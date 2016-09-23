@@ -6,8 +6,8 @@ import withStateFrom from 'd2-ui/lib/component-helpers/withStateFrom';
 
 import { LeftNav } from 'material-ui';
 
-import SearchBox from '../../src/app/SearchBox.component';
-import InterpretationList from '../../src/app/InterpretationList.component';
+import SearchBox from './SearchBox.component';
+import InterpretationList from './InterpretationList.component';
 
 
 const HeaderBar = withStateFrom(headerBarStore$, HeaderBarComponent);
@@ -47,9 +47,7 @@ export default React.createClass({
 
                 <HeaderBar />
 
-
 				<LeftNav openRight="true" >
-
 
 					<div className="rightNav">
 						<div className="">Top 5 interpretations ( last 30 days )</div>

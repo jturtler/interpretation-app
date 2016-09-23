@@ -13,7 +13,7 @@ const InterpretationList = React.createClass({
 
     getInitialState() {
         return {
-            hasMore: true, items: [], currentUser: this.props.d2.currentUser.displayName,
+            hasMore: true, items: [], currentUser: { name: this.props.d2.currentUser.displayName, id: this.props.d2.currentUser.id, superUser: this.isSuperUser() },
         };
     },
 
@@ -25,8 +25,8 @@ const InterpretationList = React.createClass({
 
     onSearchChanged(keyword) {
 		// reset the list item
-        this.state.items = [];
-
+        //this.state.items = [];
+        this.setState(this.getInitialState());
 		// set the keyword on memory
         this.searchKey = keyword;
 
@@ -45,20 +45,9 @@ const InterpretationList = React.createClass({
 
             let data = {};
             data = interpretation;
+            data.userId = interpretation.user.id;
             data.user = interpretation.user.name;
-
-			// Comments information
-            let comments = '';
-            for (let j = 0; j < interpretation.comments.length; j++) {
-                const cm = interpretation.comments[j];
-                comments += `${cm.user.name},${cm.created},${cm.text};`;
-            }
-
-            if (comments.length > 0) {
-                comments = comments.substring(0, comments.length - 1);
-            }
-
-            data.comments = comments;
+            data.comments = JSON.stringify(interpretation.comments);
 
             if (interpretation.type === 'CHART') {
                 data.objId = interpretation.chart.id;
@@ -77,6 +66,10 @@ const InterpretationList = React.createClass({
         return dataList;
     },
 
+    isSuperUser() {
+        return this.props.d2.currentUser.authorities.has('ALL');
+    },
+
     addToDivList(dataList, hasMore, resultPage) {
         this.setState({
             items: this.state.items.concat([this.createDiv(dataList, resultPage)]), hasMore,
@@ -87,7 +80,7 @@ const InterpretationList = React.createClass({
         const d2 = this.props.d2;
         const d2Api = d2.Api.getApi();
 
-        let url = `interpretations?fields=id,type,text,created,likes,likedBy[name],user[name],comments[id,created,text,user[name]],chart[id,name],map[id,name],reportTable[id,name]&page=${page}&pageSize=3`;
+        let url = `interpretations?fields=id,type,text,created,likes,likedBy[id,name],user[id,name],comments[id,created,text,user[id,name]],chart[id,name],map[id,name],reportTable[id,name]&page=${page}&pageSize=5`;
 
         if (searchKey !== undefined && searchKey !== '') {
             url += `&filter=text:ilike:${searchKey}`;
@@ -112,10 +105,37 @@ const InterpretationList = React.createClass({
         return (
 			<div>
 			{dataList.map(data =>
-			<Interpretation page={page} key={data.id} data={data} currentUser={this.state.currentUser} />
+			<Interpretation page={page} key={data.id} data={data} currentUser={this.state.currentUser} deleteInterpretationSuccess={this._deleteInterpretationSuccess} />
 			)}
 			</div>
         );
+    },
+
+    removeFromArray(list, propertyName, value) {
+        let index;
+
+        for (let i = 0; i < list.length; i++) {
+            if (list[i][propertyName] === value) {
+                index = i;
+            }
+        }
+
+        if (index !== undefined) {
+            list.splice(index, 1);
+        }
+
+        return list;
+    },
+
+    _deleteInterpretationSuccess(id) {
+        const items = this.state.items;
+
+        for (let i = 0; i < items.length; i++) {
+            const children = items[i].props.children;
+            this.removeFromArray(children, 'key', id);
+        }
+
+        this.setState({ items });
     },
 
     render() {
