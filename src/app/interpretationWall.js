@@ -37,8 +37,8 @@ export default React.createClass({
         };
     },
 
-    _onSearchChange(keyword) {
-        this.refs.lists.onSearchChanged(keyword);
+    _onSearchChange(searchTerm) {
+        this.refs.lists.onSearchChanged(searchTerm);
     },
 
     render() {
@@ -46,61 +46,6 @@ export default React.createClass({
             <div className="app-wrapper">
 
                 <HeaderBar />
-
-				<LeftNav openRight="true" >
-
-					<div className="rightNav">
-						<div className="">Top 5 interpretations ( last 30 days )</div>
-						<div>
-							<ul>
-								<li><a href="#">#1 favorite name</a></li>
-								<li><a href="#">#2 favorite name</a></li>
-								<li><a href="#">#3 favorite name</a></li>
-								<li><a href="#">#4 favorite name</a></li>
-								<li><a href="#">#5 favorite name</a></li>
-							</ul>
-						</div>
-					</div>
-
-					<table>
-						<tr>
-							<th>Top 5 authors ( last 30 days )</th>
-						</tr>
-						<tr>
-							<td>
-								<ul>
-									<li><a href="#">#1 Rodolfo Melia</a></li>
-									<li><a href="#">#2 James Chang</a></li>
-									<li><a href="#">#3 Lars Overland</a></li>
-									<li><a href="#">#4 Name Melia</a></li>
-									<li><a href="#">#5 User Melia</a></li>
-								</ul>
-							</td>
-						</tr>
-					</table>
-					<br />
-
-
-					<table>
-						<tr>
-							<th>Top 5 commentators ( last 30 days )</th>
-						</tr>
-						<tr>
-							<td>
-								<ul>
-									<li><a href="#">#1 Rodolfo Melia</a></li>
-									<li><a href="#">#2 James Chang</a></li>
-									<li><a href="#">#3 Lars Overland</a></li>
-									<li><a href="#">#4 Name Melia</a></li>
-									<li><a href="#">#5 User Melia</a></li>
-								</ul>
-							</td>
-						</tr>
-					</table>
-					<br />
-
-				</LeftNav>
-
 				<mainPage>
 					<div>
 						<SearchBox
