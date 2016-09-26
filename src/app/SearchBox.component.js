@@ -12,6 +12,7 @@ const customStyles = {
         right: 0,
         bottom: 0,
         backgroundColor: 'rgba(255, 255, 255, 0)',
+        'z-index': 1000,
     },
     content: {
         position: 'absolute',
@@ -22,6 +23,7 @@ const customStyles = {
         width: '500px',
         'box-shadow': '3px 3px 2px #DDD',
         'font-size': '13px !important',
+        'z-index': 1001,
     },
 };
 
@@ -76,6 +78,7 @@ export default class SearchBox extends Component {
 
         this.setState({ open: true });
         this.bodyscrollingDisable(true);
+        // $('divReactModal__Overlay--after-open').css('z-index', '1000');
     }
 
     _handleCloseAdvancedSearch() {
