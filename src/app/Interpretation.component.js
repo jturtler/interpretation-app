@@ -178,7 +178,6 @@ const Interpretation = React.createClass({
                         <div id={peopleLikeTagId} className={this.state.likes > 0 ? '' : 'hidden'}>
                             <img src="./images/like.png" /> <a onClick={this._openPeopleLikedHandler}>{this.state.likes} people</a><span> liked this.</span>
                             <br />
-                            <br />
                         </div>
                         <CommentArea comments={this.props.data.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
                     
