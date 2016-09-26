@@ -55,7 +55,7 @@ const InterpretationList = React.createClass({
             } else if (interpretation.type === 'MAP') {
                 data.objId = interpretation.map.id;
                 data.name = interpretation.map.name;
-            } else {
+            } else if (interpretation.type === 'REPORT_TABLE') {
                 data.objId = interpretation.reportTable.id;
                 data.name = interpretation.reportTable.name;
             }
@@ -88,11 +88,10 @@ const InterpretationList = React.createClass({
 
         d2Api.get(url).then(result => {
             const dataList = this.getFormattedData(result.interpretations, d2Api.baseUrl);
-
             const hasMore = (result.pager.page < result.pager.pageCount);
             const resultPage = result.pager.page;
 
-            setTimeout(this.addToDivList(dataList, hasMore, resultPage).bind(this), 1000);
+            this.addToDivList(dataList, hasMore, resultPage);
 
             return Promise.resolve();
         })

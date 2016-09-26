@@ -7,8 +7,7 @@ import actions from './actions/Comment.action';
 const PostComment = React.createClass({
     propTypes: {
         currentUser: React.PropTypes.string,
-        postCommentId: React.PropTypes.string,
-        data: React.PropTypes.object,
+        interpretationId: React.PropTypes.string,
         postCommentSuccess: React.PropTypes.func,
     },
 
@@ -19,9 +18,12 @@ const PostComment = React.createClass({
     },
 
     _addComment() {
-        actions.addComment(this.props.data.id, this.state.text)
-			.subscribe(() => {
-    this.props.postCommentSuccess(this.state.text);
+        actions.addComment(this.props.interpretationId, this.state.text)
+			.subscribe((data) => {
+                // const params = data.responseHeader.split("/");
+    // this.props.postCommentSuccess('', this.state.text);
+    this.props.postCommentSuccess();
+    this.setState({ text: '' });
 		});
     },
 
@@ -36,9 +38,11 @@ const PostComment = React.createClass({
             initChars += userName[userName.length - 1][0];
         }
 
+        const postComentTagId = `postComent_${this.props.interpretationId}`;
+
         return (
 
-			<div className="postComment hidden" id={this.props.postCommentId} >
+			<div className="postComment hidden" id={postComentTagId} >
 				<table>
 					<tr>
 						<td>
