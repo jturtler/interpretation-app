@@ -124,13 +124,13 @@ export default class AdvanceSearchForm extends Component {
                         <tr>
                             <td className="tdTitle"><span className="searchStyle">Author (user)</span></td>
                             <td className="tdData">
-                                <AutoCompleteUsers userType="author" onUserSelect={this._authorSelected} />
+                                <AutoCompleteUsers searchId="author" onSelect={this._authorSelected} />
                             </td>
                         </tr>
                         <tr>
                             <td className="tdTitle"><span className="searchStyle">Commentator (user)</span></td>
                             <td className="tdData">
-                                <AutoCompleteUsers userType="commentator" onUserSelect={this._commentatorSelected} />
+                                <AutoCompleteUsers searchId="commentator" onSelect={this._commentatorSelected} />
                             </td>
                         </tr>
                     </tbody>

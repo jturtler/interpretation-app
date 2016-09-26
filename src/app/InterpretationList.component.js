@@ -15,6 +15,7 @@ const InterpretationList = React.createClass({
         return {
             hasMore: true,
             items: [],
+            searchTerm: undefined,
             currentUser: { name: this.props.d2.currentUser.displayName, id: this.props.d2.currentUser.id, superUser: this.isSuperUser() },
         };
     },
@@ -26,14 +27,11 @@ const InterpretationList = React.createClass({
     },
 
     onSearchChanged(searchTerm) {
-		// reset the list item
-        // this.state.items = [];
-        this.setState(this.getInitialState());
-
 		// set the search terms on state memory
         this.state.searchTerm = searchTerm;
 
-        this.loadMore(1);
+		// reset the list item
+        this.setState({ hasMore: true, items: [], searchTerm });
     },
 
     getFormattedData(itemList) {

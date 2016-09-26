@@ -234,6 +234,11 @@ a{
 /* Search                                                             */
 /*----------------------------------------------------------------------------*/
 
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}
+
 .searchDiv
 {
 	height: 46px;
@@ -247,8 +252,7 @@ a{
 .searchImg
 {
   margin-left: 4px;
-  margin-right: 4px;
-  padding-bottom: 6px;
+  margin-right: 12px;
   vertical-align: middle;
   cursor: pointer;
 }
@@ -258,6 +262,40 @@ a{
   fill: #777;
 }
 
+.searchTable td
+{
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  vertical-align: middle;
+}
+
+.searchTextbox
+{
+  width: 400px;
+}
+
+.searchItemsDiv 
+{
+  font-size:16px;
+  line-height:32px;
+  height:40px;
+}
+
+/*
+.searchTextDiv input
+{
+  border: none;
+  outline: none;
+  line-height: 32px;
+  height: 32px;;
+  font-family: Roboto, sans-serif;
+  font-size: 16px;
+  margin: 0px;
+  padding: 0px;
+  width: 350px;
+}
+*/
 
 .advanceSearchFormBtns
 {
@@ -286,6 +324,7 @@ div.advancedSearchForm
 .tdData input, .tdData select
 {
   font-size: 13px;  
+  height: 21.5px !important;
 }
 
 .searchStyle

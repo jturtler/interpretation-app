@@ -22,8 +22,8 @@ const autoSearchStyles = {
 
 const AutoCompleteUsers = React.createClass({
     propTypes: {
-        userType: React.PropTypes.string,
-        onUserSelect: React.PropTypes.func,
+        searchId: React.PropTypes.string,
+        onSelect: React.PropTypes.func,
     },
 
     getInitialState() {
@@ -31,6 +31,7 @@ const AutoCompleteUsers = React.createClass({
             value: '',
             itemList: [],
             loading: false,
+            open: false,
         };
     },
 
@@ -39,28 +40,37 @@ const AutoCompleteUsers = React.createClass({
             <div className="divAuthorSelector">
                 <Autocomplete
                     className="searchStyle author"
-                    inputProps={{ displayName: 'Type Author', id: '' }}
+                    inputProps={{ placeholder: 'Type User Name', style: { width: '250px' } }}
                     ref="autocomplete"
                     value={this.state.value}
                     items={this.state.itemList}
                     getItemValue={(item) => item.displayName}
+                    open={this.state.open}
                     onSelect={(value, item) => {
-                        this.setState({ value, itemList: [item] });
-                        this.props.onUserSelect(item);
+                        this.setState({ value, itemList: [item], open: false });
+                        this.props.onSelect(item);
                     }}
                     onChange={(event, value) => {
-                        this.setState({ value, loading: true });
+                        this.setState({ value, loading: true, open: false });
 
-                        delayOnceTimeAction.bind(700, this.props.userType, () => {
-                            getD2().then(d2 => {
-                                const url = `users.json?paging=false&filter=name:ilike:${value}`;
-                                d2.Api.getApi().get(url).then(result => {
-                                    this.setState({ itemList: result.users, loading: false });                    
-                                })
-                                .catch(errorResponse => {
-                                    console.log(`error ${errorResponse}`);
+                        delayOnceTimeAction.bind(700, this.props.searchId, () => {
+                            if (value === '') {
+                                this.setState({ itemList: [], loading: false, open: false });
+                                this.props.onSelect({ displayName: '', id: '' });
+                            }
+                            else {
+                                getD2().then(d2 => {
+                                    const url = `users.json?paging=false&filter=name:ilike:${value}`;
+                                    d2.Api.getApi().get(url).then(result => {
+                                        const openVal = (result.users.length > 0) ? true: false;
+
+                                        this.setState({ itemList: result.users, loading: false, open: openVal });
+                                    })
+                                    .catch(errorResponse => {
+                                        console.log(`error ${errorResponse}`);
+                                    });
                                 });
-                            });
+                            }
                         });
                     }}
                     renderItem={(item, isHighlighted) => (

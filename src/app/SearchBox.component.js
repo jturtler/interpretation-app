@@ -29,7 +29,12 @@ export default class SearchBox extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { value: props.value, open: false, searchList: [] };
+        this.state = {
+            value: props.value,
+            open: false,
+            searchList: [],
+            moreTerms: undefined,
+        };
 
         this._change = this._change.bind(this);
         this._clickPerformSearch = this._clickPerformSearch.bind(this);
@@ -39,11 +44,20 @@ export default class SearchBox extends Component {
         this._keyDown = this._keyDown.bind(this);
         this._clickTest = this._clickTest.bind(this);
 
-        this._handleKeywordAutoSearch = this._handleKeywordAutoSearch.bind(this);
+        this._keywordSelected = this._keywordSelected.bind(this);
     }
 
     componentWillReceiveProps(props) {
         this.setState({ value: props.value });
+    }
+
+    bodyscrollingDisable(enable) {
+        if (enable) {
+            $('body').addClass('stop-scrolling');
+        }
+        else {
+            $('body').removeClass('stop-scrolling');
+        }
     }
 
     _change(e) {
@@ -55,19 +69,18 @@ export default class SearchBox extends Component {
     }
 
     _handleOpenAdvancedSearch() {
-        console.log('_handleOpen_AdvancedSearch');
-
         const offSet = $('div.searchDiv').offset();
 
         customStyles.content.top = `${Number(offSet.top) + 45}px`;
         customStyles.content.left = `${offSet.left}px`;
 
         this.setState({ open: true });
+        this.bodyscrollingDisable(true);
     }
 
     _handleCloseAdvancedSearch() {
-        console.log('_handleClose_AdvancedSearch');
         this.setState({ open: false });
+        this.bodyscrollingDisable(false);
     }
 
     _handleAdvancedSearch() {
@@ -77,21 +90,23 @@ export default class SearchBox extends Component {
         // Call back with search term and keyword
         this.props.onChangeEvent({ keyword: this.state.value, moreTerms });
 
-        this.setState({ open: false });
+        // Save the moreTerms in memory..
+        this.setState({ open: false, moreTerms });
+        this.bodyscrollingDisable(false);
     }
 
-    _handleKeywordAutoSearch() {
-        // console.log( '_handleKeywordAutoSearch' );
+    _keywordSelected(item) {
+        this.state.value = item.text;
+        this.props.onChangeEvent({ keyword: this.state.value });
     }
 
     _clickTest() {
-        console.log('_clickTest');
         this.setState({ open: false });
+        this.bodyscrollingDisable(false);
     }
 
     _keyDown(e) {
         if (e.keyCode === 13) {
-            console.log( 'keydown: ' + this.state.value );
             this.props.onChangeEvent({ keyword: this.state.value });
         }
     }
@@ -104,15 +119,25 @@ export default class SearchBox extends Component {
 
         return (
             <div className="searchDiv">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="36" viewBox="0 0 24 24" width="36" className="searchImg" onClick={this._clickPerformSearch}>
+                <table className="searchTable">
+                <tr>
+                <td>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="32" viewBox="0 0 24 24" width="32" className="searchImg" onClick={this._clickPerformSearch}>
                     <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
                     <path d="M0 0h24v24H0z" fill="none"></path>
                 </svg>
-                <TextField errorStyle={errorStyle} {...this.props} value={this.state.value} onChange={this._change} style={{ width: 350 }} onKeyDown={this._keyDown} />
+                </td>
+                <td>
+                    <AutoCompleteSearchKeyword searchId="searchKeyword" onSelect={this._keywordSelected} />
+                </td>
+                <td>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="36" viewBox="0 0 24 24" width="36" className="searchImg" onClick={this._handleOpenAdvancedSearch}>
                     <path d="M7 10l5 5 5-5z"></path>
                     <path d="M0 0h24v24H0z" fill="none"></path>
                 </svg>
+                </td>
+                </tr>
+                </table>
 
                 <Modal
                     isOpen={this.state.open}
@@ -137,4 +162,10 @@ SearchBox.propTypes = { value: React.PropTypes.string,
 SearchBox.defaultProps = { value: '' };
 
 /*
+
+                <TextField errorStyle={errorStyle} {...this.props} value={this.state.value} onChange={this._change} style={{ width: 350 }} onKeyDown={this._keyDown} />
+
+
+                <TextField errorStyle={errorStyle} {...this.props} value={this.state.value} onChange={this._change} style={{ width: 350 }} onKeyDown={this._keyDown} />
+
 */
