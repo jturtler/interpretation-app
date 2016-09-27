@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { TextField } from 'material-ui';
 import Modal from 'react-modal';
 import AdvanceSearchForm from './AdvanceSearchForm.component';
 import AutoCompleteSearchKeyword from './AutoCompleteSearchKeyword.component';
@@ -32,26 +31,21 @@ export default class SearchBox extends Component {
         super(props);
 
         this.state = {
-            value: props.value,
+            value: '',
             open: false,
             searchList: [],
             moreTerms: undefined,
         };
 
-        this._change = this._change.bind(this);
-        this._clickPerformSearch = this._clickPerformSearch.bind(this);
-        this._handleOpenAdvancedSearch = this._handleOpenAdvancedSearch.bind(this);
-        this._handleCloseAdvancedSearch = this._handleCloseAdvancedSearch.bind(this);
+        this._onChange = this._onChange.bind(this);
+        this._clickSearchIcon = this._clickSearchIcon.bind(this);
+        this._openAdvancedSearchForm = this._openAdvancedSearchForm.bind(this);
+        this._closeAdvancedSearchForm = this._closeAdvancedSearchForm.bind(this);
         this._advSearchFormReset = this._advSearchFormReset.bind(this);
-        this._handleAdvancedSearch = this._handleAdvancedSearch.bind(this);
-        this._keyDown = this._keyDown.bind(this);
-        this._clickTest = this._clickTest.bind(this);
+        this._performAdvancedSearch = this._performAdvancedSearch.bind(this);
+        this._onInputEnterPressed = this._onInputEnterPressed.bind(this);
 
         this._keywordSelected = this._keywordSelected.bind(this);
-    }
-
-    componentWillReceiveProps(props) {
-        this.setState({ value: props.value });
     }
 
     bodyscrollingDisable(enable) {
@@ -63,15 +57,18 @@ export default class SearchBox extends Component {
         }
     }
 
-    _change(e) {
-        this.setState({ value: e.target.value });
+    _onChange(event, value) {
+        this.setState({ value });
     }
 
-    _clickPerformSearch() {
+    _clickSearchIcon() {
+        this.refs.advancedSearchForm.collapseMenu();
         this.props.onChangeEvent({ keyword: this.state.value });
     }
 
-    _handleOpenAdvancedSearch() {
+    _openAdvancedSearchForm() {
+        this.refs.advancedSearchForm.collapseMenu();
+        
         const offSet = $('div.searchDiv').offset();
 
         customStyles.content.top = `${Number(offSet.top) + 45}px`;
@@ -81,7 +78,7 @@ export default class SearchBox extends Component {
         this.bodyscrollingDisable(true);
     }
 
-    _handleCloseAdvancedSearch() {
+    _closeAdvancedSearchForm() {
         // get data from advanced search form
         const moreTerms = this.refs.advancedSearchForm.getSearchConditions();
 
@@ -95,7 +92,7 @@ export default class SearchBox extends Component {
         this.refs.advancedSearchForm.resetForm();
     }
 
-    _handleAdvancedSearch() {
+    _performAdvancedSearch() {
         // get data from advanced search form
         const moreTerms = this.refs.advancedSearchForm.getSearchConditions();
 
@@ -114,15 +111,8 @@ export default class SearchBox extends Component {
         this.props.onChangeEvent({ keyword: this.state.value });
     }
 
-    _clickTest() {
-        this.setState({ open: false });
-        this.bodyscrollingDisable(false);
-    }
-
-    _keyDown(e) {
-        if (e.keyCode === 13) {
-            this.props.onChangeEvent({ keyword: this.state.value });
-        }
+    _onInputEnterPressed(e) {
+        this.props.onChangeEvent({ keyword: this.state.value });
     }
 
     render() {
@@ -130,16 +120,16 @@ export default class SearchBox extends Component {
             <div className="searchDiv">
                 <table className="searchTable"><tr>
                 <td>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._clickPerformSearch}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._clickSearchIcon}>
                         <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
                         <path d="M0 0h24v24H0z" fill="none"></path>
                     </svg>
                 </td>
                 <td>
-                    <AutoCompleteSearchKeyword searchId="searchKeyword" onSelect={this._keywordSelected} />
+                    <AutoCompleteSearchKeyword searchId="searchKeyword" onChange={this._onChange} onSelect={this._keywordSelected} onInputEnterPressed={this._onInputEnterPressed} />
                 </td>
                 <td>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._handleOpenAdvancedSearch}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._openAdvancedSearchForm}>
                         <path d="M7 10l5 5 5-5z"></path>
                         <path d="M0 0h24v24H0z" fill="none"></path>
                     </svg>
@@ -148,13 +138,13 @@ export default class SearchBox extends Component {
 
                 <Modal
                     isOpen={this.state.open}
-                    onRequestClose={this._handleCloseAdvancedSearch}
+                    onRequestClose={this._closeAdvancedSearchForm}
                     style={customStyles}
                     shouldCloseOnOverlayClick
                 >
-                    <AdvanceSearchForm ref="advancedSearchForm" savedTerms={this.state.moreTerms} askPopupClose={this._handleCloseAdvancedSearch} />
+                    <AdvanceSearchForm ref="advancedSearchForm" savedTerms={this.state.moreTerms} askPopupClose={this._closeAdvancedSearchForm} />
                     <div className="advanceSearchFormBtns">
-                        <button className="cssBtnBlue" onClick={this._handleAdvancedSearch}>Search</button>
+                        <button className="cssBtnBlue" onClick={this._performAdvancedSearch}>Search</button>
                         <button className="cssBtnGray" onClick={this._advSearchFormReset}>Reset</button>
                     </div>
                 </Modal>
@@ -163,7 +153,7 @@ export default class SearchBox extends Component {
     }
 }
 
-SearchBox.propTypes = { value: React.PropTypes.string,
+SearchBox.propTypes = { value: React.PropTypes.any,
     multiLine: React.PropTypes.bool,
     onChangeEvent: React.PropTypes.func,
      };

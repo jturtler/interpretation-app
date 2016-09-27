@@ -1,7 +1,7 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import Interpretation from '../../src/app/Interpretation.component';
-
+import { LinearProgress } from 'material-ui';
 import actions from './actions/Interpretation.action';
 
 const InterpretationList = React.createClass({
@@ -29,11 +29,12 @@ const InterpretationList = React.createClass({
     },
 
     onSearchChanged(searchTerm) {
-		// set the search terms on state memory
+		// set the search terms on state memory and reset the item list
         this.state.searchTerm = searchTerm;
+        this.state.items = [];
 
-		// reset the list item
-        this.setState({ hasMore: true, items: [], searchTerm });
+        // Search for Interpretation with first page.  searchTerm are passed as memory
+        this.loadMore(1);
     },
 
     getFormattedData(itemList) {
@@ -105,26 +106,16 @@ const InterpretationList = React.createClass({
         return this.props.d2.currentUser.authorities.has('ALL');
     },
 
+    showProgressBar(show) {
+        if (show) $('div.divProgressBar').show();
+        else $('div.divProgressBar').hide();
+    },
+
     loadMore(page) {
-        /* const d2 = this.props.d2;
-        const d2Api = d2.Api.getApi();
-
-        let url = `interpretations?fields=id,type,text,created,likes,likedBy[id,name],user[id,name],comments[id,created,text,user[id,name]],chart[id,name],map[id,name],reportTable[id,name]&page=${page}&pageSize=5`;
-        url += this.getSearchTerms(this.state.searchTerm);
-
-        d2Api.get(url).then(result => {
-            const dataList = this.getFormattedData(result.interpretations, d2Api.baseUrl);
-            const hasMore = (result.pager.page < result.pager.pageCount);
-            const resultPage = result.pager.page;
-
-            this.addToDivList(dataList, hasMore, resultPage);
-
-            return Promise.resolve();
-        })
-		.catch(error => { console.log(error); return Promise.resolve(); }); */
-
-
         const searchData = this.getSearchTerms(this.state.searchTerm);
+
+        this.showProgressBar(true);
+
         actions.listInterpretation('', page, searchData).subscribe(result => {
             const d2 = this.props.d2;
             const d2Api = d2.Api.getApi();
@@ -134,6 +125,8 @@ const InterpretationList = React.createClass({
             const resultPage = result.pager.page;
 
             this.addToDivList(dataList, hasMore, resultPage);
+
+            this.showProgressBar(false);
         });
     },
 
@@ -177,6 +170,7 @@ const InterpretationList = React.createClass({
     render() {
         return (
 			<div>
+                <div className="divProgressBar" style={{ display: 'none' }}><LinearProgress mode="indeterminate" /></div>
 				<InfiniteScroll loader={<div><img src="images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
                     {this.state.items}
 				</InfiniteScroll>

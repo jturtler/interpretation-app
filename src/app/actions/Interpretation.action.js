@@ -9,8 +9,7 @@ const actions = Action.createActionsFromNames(['listInterpretation', 'updateLike
 actions.listInterpretation
     .subscribe(({ data: [model, page, searchData], complete }) => {
         getD2().then(d2 => {
-            let url = `interpretations?fields=id,type,text,created,likes,likedBy[id,name],user[id,name],comments[id,created,text,user[id,name]],chart[id,name],map[id,name],reportTable[id,name]&page=${page}&pageSize=5`;
-            url += searchData;
+            let url = `interpretations?fields=id,type,text,created,likes,likedBy[id,name],user[id,name],comments[id,created,text,user[id,name]],chart[id,name],map[id,name],reportTable[id,name]&page=${page}&pageSize=5${searchData}`;
 
             d2.Api.getApi().get(url)
 				.then(result => {
