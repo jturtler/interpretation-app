@@ -46,7 +46,7 @@ const InterpretationList = React.createClass({
             data = interpretation;
             data.userId = interpretation.user.id;
             data.user = interpretation.user.name;
-            data.comments = JSON.stringify(interpretation.comments);
+            // data.comments = JSON.stringify(interpretation.comments);
 
             if (interpretation.type === 'CHART') {
                 data.objId = interpretation.chart.id;
@@ -74,19 +74,19 @@ const InterpretationList = React.createClass({
             }
 
             if (searchTerm.moreTerms !== undefined) {
-                if (searchTerm.moreTerms.author && searchTerm.moreTerms.author.id !== '') searchTermUrl += `&filter=user.id:eq:${searchTerm.moreTerms.author.id}`;
+                if (searchTerm.moreTerms.author !== '') searchTermUrl += `&filter=user.id:eq:${searchTerm.moreTerms.author}`;
 
-                if (searchTerm.moreTerms.commentator && searchTerm.moreTerms.commentator.id !== '') searchTermUrl += `&filter=comments.user.id:eq:${searchTerm.moreTerms.commentator.id}`;
+                if (searchTerm.moreTerms.commentator !== '') searchTermUrl += `&filter=comments.user.id:eq:${searchTerm.moreTerms.commentator}`;
 
                 if (searchTerm.moreTerms.type !== '') searchTermUrl += `&filter=type:eq:${searchTerm.moreTerms.type}`;
 
-                if (!searchTerm.moreTerms.dateCreatedFrom !== '') searchTermUrl += `&filter=created:ge:${searchTerm.moreTerms.dateCreatedFrom.format('YYYY-MM-DD')}`;
+                if (searchTerm.moreTerms.dateCreatedFrom !== '') searchTermUrl += `&filter=created:ge:${searchTerm.moreTerms.dateCreatedFrom.format('YYYY-MM-DD')}`;
 
-                if (!searchTerm.moreTerms.dateCreatedTo !== '') searchTermUrl += `&filter=created:le:${searchTerm.moreTerms.dateCreatedTo.format('YYYY-MM-DD')}`;
+                if (searchTerm.moreTerms.dateCreatedTo !== '') searchTermUrl += `&filter=created:le:${searchTerm.moreTerms.dateCreatedTo.format('YYYY-MM-DD')}`;
 
-                if (!searchTerm.moreTerms.dateModiFrom !== '') searchTermUrl += `&filter=lastUpdated:ge:${searchTerm.moreTerms.dateModiFrom.format('YYYY-MM-DD')}`;
+                if (searchTerm.moreTerms.dateModifiedFrom !== '') searchTermUrl += `&filter=lastUpdated:ge:${searchTerm.moreTerms.dateModifiedFrom.format('YYYY-MM-DD')}`;
 
-                if (!searchTerm.moreTerms.dateModiTo !== '') searchTermUrl += `&filter=lastUpdated:le:${searchTerm.moreTerms.dateModiTo.format('YYYY-MM-DD')}`;
+                if (searchTerm.moreTerms.dateModifiedTo !== '') searchTermUrl += `&filter=lastUpdated:le:${searchTerm.moreTerms.dateModifiedTo.format('YYYY-MM-DD')}`;
             }
         }
 
@@ -117,9 +117,9 @@ const InterpretationList = React.createClass({
 
             this.addToDivList(dataList, hasMore, resultPage);
 
-            Promise.resolve();
-        });
-		// .catch(error => { console.log(error); return Promise.resolve(); });
+            return Promise.resolve();
+        })
+		.catch(error => { console.log(error); return Promise.resolve(); });
     },
 
     createDiv(dataList, page) {

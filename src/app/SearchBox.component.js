@@ -42,6 +42,7 @@ export default class SearchBox extends Component {
         this._clickPerformSearch = this._clickPerformSearch.bind(this);
         this._handleOpenAdvancedSearch = this._handleOpenAdvancedSearch.bind(this);
         this._handleCloseAdvancedSearch = this._handleCloseAdvancedSearch.bind(this);
+        this._advSearchFormReset = this._advSearchFormReset.bind(this);
         this._handleAdvancedSearch = this._handleAdvancedSearch.bind(this);
         this._keyDown = this._keyDown.bind(this);
         this._clickTest = this._clickTest.bind(this);
@@ -88,6 +89,10 @@ export default class SearchBox extends Component {
 
         this.setState({ open: false, moreTerms });
         this.bodyscrollingDisable(false);
+    }
+
+    _advSearchFormReset() {
+        this.refs.advancedSearchForm.resetForm();
     }
 
     _handleAdvancedSearch() {
@@ -153,10 +158,10 @@ export default class SearchBox extends Component {
                     onRequestClose={this._handleCloseAdvancedSearch}
                     style={customStyles}
                     shouldCloseOnOverlayClick={true}>
-                    <AdvanceSearchForm ref="advancedSearchForm" savedTerms={this.state.moreTerms} />
+                    <AdvanceSearchForm ref="advancedSearchForm" savedTerms={this.state.moreTerms} askPopupClose={this._handleCloseAdvancedSearch} />
                     <div className="advanceSearchFormBtns">
                         <button className="cssBtnBlue" onClick={this._handleAdvancedSearch}>Search</button>
-                        <button className="cssBtnGray" onClick={this._handleCloseAdvancedSearch}>Close</button>
+                        <button className="cssBtnGray" onClick={this._advSearchFormReset}>Reset</button>
                     </div>
                 </Modal>
             </div>
