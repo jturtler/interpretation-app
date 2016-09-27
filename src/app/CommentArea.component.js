@@ -15,9 +15,29 @@ const CommentArea = React.createClass({
     },
 
     getInitialState() {
-        const comments = JSON.parse(this.props.comments);
+        const comments = this._getSubComments(this.props.comments);
         return {
-            comments,
+            showComments: comments.showComments,
+            hideComments: comments.hideComments,
+            hidden: true,
+        };
+    },
+
+    _getSubComments(list) {
+        let showComments = [];
+        let hideComments = [];
+        if (list.length >= 5) {
+            showComments = list.slice(0, 5);
+            if (list.length > 5) {
+                hideComments = list.slice(5, list.length);
+            }
+        } else {
+            showComments = list;
+        }
+
+        return {
+            showComments,
+            hideComments,
         };
     },
 
@@ -40,41 +60,70 @@ const CommentArea = React.createClass({
     // _addCommentSuccess(id, text) {
     _addCommentSuccess() {
         actions.listComment(undefined, this.props.interpretationId).subscribe(result => {
-            const comments = this.state.comments;
-            comments.push(result.comments[result.comments.length - 1]);
+            this.setState({
+                hideComments: [],
+                showComments: [],
+            });
 
-            this.setState({ comments });
-
-            const postComentTagId = `postComent_${this.props.interpretationId}`;
-            $(`#${postComentTagId}`).closest('.interpretationCommentArea').show();
+            this.setState(this._getSubComments(result.comments), function () {
+                const postComentTagId = `postComent_${this.props.interpretationId}`;
+                $(`#${postComentTagId}`).closest('.interpretationCommentArea').show();
+            });
         });
     },
 
     _updateCommentSuccess(id, text) {
-        const comments = this.state.comments;
-        for (let i = 0; i < comments.length; i++) {
-            if (comments[i].id === id) {
-                comments[i].text = text;
+        const showComments = this.state.showComments;
+        for (let i = 0; i < showComments.length; i++) {
+            if (showComments[i].id === id) {
+                showComments[i].text = text;
+            }
+        }
+
+        const hideComments = this.state.hideComments;
+        for (let i = 0; i < hideComments.length; i++) {
+            if (hideComments[i].id === id) {
+                hideComments[i].text = text;
             }
         }
 
         this.setState({
-            comments,
+            showComments,
+            hideComments,
         });
     },
 
     _deleteCommentSuccess(commentId) {
-        let comments = this.state.comments;
-        comments = this.removeFromArray(comments, 'id', commentId);
+        actions.listComment(undefined, this.props.interpretationId).subscribe(result => {
+            const comments = this.state.showComments;
+            comments.concat(this.state.hideComments);
+            this.removeFromArray(comments, 'id', commentId);
 
-        this.setState({ comments });
+            this.setState({
+                hideComments: [],
+                showComments: [],
+            });
+
+            this.setState(this._getSubComments(result.comments));
+        });
     },
 
     _getShowCommentListTag() {
         let commentPart = '';
-        if (this.state.comments.length > 0) {
+        if (this.state.showComments.length > 0) {
             const keyTagId = `showList_${this.props.interpretationId}`;
-            commentPart = <CommentList list={this.state.comments} hidden={false} key={keyTagId} interpretationId={this.props.interpretationId} currentUser={this.props.currentUser} updateCommentSuccess={this._updateCommentSuccess} deleteCommentSuccess={this._deleteCommentSuccess} />;
+            commentPart = <CommentList list={this.state.showComments} hidden={false} isHidden={false} key={keyTagId} interpretationId={this.props.interpretationId} currentUser={this.props.currentUser} updateCommentSuccess={this._updateCommentSuccess} deleteCommentSuccess={this._deleteCommentSuccess} />;
+        }
+
+        return commentPart;
+    },
+
+    _getHideCommentListTag() {
+        let commentPart = '';
+
+        if (this.state.hideComments.length > 0) {
+            const keyTagId = `hideList_${this.props.interpretationId}`;
+            commentPart = <CommentList hidden isHidden={this.state.hidden} list={this.state.hideComments} key={keyTagId} interpretationId={this.props.interpretationId} currentUser={this.props.currentUser} updateCommentSuccess={this._updateCommentSuccess} deleteCommentSuccess={this._deleteCommentSuccess} />;
         }
 
         return commentPart;
@@ -82,20 +131,33 @@ const CommentArea = React.createClass({
 
     _getCommentAreaClazz() {
         let commentAreaClazzNames = 'interpretationCommentArea';
-        if (this.state.comments.length === 0 && this.props.likes === 0) {
+        if (this.state.showComments.length === 0 && this.props.likes === 0) {
             commentAreaClazzNames += ' hidden';
         }
 
         return commentAreaClazzNames;
     },
 
+    _showMore() {
+        this.setState({ hidden: false }, function () {
+            const hasMoreTagLinkId = `hasMoreCommentLink_${this.props.interpretationId}`;
+            const hasMoreTagId = `hideCommentList_${this.props.interpretationId}`;
+
+            $(`#${hasMoreTagLinkId}`).hide();
+            $(`#${hasMoreTagId}`).show();
+        });
+    },
 
     render() {
+        const hasMoreTagLinkId = `hasMoreCommentLink_${this.props.interpretationId}`;
         return (
             <div className={this._getCommentAreaClazz()} >
                 <PostComment currentUser={this.props.currentUser} interpretationId={this.props.interpretationId} postCommentSuccess={this._addCommentSuccess} />
                 {this._getShowCommentListTag()}
 
+                {this.state.hideComments.length > 0 && this.state.hidden ? <div id={hasMoreTagLinkId}><a onClick={this._showMore}>[{this.state.hideComments.length} more comments]</a></div> : ''}
+
+                {this._getHideCommentListTag()}
             </div>
 		);
     },

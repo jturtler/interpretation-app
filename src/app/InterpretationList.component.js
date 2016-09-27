@@ -46,7 +46,7 @@ const InterpretationList = React.createClass({
             data = interpretation;
             data.userId = interpretation.user.id;
             data.user = interpretation.user.name;
-            data.comments = JSON.stringify(interpretation.comments);
+            // data.comments = JSON.stringify(interpretation.comments);
 
             if (interpretation.type === 'CHART') {
                 data.objId = interpretation.chart.id;

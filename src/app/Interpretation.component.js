@@ -19,6 +19,7 @@ const Interpretation = React.createClass({
             likes: this.props.data.likes,
             likedBy: this.props.data.likedBy,
             open: false,
+            comments: this.props.data.comments,
         };
     },
 
@@ -179,7 +180,7 @@ const Interpretation = React.createClass({
                             <img src="./images/like.png" /> <a onClick={this._openPeopleLikedHandler}>{this.state.likes} people</a><span> liked this.</span>
                             <br />
                         </div>
-                        <CommentArea comments={this.props.data.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
+                        <CommentArea comments={this.state.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
                     
                         
                         <Dialog
