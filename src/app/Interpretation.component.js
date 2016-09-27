@@ -68,9 +68,9 @@ const Interpretation = React.createClass({
     },
 
     _showCommentHandler() {
-        const postComentTagId = `#postComent_${this.props.data.id}`;
-        $(`${postComentTagId}`).show();
-        $(`${postComentTagId}`).closest('.interpretationCommentArea').show();
+        const postComentTagId = `postComent_${this.props.data.id}`;
+        $(`#${postComentTagId}`).show();
+        $(`#${postComentTagId}`).closest('.interpretationCommentArea').show();
     },
 
     _likeHandler() {
@@ -85,12 +85,12 @@ const Interpretation = React.createClass({
             this.setState({
                 likes,
                 likedBy,
+            }, function () {
+                const peopleLikeTagId = `peopleLike_${this.props.data.id}`;
+                const postComentTagId = `postComent_${this.props.data.id}`;
+                $(`#${peopleLikeTagId}`).show();
+                $(`#${postComentTagId}`).closest('.interpretationCommentArea').show();
             });
-
-            const peopleLikeTagId = `peopleLike_${this.props.data.id}`;
-            const postComentTagId = `postComent_${this.props.data.id}`;
-            $(`#${peopleLikeTagId}`).show();
-            $(`#${postComentTagId}`).closest('.interpretationCommentArea').show();
         });
     },
 
@@ -121,7 +121,7 @@ const Interpretation = React.createClass({
 
     _getCommentAreaClazz() {
         let commentAreaClazzNames = 'interpretationCommentArea';
-        if (this.props.data.comments.length > 0 && this.state.likes === 0) {
+        if (this.props.data.comments.length === 0 && this.state.likes === 0) {
             commentAreaClazzNames += ' hidden';
         }
 

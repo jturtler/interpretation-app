@@ -71,10 +71,13 @@ const Comment = React.createClass({
         $(`#${divShowText}`).show();
     },
 
-    render() {        
+    render() {
+        console.log(this.state.data.created);
         const created = this.state.data.created.substring(0, 10).split('-');
         const time = this.state.data.created.substring(11, 19).split(':');
-        let date = new Date(created[0], eval(created[1]) - 1, created[2], time[0], time[1], time[2]);
+
+        const month = eval(created[1]) - 1;
+        const date = new Date(created[0], month, created[2], time[0], time[1], time[2]);
 
         const userName = this.state.data.user.name.split(' ');
         let initChars = userName[0][0];

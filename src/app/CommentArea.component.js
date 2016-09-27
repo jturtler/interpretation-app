@@ -129,15 +129,6 @@ const CommentArea = React.createClass({
         return commentPart;
     },
 
-    _getCommentAreaClazz() {
-        let commentAreaClazzNames = 'interpretationCommentArea';
-        if (this.state.showComments.length === 0 && this.props.likes === 0) {
-            commentAreaClazzNames += ' hidden';
-        }
-
-        return commentAreaClazzNames;
-    },
-
     _showMore() {
         this.setState({ hidden: false }, function () {
             const hasMoreTagLinkId = `hasMoreCommentLink_${this.props.interpretationId}`;
@@ -150,8 +141,9 @@ const CommentArea = React.createClass({
 
     render() {
         const hasMoreTagLinkId = `hasMoreCommentLink_${this.props.interpretationId}`;
+
         return (
-            <div className={this._getCommentAreaClazz()} >
+            <div>
                 <PostComment currentUser={this.props.currentUser} interpretationId={this.props.interpretationId} postCommentSuccess={this._addCommentSuccess} />
                 {this._getShowCommentListTag()}
 

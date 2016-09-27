@@ -2,6 +2,8 @@ import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import Interpretation from '../../src/app/Interpretation.component';
 
+import actions from './actions/Interpretation.action';
+
 const InterpretationList = React.createClass({
     propTypes: {
         d2: React.PropTypes.object,
@@ -104,7 +106,7 @@ const InterpretationList = React.createClass({
     },
 
     loadMore(page) {
-        const d2 = this.props.d2;
+        /* const d2 = this.props.d2;
         const d2Api = d2.Api.getApi();
 
         let url = `interpretations?fields=id,type,text,created,likes,likedBy[id,name],user[id,name],comments[id,created,text,user[id,name]],chart[id,name],map[id,name],reportTable[id,name]&page=${page}&pageSize=5`;
@@ -119,7 +121,20 @@ const InterpretationList = React.createClass({
 
             return Promise.resolve();
         })
-		.catch(error => { console.log(error); return Promise.resolve(); });
+		.catch(error => { console.log(error); return Promise.resolve(); }); */
+
+
+        const searchData = this.getSearchTerms(this.state.searchTerm);
+        actions.listInterpretation('', page, searchData).subscribe(result => {
+            const d2 = this.props.d2;
+            const d2Api = d2.Api.getApi();
+
+            const dataList = this.getFormattedData(result.interpretations, d2Api.baseUrl);
+            const hasMore = (result.pager.page < result.pager.pageCount);
+            const resultPage = result.pager.page;
+
+            this.addToDivList(dataList, hasMore, resultPage);
+        });
     },
 
     createDiv(dataList, page) {
