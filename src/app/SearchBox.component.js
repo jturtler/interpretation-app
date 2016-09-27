@@ -126,38 +126,32 @@ export default class SearchBox extends Component {
     }
 
     render() {
-        const errorStyle = {
-            lineHeight: this.props.multiLine ? '48px' : '12px',
-            marginTop: this.props.multiLine ? -16 : 0,
-        };
-
         return (
             <div className="searchDiv">
-                <table className="searchTable">
-                <tr>
+                <table className="searchTable"><tr>
                 <td>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._clickPerformSearch}>
-                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
-                    <path d="M0 0h24v24H0z" fill="none"></path>
-                </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._clickPerformSearch}>
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                    </svg>
                 </td>
                 <td>
                     <AutoCompleteSearchKeyword searchId="searchKeyword" onSelect={this._keywordSelected} />
                 </td>
                 <td>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._handleOpenAdvancedSearch}>
-                    <path d="M7 10l5 5 5-5z"></path>
-                    <path d="M0 0h24v24H0z" fill="none"></path>
-                </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._handleOpenAdvancedSearch}>
+                        <path d="M7 10l5 5 5-5z"></path>
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                    </svg>
                 </td>
-                </tr>
-                </table>
+                </tr></table>
 
                 <Modal
                     isOpen={this.state.open}
                     onRequestClose={this._handleCloseAdvancedSearch}
                     style={customStyles}
-                    shouldCloseOnOverlayClick={true}>
+                    shouldCloseOnOverlayClick
+                >
                     <AdvanceSearchForm ref="advancedSearchForm" savedTerms={this.state.moreTerms} askPopupClose={this._handleCloseAdvancedSearch} />
                     <div className="advanceSearchFormBtns">
                         <button className="cssBtnBlue" onClick={this._handleAdvancedSearch}>Search</button>
@@ -174,12 +168,3 @@ SearchBox.propTypes = { value: React.PropTypes.string,
     onChangeEvent: React.PropTypes.func,
      };
 SearchBox.defaultProps = { value: '' };
-
-/*
-
-                <TextField errorStyle={errorStyle} {...this.props} value={this.state.value} onChange={this._change} style={{ width: 350 }} onKeyDown={this._keyDown} />
-
-
-                <TextField errorStyle={errorStyle} {...this.props} value={this.state.value} onChange={this._change} style={{ width: 350 }} onKeyDown={this._keyDown} />
-
-*/
