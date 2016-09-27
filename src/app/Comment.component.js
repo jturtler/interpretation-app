@@ -71,13 +71,23 @@ const Comment = React.createClass({
         $(`#${divShowText}`).show();
     },
 
+    _convertToNumber(n) {
+        return (n.startsWith('0')) ? eval(n[1]) : eval(n);
+    },
+
     render() {
-        console.log(this.state.data.created);
         const created = this.state.data.created.substring(0, 10).split('-');
         const time = this.state.data.created.substring(11, 19).split(':');
 
-        const month = eval(created[1]) - 1;
-        const date = new Date(created[0], month, created[2], time[0], time[1], time[2]);
+        let month = this._convertToNumber(created[1]);
+        month = month - 1;
+        const day = this._convertToNumber(created[2]);
+        const hour = this._convertToNumber(time[0]);
+        const minute = this._convertToNumber(time[1]);
+        const second = this._convertToNumber(time[2]);
+
+
+        const date = new Date(eval(created[0]), month, day, hour, minute, second);
 
         const userName = this.state.data.user.name.split(' ');
         let initChars = userName[0][0];
