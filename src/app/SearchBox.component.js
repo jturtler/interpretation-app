@@ -68,7 +68,7 @@ export default class SearchBox extends Component {
 
     _openAdvancedSearchForm() {
         this.refs.advancedSearchForm.collapseMenu();
-        
+
         const offSet = $('div.searchDiv').offset();
 
         customStyles.content.top = `${Number(offSet.top) + 45}px`;
@@ -111,7 +111,7 @@ export default class SearchBox extends Component {
         this.props.onChangeEvent({ keyword: this.state.value });
     }
 
-    _onInputEnterPressed(e) {
+    _onInputEnterPressed() {
         this.props.onChangeEvent({ keyword: this.state.value });
     }
 
