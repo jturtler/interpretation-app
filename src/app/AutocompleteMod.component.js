@@ -50,6 +50,7 @@ let AutocompleteMod = React.createClass({
         position: 'fixed',
         overflow: 'auto',
         maxHeight: '50%', // TODO: don't cheat, let it flow to the bottom
+        zIndex: 1000,
       },
       autoHighlight: true,
       onMenuVisibilityChange () {},
@@ -248,7 +249,7 @@ let AutocompleteMod = React.createClass({
 
   setMenuPositions () {
     var node = this.refs.input
-    var rect = node.getBoundingClientRect()
+    //var rect = node.getBoundingClientRect()
     var computedStyle = global.window.getComputedStyle(node)
     var marginBottom = parseInt(computedStyle.marginBottom, 10) || 0;
     var marginLeft = parseInt(computedStyle.marginLeft, 10) || 0;

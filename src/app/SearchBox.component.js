@@ -62,12 +62,12 @@ export default class SearchBox extends Component {
     }
 
     _clickSearchIcon() {
-        this.refs.advancedSearchForm.collapseMenu();
+        if (this.refs.advancedSearchForm) this.refs.advancedSearchForm.collapseMenu();
         this.props.onChangeEvent({ keyword: this.state.value });
     }
 
     _openAdvancedSearchForm() {
-        this.refs.advancedSearchForm.collapseMenu();
+        if (this.refs.advancedSearchForm) this.refs.advancedSearchForm.collapseMenu();
 
         const offSet = $('div.searchDiv').offset();
 
