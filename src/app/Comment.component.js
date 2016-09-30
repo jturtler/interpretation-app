@@ -97,11 +97,12 @@ const Comment = React.createClass({
 
         const divEditText = `edit_${this.props.data.id}`;
         const divShowText = `show_${this.props.data.id}`;
+        const style = { 'font-size': 15, 'font-weight': 'bold' };
 
         return (
             <table>
                 <tr>
-                    <td className="valignTop"><Avatar color="black" size="32">{initChars}</Avatar></td>
+                    <td className="valignTop"><Avatar color="black" size="32" style={style}>{initChars}</Avatar></td>
                     <td>
                         <div className="interpretationComment">
                             <a className="bold userLink">{this.state.data.user.name} </a>

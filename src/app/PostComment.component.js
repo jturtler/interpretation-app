@@ -39,6 +39,7 @@ const PostComment = React.createClass({
         }
 
         const postComentTagId = `postComent_${this.props.interpretationId}`;
+        const style = { 'font-size': 15, 'font-weight': 'bold' };
 
         return (
 
@@ -46,7 +47,7 @@ const PostComment = React.createClass({
 				<table>
 					<tr>
 						<td>
-							<Avatar color="black" size="32">{initChars}</Avatar>
+							<Avatar color="black" size="32" style={style}>{initChars}</Avatar>
 						</td>
 						<td>
 							<table>

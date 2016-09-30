@@ -19,7 +19,7 @@ const Interpretation = React.createClass({
             likes: this.props.data.likes,
             likedBy: this.props.data.likedBy,
             open: false,
-            comments: this.props.data.comments,
+            comments: this.props.data.comments.reverse(),
         };
     },
 
@@ -32,71 +32,56 @@ const Interpretation = React.createClass({
             }
         }
 
-        const id = this.props.data.objId;
         const divId = this.props.data.id;
 
         if (this.props.data.type === 'REPORT_TABLE') {
-            DHIS.getTable({
-                url: '../../..',
-                el: divId,
-                id,
-                width: 600,
-                height: 400,
-                displayDensity: 'compact',
-            });
-            $('#' + divId).closest('.interpretationItem ').addClass('contentTable');
+            DHIS.getTable(this._setReportTableOptions());
+            $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
+            $(`#${divId}`).css('height', '400px');
         } else if (this.props.data.type === 'CHART') {
-            DHIS.getChart(this._setChartOptions(id, divId, this.props.data.chart.relativePeriods, this.props.data.chart.periods, this.props.data.created));
-
-            /* DHIS.getChart({
-                uid: id,
-                el: divId,
-                url: '../../..',
-                width: 600,
-                height: 400,
-            }); */
-
-
-            /* DHIS.getChart({
-                uid: id,
-                el: divId,
-                url: '../../..',
-                width: 600,
-                height: 400,
-                columns: [{
-					dimension: 'pe',
-					items: [{id: '2016W52'}]
-				}]
-            }); */
+            DHIS.getChart(this._setChartOptions());
         } else if (this.props.data.type === 'MAP') {
-            $('#' + divId).css('height', '308px');
-            DHIS.getMap({
-                url: '../../..',
-                el: divId,
-                id,
-                width: 600,
-                height: 400,
+            actions.getMap('', this.props.data.map.id).subscribe(result => {
+                $(`#${divId}`).css('height', '308px');
+                DHIS.getMap(this._setMapOptions(result));
             });
         }
     },
 
-    _setChartOptions(id, divId, relativePeriodKeys, rootPeriods, createdDate) {
-        const relativePeriods = this._converRelativePeriods(relativePeriodKeys, createdDate);
+    _findItemFromList(listData, searchProperty, searchValue) {
+        let foundData;
+
+        for (let i = 0; i < listData.length; i++) {
+            const item = listData[i];
+            if (item[searchProperty] === searchValue) {
+                foundData = item;
+                return false;
+            }
+        }
+
+        return foundData;
+    },
+
+    _setChartOptions() {
+        const id = this.props.data.objId;
+        const divId = this.props.data.id;
+        const relativePeriodKeys = this.props.data.chart.relativePeriods;
+        const rootPeriods = this.props.data.chart.periods;
+        const createdDate = this.props.data.created;
 
         const options = {};
 
         options.uid = id;
         options.el = divId;
+        options.id = id;
         options.url = '../../..';
         options.width = 600;
         options.height = 400;
 
+        let relativePeriods = this._converRelativePeriods(relativePeriodKeys, createdDate);
+
         if (relativePeriods.length > 0) {
-            console.log('\n ==== 1');
-            console.log(relativePeriods);
-            relativePeriods.concat(rootPeriods);
-            console.log('2');
-            console.log(relativePeriods);
+            relativePeriods = relativePeriods.concat(rootPeriods);
             if (this.props.data.chart.series === 'pe') {
                 options.columns = [{
                     dimension: 'pe',
@@ -112,6 +97,90 @@ const Interpretation = React.createClass({
                     dimension: 'pe',
                     items: relativePeriods,
                 }];
+            }
+        }
+
+        return options;
+    },
+
+    _setReportTableOptions() {
+        const id = this.props.data.objId;
+        const divId = this.props.data.id;
+        const rootPeriods = this.props.data.reportTable.periods;
+
+        const options = {};
+
+        options.el = divId;
+        options.id = id;
+        options.url = '../../..';
+        options.width = 600;
+        options.height = 400;
+        options.displayDensity = 'compact';
+
+        let relativePeriods = this._converRelativePeriods(this.props.data.reportTable.relativePeriods, this.props.data.created);
+
+        if (relativePeriods.length > 0) {
+            relativePeriods = relativePeriods.concat(rootPeriods);
+            if (this.props.data.reportTable.columnDimensions.indexOf('pe') >= 0) {
+                options.columns = [{
+                    dimension: 'pe',
+                    items: relativePeriods,
+                }];
+            } else if (this.props.data.reportTable.rowDimensions.indexOf('pe') >= 0) {
+                options.rows = [{
+                    dimension: 'pe',
+                    items: relativePeriods,
+                }];
+            } else if (this.props.data.reportTable.filterDimensions.indexOf('pe') >= 0) {
+                options.filters = [{
+                    dimension: 'pe',
+                    items: relativePeriods,
+                }];
+            }
+        }
+
+        return options;
+    },
+
+    _setMapOptions(data) {
+        const id = this.props.data.objId;
+        const divId = this.props.data.id;
+        const createdDate = this.props.data.created;
+
+        const options = {};
+
+        options.el = divId;
+        options.id = id;
+        options.url = '../../..';
+        options.width = 600;
+        options.height = 400;
+
+        let relativePeriods = [];
+        options.mapViews = data.mapViews;
+
+        for (let i = 0; i < data.mapViews.length; i++) {
+            const mapView = data.mapViews[i];
+            const relativePeriodKeys = mapView.relativePeriods;
+            const periods = this._converRelativePeriods(relativePeriodKeys, createdDate);
+            relativePeriods = relativePeriods.concat(periods);
+
+            if (relativePeriods.length > 0) {
+                if (this._findItemFromList(mapView.columns, 'id', 'pe') !== undefined) {
+                    options.mapViews[i].columns = [{
+                        dimension: 'pe',
+                        items: relativePeriods,
+                    }];
+                } else if (this._findItemFromList(mapView.rows, 'id', 'pe') !== undefined) {
+                    options.mapViews[i].rows = [{
+                        dimension: 'pe',
+                        items: relativePeriods,
+                    }];
+                } else if (this._findItemFromList(mapView.filters, 'id', 'pe') !== undefined) {
+                    options.mapViews[i].filters = [{
+                        dimension: 'pe',
+                        items: relativePeriods,
+                    }];
+                }
             }
         }
 
@@ -171,10 +240,7 @@ const Interpretation = React.createClass({
                     }
                 }
                 if (key === 'last12Months') {
-                    console.log('last12Months :');
-                    console.log(periods);
                     periods = periods.concat(this._getLastNMonth(12, currentYear, date.getMonth()));
-                    console.log(periods);
                 }
                 if (key === 'last3Months') {
                     periods = periods.concat(this._getLastNMonth(3, currentYear, date.getMonth()));
@@ -185,36 +251,7 @@ const Interpretation = React.createClass({
                 // monthsLastYear
             }
         }
-    /*    "": false,
-"quartersLastYear": false,
-"last52Weeks": false,
-"thisWeek": false,
-"": false,
-"": false,
-"last2SixMonths": false,
-"thisQuarter": false,
-"": true,
-"last5FinancialYears": false,
-"thisSixMonth": false,
-"lastQuarter": false,
-"thisFinancialYear": false,
-"last4Weeks": false,
-"": false,
-"": false,
-"": false,
-"last6BiMonths": false,
-"lastFinancialYear": false,
-"": false,
-"quartersThisYear": false,
-"": false,
-"lastWeek": false,
-"thisBimonth": false,
-"lastBimonth": false,
-"lastSixMonth": false,
-"": false,
-"last12Weeks": false,
-"last4Quarters": false
-*/
+
         return periods;
     },
 
@@ -238,14 +275,8 @@ const Interpretation = React.createClass({
             }
         }
 
-        const periods = [];
-        for (let i = lastYearPeriods.length - 1; i >= 0; i--) {
-            periods.push(lastYearPeriods[i]);
-        }
-
-        for (let i = currentYearPeriods.length - 1; i >= 0; i--) {
-            periods.push(currentYearPeriods[i]);
-        }
+        let periods = lastYearPeriods.reverse();
+        periods = periods.concat(currentYearPeriods.reverse());
 
         return periods;
     },
@@ -280,7 +311,7 @@ const Interpretation = React.createClass({
     _deleteHandler() {
         actions.deleteInterpretation(this.props.data, this.props.data.id)
 			.subscribe(() => {
-    this.props.deleteInterpretationSuccess(this.props.data.id);
+    this.props.deleteInterpretationSuccess();
 		});
     },
 

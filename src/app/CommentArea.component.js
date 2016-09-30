@@ -65,7 +65,7 @@ const CommentArea = React.createClass({
                 showComments: [],
             });
 
-            this.setState(this._getSubComments(result.comments), function () {
+            this.setState(this._getSubComments(result.comments.reverse()), function () {
                 const postComentTagId = `postComent_${this.props.interpretationId}`;
                 $(`#${postComentTagId}`).closest('.interpretationCommentArea').show();
             });
@@ -93,18 +93,14 @@ const CommentArea = React.createClass({
         });
     },
 
-    _deleteCommentSuccess(commentId) {
+    _deleteCommentSuccess() {
         actions.listComment(undefined, this.props.interpretationId).subscribe(result => {
-            const comments = this.state.showComments;
-            comments.concat(this.state.hideComments);
-            this.removeFromArray(comments, 'id', commentId);
-
             this.setState({
                 hideComments: [],
                 showComments: [],
             });
 
-            this.setState(this._getSubComments(result.comments));
+            this.setState(this._getSubComments(result.comments.reverse()));
         });
     },
 

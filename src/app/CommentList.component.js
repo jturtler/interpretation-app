@@ -4,7 +4,7 @@ import Comment from './Comment.component';
 
 const CommentList = React.createClass({
     propTypes: {
-        list: React.PropTypes.text,
+        list: React.PropTypes.array,
         currentUser: React.PropTypes.text,
         interpretationId: React.PropTypes.text,
         hidden: React.PropTypes.bool,
