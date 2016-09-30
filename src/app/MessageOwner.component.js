@@ -74,7 +74,7 @@ const MessageOwner = React.createClass({
         let month = this._convertToNumber(created[1]);
         month = month - 1;
         const day = this._convertToNumber(created[2]);
-        let date = new Date(created[0], month, day);
+        const date = new Date(created[0], month, day);
 
         let clazzName = 'moreLink';
         if (this.state.hiddenContent.length === 0) {
