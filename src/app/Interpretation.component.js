@@ -311,7 +311,7 @@ const Interpretation = React.createClass({
     _deleteHandler() {
         actions.deleteInterpretation(this.props.data, this.props.data.id)
 			.subscribe(() => {
-    this.props.deleteInterpretationSuccess();
+    this.props.deleteInterpretationSuccess(this.props.data.id);
 		});
     },
 

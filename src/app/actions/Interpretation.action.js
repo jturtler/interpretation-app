@@ -25,7 +25,6 @@ actions.listInterpretation
 actions.getMap
     .subscribe(({ data: [model, mapId], complete }) => {
         getD2().then(d2 => {
-           // const url = `/25/maps/${mapId}.json?fields=mapViews[columns[id,items],filters[id,items],rows[id,items],relativePeriods]`;
             const url = `/25/maps/${mapId}.json?fields=mapViews[*]`;
 
             d2.Api.getApi().get(url)
@@ -61,7 +60,7 @@ actions.updateLike.subscribe(({ data: [model, id], complete }) => {
 actions.editInterpretation
     .subscribe(({ data: [model, id, value], complete }) => {
         getD2().then(d2 => {
-            const url = `../../interpretations/${id}`;
+            const url = `${d2.Api.getApi().baseUrl}/interpretations/${id}`;
 
             d2.Api.getApi().request('PUT', url, value, { contentType: 'text/plain' })
 				.then(complete)

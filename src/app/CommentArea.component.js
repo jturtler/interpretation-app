@@ -23,13 +23,15 @@ const CommentArea = React.createClass({
         };
     },
 
+    noComment: 3,
+
     _getSubComments(list) {
         let showComments = [];
         let hideComments = [];
-        if (list.length >= 5) {
-            showComments = list.slice(0, 5);
-            if (list.length > 5) {
-                hideComments = list.slice(5, list.length);
+        if (list.length >= this.noComment) {
+            showComments = list.slice(0, this.noComment);
+            if (list.length > this.noComment) {
+                hideComments = list.slice(this.noComment, list.length);
             }
         } else {
             showComments = list;

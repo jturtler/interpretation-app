@@ -54,7 +54,7 @@ const MessageOwner = React.createClass({
 		});
     },
 
-    _cancelInterpretationText(){
+    _cancelInterpretationText() {
         this.setState(this.setValues(this.state.oldText, this.state.oldText));
 
         const divEditText = `edit_${this.props.data.id}`;

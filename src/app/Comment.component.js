@@ -16,10 +16,35 @@ const Comment = React.createClass({
     },
 
     getInitialState() {
+        const comments = this._setComments(this.props.data.text, this.props.data.text);
+
         return {
             data: this.props.data,
-            text: this.props.data.text,
-            oldText: this.props.data.text,
+            text: comments.text,
+            oldText: comments.text,
+            showContent: comments.showContent,
+            hiddenContent: comments.hiddenContent,
+        };
+    },
+
+    maxWords: 30,
+
+    _getWords(str, start, end) {
+        return str.split(/\s+/).slice(start, end).join(' ');
+    },
+
+    _setComments(content, oldText) {
+        let hiddenContent = '';
+        const noWords = content.split(/\s+/).length;
+        if (noWords >= this.maxWords) {
+            hiddenContent = this._getWords(content, this.maxWords, noWords);
+        }
+
+        return {
+            text: content,
+            showContent: this._getWords(content, 0, this.maxWords),
+            hiddenContent,
+            oldText,
         };
     },
 
@@ -38,19 +63,21 @@ const Comment = React.createClass({
         $(`#${divShowText}`).hide();
     },
 
+    _handleClick(e) {
+        const linkTag = $(e.target);
+        linkTag.closest('.interpretationText').find('.hiddenContent').show();
+        linkTag.hide();
+    },
+
     _onChange(e) {
-        this.setState({ text: e.target.value });
+        this.setState(this._setComments(e.target.value, this.state.oldText));
     },
 
     _editCommentText() {
         const text = this.state.text;
         actions.editComment(this.props.interpretationId, this.state.data.id, text)
 			.subscribe(() => {
-    this.setState({
-        text,
-        oldText: text,
-    });
-
+    this.setState(this._setComments(this.state.text, this.state.text));
     const divEditText = `edit_${this.props.data.id}`;
     const divShowText = `show_${this.props.data.id}`;
 
@@ -60,10 +87,7 @@ const Comment = React.createClass({
     },
 
     _cancelCommentText() {
-        this.setState({
-            text: this.state.oldText,
-        });
-
+        this.setState(this._setComments(this.state.oldText, this.state.oldText));
         const divEditText = `edit_${this.props.data.id}`;
         const divShowText = `show_${this.props.data.id}`;
 
@@ -98,6 +122,10 @@ const Comment = React.createClass({
         const divEditText = `edit_${this.props.data.id}`;
         const divShowText = `show_${this.props.data.id}`;
         const style = { fontSize: 15, fontWeight: 'bold' };
+        let clazzName = 'moreLink';
+        if (this.state.hiddenContent.length === 0) {
+            clazzName += ' hidden';
+        }
 
         return (
             <table>
@@ -107,12 +135,18 @@ const Comment = React.createClass({
                         <td>
                             <div className="interpretationComment">
                                 <a className="bold userLink">{this.state.data.user.name} </a>
-                                <span className="interpretationText" id={divShowText}>{this.state.text}</span>
-                                <div className="hidden" id={divEditText}>
-                                    <textarea className="commentArea" value={this.state.text} onChange={this._onChange} />
-                                    <a onClick={this._editCommentText}>  OK </a> | <a onClick={this._cancelCommentText}>  Cancel</a>
+                                <div className="interpretationText">
+                                     <div id={divShowText} >
+                                        {this.state.showContent}
+                                        <span className={clazzName} onClick={this._handleClick}> ... more</span>
+                                        <span className="hiddenContent hidden">{this.state.hiddenContent}</span>
+                                    </div>
+                                    <div className="hidden" id={divEditText}>
+                                        <textarea className="commentArea" value={this.state.text} onChange={this._onChange} />
+                                        <a onClick={this._editCommentText}>  OK </a> | <a onClick={this._cancelCommentText}>  Cancel</a>
+                                    </div>
                                 </div>
-                                <br />
+
                                 <span className="tipText">
                                     <IntlProvider locale="en">
                                         <FormattedRelative value={date} />
