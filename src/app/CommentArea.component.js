@@ -7,11 +7,11 @@ import actions from './actions/Comment.action';
 const CommentArea = React.createClass({
 
     propTypes: {
-        comments: React.PropTypes.string,
-        likes: React.PropTypes.int,
+        comments: React.PropTypes.array,
+        likes: React.PropTypes.number,
         likedBy: React.PropTypes.array,
         interpretationId: React.PropTypes.string,
-        currentUser: React.PropTypes.string,
+        currentUser: React.PropTypes.object,
     },
 
     getInitialState() {
@@ -137,9 +137,10 @@ const CommentArea = React.createClass({
 
     render() {
         const hasMoreTagLinkId = `hasMoreCommentLink_${this.props.interpretationId}`;
+        const commentAreaKey = `commentAreaMainKey_${this.props.interpretationId}`;
 
         return (
-            <div>
+            <div key={commentAreaKey}>
                 <PostComment currentUser={this.props.currentUser} interpretationId={this.props.interpretationId} postCommentSuccess={this._addCommentSuccess} />
                 {this._getShowCommentListTag()}
 

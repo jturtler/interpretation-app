@@ -131,8 +131,10 @@ const InterpretationList = React.createClass({
     },
 
     createDiv(dataList, page) {
+        const divKey = `list_${page}`;
+
         return (
-			<div>
+			<div key={divKey}>
 			{dataList.map(data =>
                 <Interpretation page={page} key={data.id} data={data} currentUser={this.state.currentUser} deleteInterpretationSuccess={this._deleteInterpretationSuccess} />
 			)}
@@ -171,7 +173,7 @@ const InterpretationList = React.createClass({
         return (
 			<div>
                 <Progress.Component />
-				<InfiniteScroll loader={<div><img src="images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
+				<InfiniteScroll key="interpretationListKey" loader={<div><img src="images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
                     {this.state.items}
 				</InfiniteScroll>
 			</div>

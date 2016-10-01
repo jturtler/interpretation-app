@@ -9,7 +9,7 @@ import actions from './actions/Interpretation.action';
 const Interpretation = React.createClass({
     propTypes: {
         data: React.PropTypes.object,
-        currentUser: React.PropTypes.string,
+        currentUser: React.PropTypes.object,
         deleteInterpretationSuccess: React.PropTypes.func,
     },
 
@@ -358,6 +358,9 @@ const Interpretation = React.createClass({
         const likeLinkTagId = `likeLink_${this.props.data.id}`;
         const interpretationTagId = `interpretation_${this.props.data.id}`;
         const peopleLikeTagId = `peopleLike_${this.props.data.id}`;
+        const commentAreaKey = `commentArea_${this.props.data.id}`;
+        const messageOwnerKey = `messageOwnerKey_${this.props.data.id}`;
+        const likeDialogKey = `likeDialogKey_${this.props.data.id}`;
 
         const peopleLikedByDialogActions = [
             <FlatButton type="button"
@@ -368,7 +371,7 @@ const Interpretation = React.createClass({
         ];
 
         return (
-			<div id={interpretationTagId}>
+			<div id={interpretationTagId} key={interpretationTagId}>
 				<div className="interpretationContainer" >
 
                     <div>
@@ -378,7 +381,7 @@ const Interpretation = React.createClass({
                         </div>
                     </div>
 
-                    <MessageOwner data={this.props.data} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
+                    <MessageOwner key={messageOwnerKey} data={this.props.data} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
 
                     <div className="linkTag">
                         <a onClick={this._likeHandler} id={likeLinkTagId}>  Like </a> |
@@ -391,22 +394,22 @@ const Interpretation = React.createClass({
 
                      <div className={this._getCommentAreaClazz()} >
                         <div id={peopleLikeTagId} className={this.state.likes > 0 ? '' : 'hidden'}>
-                            <img src="./images/like.png" /> <a onClick={this._openPeopleLikedHandler}>{this.state.likes} people</a><span> liked this.</span>
+                            <img src="./src/images/like.png" /> <a onClick={this._openPeopleLikedHandler}>{this.state.likes} people</a><span> liked this.</span>
                             <br />
                         </div>
-                        <CommentArea comments={this.state.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
+                        <CommentArea key={commentAreaKey} comments={this.state.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
 
 
                         <Dialog
                             title="People"
                             actions={peopleLikedByDialogActions}
-                            modal="true"
+                            modal
                             open={this.state.open}
                             onRequestClose={this._closePeopleLikedHandler}
                         >
-                            <div>
+                            <div key={likeDialogKey}>
                                 {this.state.likedBy.map(likedByUserName =>
-                                    <p>{likedByUserName.name}</p>
+                                    <p key={likedByUserName.id}>{likedByUserName.name}</p>
                                 )}
                             </div>
                         </Dialog>

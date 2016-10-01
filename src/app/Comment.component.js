@@ -10,7 +10,7 @@ const Comment = React.createClass({
         data: React.PropTypes.object,
         created: React.PropTypes.string,
         user: React.PropTypes.string,
-        currentUser: React.PropTypes.string,
+        currentUser: React.PropTypes.object,
         interpretationId: React.PropTypes.string,
         deleteCommentSuccess: React.PropTypes.func,
     },
@@ -97,33 +97,35 @@ const Comment = React.createClass({
 
         const divEditText = `edit_${this.props.data.id}`;
         const divShowText = `show_${this.props.data.id}`;
-        const style = { 'font-size': 15, 'font-weight': 'bold' };
+        const style = { fontSize: 15, fontWeight: 'bold' };
 
         return (
             <table>
-                <tr>
-                    <td className="valignTop"><Avatar color="black" size="32" style={style}>{initChars}</Avatar></td>
-                    <td>
-                        <div className="interpretationComment">
-                            <a className="bold userLink">{this.state.data.user.name} </a>
-                            <span className="interpretationText" id={divShowText}>{this.state.text}</span>
-                            <div className="hidden" id={divEditText}>
-                                <textarea className="commentArea" value={this.state.text} onChange={this._onChange} />
-                                <a onClick={this._editCommentText}>  OK </a> | <a onClick={this._cancelCommentText}>  Cancel</a>
+                <tbody>
+                    <tr>
+                        <td className="valignTop"><Avatar color="black" size={32} style={style}>{initChars}</Avatar></td>
+                        <td>
+                            <div className="interpretationComment">
+                                <a className="bold userLink">{this.state.data.user.name} </a>
+                                <span className="interpretationText" id={divShowText}>{this.state.text}</span>
+                                <div className="hidden" id={divEditText}>
+                                    <textarea className="commentArea" value={this.state.text} onChange={this._onChange} />
+                                    <a onClick={this._editCommentText}>  OK </a> | <a onClick={this._cancelCommentText}>  Cancel</a>
+                                </div>
+                                <br />
+                                <span className="tipText">
+                                    <IntlProvider locale="en">
+                                        <FormattedRelative value={date} />
+                                    </IntlProvider>
+                                </span>
+                                <span className={this.props.currentUser.id === this.state.data.user.id || this.props.currentUser.superUser ? '' : 'hidden'} >
+                                    <a onClick={this._showEditHandler}>  Edit </a>|
+                                    <a onClick={this._deleteHandler}>  Delete </a>
+                                </span>
                             </div>
-                            <br />
-                            <span className="tipText">
-                                <IntlProvider>
-                                    <FormattedRelative value={date} />
-                                </IntlProvider>
-                            </span>
-                            <span className={this.props.currentUser.id === this.state.data.user.id || this.props.currentUser.superUser ? '' : 'hidden'} >
-                                <a onClick={this._showEditHandler}>  Edit </a>|
-                                <a onClick={this._deleteHandler}>  Delete </a>
-                            </span>
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>                
+                </tbody>
             </table>
         );
     },

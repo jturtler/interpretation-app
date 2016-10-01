@@ -89,7 +89,7 @@ const MessageOwner = React.createClass({
 				<div className="interpretationUser">
 					<a className="bold userLink">{this.props.data.user} </a>
 					<span className="tipText">
-					<IntlProvider>
+					<IntlProvider locale="en">
 					<FormattedDate
     value={date}
     day="2-digit"
