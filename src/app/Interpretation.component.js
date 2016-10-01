@@ -191,8 +191,6 @@ const Interpretation = React.createClass({
         return (n.startsWith('0')) ? eval(n[1]) : eval(n);
     },
 
-// const relativePeriods = ['thisYear', 'lastYear', 'last5Years', 'thisMonth', 'lastMonth', 'monthsThisYear', 'last12Months', 'last3Months', 'last6Months'];
-
     _converRelativePeriods(relativePeriods, createdDate) {
         let periods = [];
 

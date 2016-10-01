@@ -23,8 +23,25 @@ const Comment = React.createClass({
             text: comments.text,
             oldText: comments.text,
             showContent: comments.showContent,
-            hiddenContent: comments.hiddenContent,
+            hideContent: comments.hideContent,
         };
+    },
+
+    componentDidMount() {
+        this._displayContent();
+    },
+
+    _displayContent() {
+        const showContent = this._parseStringToHTML(this.state.showContent);
+        const hideContent = this._parseStringToHTML(this.state.hideContent);
+
+        const divShowContent = `showContent_${this.props.data.id}`;
+        const divHideContent = `hideContent_${this.props.data.id}`;
+
+        $(`#${divShowContent}`).html('');
+        $(`#${divHideContent}`).html('');
+        $(`#${divShowContent}`).append(showContent);
+        $(`#${divHideContent}`).append(hideContent);
     },
 
     maxWords: 30,
@@ -34,18 +51,22 @@ const Comment = React.createClass({
     },
 
     _setComments(content, oldText) {
-        let hiddenContent = '';
+        let hideContent = '';
         const noWords = content.split(/\s+/).length;
         if (noWords >= this.maxWords) {
-            hiddenContent = this._getWords(content, this.maxWords, noWords);
+            hideContent = this._getWords(content, this.maxWords, noWords);
         }
 
         return {
             text: content,
             showContent: this._getWords(content, 0, this.maxWords),
-            hiddenContent,
+            hideContent,
             oldText,
         };
+    },
+
+    _parseStringToHTML(str) {
+        return $.parseHTML(str);
     },
 
     _deleteHandler() {
@@ -65,19 +86,23 @@ const Comment = React.createClass({
 
     _handleClick(e) {
         const linkTag = $(e.target);
-        linkTag.closest('.interpretationText').find('.hiddenContent').show();
+        linkTag.closest('.interpretationText').find('.hideContent').show();
         linkTag.hide();
     },
 
     _onChange(e) {
-        this.setState(this._setComments(e.target.value, this.state.oldText));
+        this.setState(this._setComments(e.target.value, this.state.oldText), function () {
+            this._displayContent();
+        });
     },
 
     _editCommentText() {
         const text = this.state.text;
         actions.editComment(this.props.interpretationId, this.state.data.id, text)
 			.subscribe(() => {
-    this.setState(this._setComments(this.state.text, this.state.text));
+    this.setState(this._setComments(this.state.text, this.state.text), function () {
+        this._displayContent();
+    });
     const divEditText = `edit_${this.props.data.id}`;
     const divShowText = `show_${this.props.data.id}`;
 
@@ -87,12 +112,15 @@ const Comment = React.createClass({
     },
 
     _cancelCommentText() {
-        this.setState(this._setComments(this.state.oldText, this.state.oldText));
-        const divEditText = `edit_${this.props.data.id}`;
-        const divShowText = `show_${this.props.data.id}`;
+        this.setState(this._setComments(this.state.oldText, this.state.oldText), function () {
+            this._displayContent();
 
-        $(`#${divEditText}`).hide();
-        $(`#${divShowText}`).show();
+            const divEditText = `edit_${this.props.data.id}`;
+            const divShowText = `show_${this.props.data.id}`;
+
+            $(`#${divEditText}`).hide();
+            $(`#${divShowText}`).show();
+        });
     },
 
     _convertToNumber(n) {
@@ -121,12 +149,15 @@ const Comment = React.createClass({
 
         const divEditText = `edit_${this.props.data.id}`;
         const divShowText = `show_${this.props.data.id}`;
+        const divShowContent = `showContent_${this.props.data.id}`;
+        const divHideContent = `hideContent_${this.props.data.id}`;
         const style = { fontSize: 15, fontWeight: 'bold' };
         let clazzName = 'moreLink';
-        if (this.state.hiddenContent.length === 0) {
+        if (this.state.hideContent.length === 0) {
             clazzName += ' hidden';
         }
 
+      
         return (
             <table>
                 <tbody>
@@ -137,9 +168,9 @@ const Comment = React.createClass({
                                 <a className="bold userLink">{this.state.data.user.name} </a>
                                 <div className="interpretationText">
                                      <div id={divShowText} >
-                                        {this.state.showContent}
+                                        <span id={divShowContent}></span>
                                         <span className={clazzName} onClick={this._handleClick}> ... more</span>
-                                        <span className="hiddenContent hidden">{this.state.hiddenContent}</span>
+                                        <span className="hideContent hidden" id={divHideContent}></span>
                                     </div>
                                     <div className="hidden" id={divEditText}>
                                         <textarea className="commentArea" value={this.state.text} onChange={this._onChange} />
