@@ -40,7 +40,7 @@ const AutoCompleteSearchKeyword = React.createClass({
         this.props.onChange(event, value);
 
 
-        delayOnceTimeAction.bind(700, this.props.searchId, () => {
+        delayOnceTimeAction.bind(500, this.props.searchId, () => {
             if (value === '') {
                 this.setState({ keywordDataSource: [], keyword: this.getKeywordObj() });
                 this.props.onSelect(this.getKeywordObj());
@@ -89,6 +89,7 @@ const AutoCompleteSearchKeyword = React.createClass({
                 onNewRequest={this._onSelectkeyword}
                 dataSource={this.state.keywordDataSource}
                 style={{ width: '540px' }}
+                fullWidth
             />	    
         );
     },
