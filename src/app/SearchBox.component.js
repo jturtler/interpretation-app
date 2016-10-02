@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Modal from 'react-modal';
+import { FlatButton, Dialog, DatePicker } from 'material-ui';
+// import Modal from 'react-modal';
 import AdvanceSearchForm from './AdvanceSearchForm.component';
 import AutoCompleteSearchKeyword from './AutoCompleteSearchKeyword.component';
 
@@ -46,6 +47,8 @@ export default class SearchBox extends Component {
         this._onInputEnterPressed = this._onInputEnterPressed.bind(this);
 
         this._keywordSelected = this._keywordSelected.bind(this);
+
+        this._handleClose = this._handleClose.bind(this);
     }
 
     bodyscrollingDisable(enable) {
@@ -115,7 +118,25 @@ export default class SearchBox extends Component {
         this.props.onChangeEvent({ keyword: this.state.value });
     }
 
+    _handleClose() {
+
+    }
+
     render() {
+        const actions = [
+            <FlatButton
+                label="Search"
+                primary={true}
+                disabled={true}
+                onClick={this._performAdvancedSearch}
+            />,
+            <FlatButton
+                label="Reset"
+                primary={true}
+                onClick={this._advSearchFormReset}
+            />,
+        ];
+
         return (
             <div className="searchDiv">
                 <table className="searchTable"><tr>
@@ -135,6 +156,24 @@ export default class SearchBox extends Component {
                     </svg>
                 </td>
                 </tr></table>
+                
+                <Dialog
+                    actions={actions}
+                    onRequestClose={this._closeAdvancedSearchForm}
+                    open={this.state.open}
+                    overlayStyle={{ backgroundColor: 'rgba(255, 255, 255, 0)' }}
+                    contentStyle={{ position: 'absolute', top: '33px', left: '12px', right: 'auto', bottom: 'auto', width: '645px' }}
+                    autoDetectWindowHeight={false}
+
+                >
+                    <AdvanceSearchForm ref="advancedSearchForm" savedTerms={this.state.moreTerms} askPopupClose={this._closeAdvancedSearchForm} />                
+                </Dialog>
+            </div>
+        );
+    }
+}
+
+/*
 
                 <Modal
                     isOpen={this.state.open}
@@ -148,10 +187,7 @@ export default class SearchBox extends Component {
                         <button className="cssBtnGray" onClick={this._advSearchFormReset}>Reset</button>
                     </div>
                 </Modal>
-            </div>
-        );
-    }
-}
+*/
 
 SearchBox.propTypes = { value: React.PropTypes.any,
     multiLine: React.PropTypes.bool,

@@ -1,9 +1,24 @@
 import React from 'react';
-//import Autocomplete from 'react-autocomplete';
-import { MenuItem, AutoComplete } from 'material-ui';
+import Autocomplete from 'react-autocomplete';
 import { delayOnceTimeAction } from './utils';
 import { getInstance as getD2 } from 'd2/lib/d2';
+import AutocompleteMod from './AutocompleteMod.component';
 
+const autoSearchStyles = {
+    item: {
+        padding: '2px 6px',
+        cursor: 'default',
+    },
+    highlightedItem: {
+        color: 'white',
+        background: 'hsl(200, 50%, 50%)',
+        padding: '2px 6px',
+        cursor: 'default',
+    },
+    menu: {
+        border: 'solid 1px #ccc',
+    },
+};
 
 const AutoCompleteSearchKeyword = React.createClass({
     propTypes: {
@@ -20,8 +35,6 @@ const AutoCompleteSearchKeyword = React.createClass({
             itemList: [],
             loading: false,
             open: false,
-            keywordDataSource: [],
-            keyword: { id: '', text: '' },
         };
     },
 
@@ -29,75 +42,13 @@ const AutoCompleteSearchKeyword = React.createClass({
         this.setState({ open: false });
     },
 
-    // TODO: MUST TRY THIS!!
     _onInputEnterPressed(event) {
         this.props.onInputEnterPressed(event);
         this.collapseMenu();
     },
 
-    _onUpdatekeywords(value) {
-
-        this.setState({ value, loading: true, open: false });
-        // Call back the parent passed in method for change 
-        this.props.onChange(event, value);
-
-
-        delayOnceTimeAction.bind(700, this.props.searchId, () => {
-            if (value === '') {
-                this.setState({ keywordDataSource: [], keyword: { id: '', text: '' } });
-                this.props.onSelect({ text: '', id: '' });
-            }
-            else {
-                getD2().then(d2 => {
-                    const url = `interpretations?paging=false&fields=id,text&filter=text:ilike:${value}`;
-
-                    d2.Api.getApi().get(url).then(result => {
-                        const keywordList = [];
-
-                        for (const user of result.interpretations) {
-                            const source = { id: user.id, text: `${user.text}` };
-                            keywordList.push({ text: source.text, value: <MenuItem primaryText={source.text} value={source.id} />, source });
-                        }
-
-                        this.setState({ keywordDataSource: keywordList });
-
-                        // this.setState({ itemList: result.interpretations, loading: false, open: openVal });
-                    })
-                    .catch(errorResponse => {
-                        console.log(`error ${errorResponse}`);
-                    });
-                });
-            }
-        });
-    },
-
-    _onSelectkeyword(value, i) {
-        // If keyword is empty, 'Enter' was hit, probably
-        console.log( '_onSelectkeyword i: ' + i );
-
-        if (i < 0) {
-        }
-        else {
-            // Set real keyword here with setstate!!
-            this.state.keyword = this.state.keywordDataSource[i].source;
-            this.props.onSelect(this.state.keyword);
-        }
-    },
-
     render() {
         return (
-            <AutoComplete hintText="Search Interpretation"
-                filter={AutoComplete.noFilter}
-                onUpdateInput={this._onUpdatekeywords}
-                onNewRequest={this._onSelectkeyword}
-                dataSource={this.state.keywordDataSource}
-                style={{ width: '540px' }}
-            />	    
-        );
-    },
-});
-
-/*
             <div className="searchTextDiv">
                 <AutocompleteMod
                     className="searchTextbox"
@@ -147,6 +98,8 @@ const AutoCompleteSearchKeyword = React.createClass({
                     )}
                 />
             </div>
-*/
+        );
+    },
+});
 
 export default AutoCompleteSearchKeyword;
