@@ -8,7 +8,6 @@ const CommentList = React.createClass({
         currentUser: React.PropTypes.object,
         interpretationId: React.PropTypes.string,
         hidden: React.PropTypes.bool,
-        isHidden: React.PropTypes.bool,
         deleteCommentSuccess: React.PropTypes.func,
         updateCommentSuccess: React.PropTypes.func,
     },
