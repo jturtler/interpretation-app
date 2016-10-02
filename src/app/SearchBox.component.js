@@ -75,10 +75,10 @@ export default class SearchBox extends Component {
     }
 
     _searchedItemSelected(item) {
-        // TODO: SEND THE SEARCH OBJECT's interpretation ID!!
-
         this.state.value = item.text;
-        this.props.onChangeEvent({ keyword: this.state.value });
+        // if ID exists (selected from list), do not pass keyword
+        const keywordToPass = (item.id) ? '' : item.text;
+        this.props.onChangeEvent({ id: item.id, keyword: keywordToPass });
     }
 
     render() {

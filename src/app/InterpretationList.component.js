@@ -77,6 +77,8 @@ const InterpretationList = React.createClass({
 
         if (searchTerm !== undefined) {
             // TODO: Will be changed from text to object
+            if (searchTerm.id) searchTermUrl += `&filter=id:eq:${searchTerm.id}`;
+
             if (searchTerm.keyword) searchTermUrl += `&filter=text:ilike:${searchTerm.keyword}`;
 
             if (searchTerm.moreTerms !== undefined) {
