@@ -11,3 +11,4 @@ manifest.webapp
 # Misc files
 npm-debug.log
 
+src/app/InterpretationList.component.js

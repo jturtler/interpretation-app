@@ -1,7 +1,6 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import Interpretation from '../../src/app/Interpretation.component';
-import Progress from 'react-progress-3';
 import actions from './actions/Interpretation.action';
 
 const InterpretationList = React.createClass({
@@ -29,6 +28,9 @@ const InterpretationList = React.createClass({
     },
 
     onSearchChanged(searchTerm) {
+
+        console.log( 'onSearchChanged called');
+
 		// set the search terms on state memory and reset the item list
         this.state.searchTerm = searchTerm;
         this.state.items = [];
@@ -72,24 +74,23 @@ const InterpretationList = React.createClass({
         let searchTermUrl = '';
 
         if (searchTerm !== undefined) {
-            if (searchTerm.keyword !== undefined && searchTerm.keyword !== '') {
-                searchTermUrl += `&filter=text:ilike:${searchTerm.keyword}`;
-            }
+            // TODO: Will be changed from text to object
+            if (searchTerm.keyword) searchTermUrl += `&filter=text:ilike:${searchTerm.keyword}`;
 
             if (searchTerm.moreTerms !== undefined) {
-                if (searchTerm.moreTerms.author !== '') searchTermUrl += `&filter=user.id:eq:${searchTerm.moreTerms.author}`;
+                if (searchTerm.moreTerms.author) searchTermUrl += `&filter=user.id:eq:${searchTerm.moreTerms.author.id}`;
 
-                if (searchTerm.moreTerms.commentator !== '') searchTermUrl += `&filter=comments.user.id:eq:${searchTerm.moreTerms.commentator}`;
+                if (searchTerm.moreTerms.commentator) searchTermUrl += `&filter=comments.user.id:eq:${searchTerm.moreTerms.commentator.id}`;
 
                 if (searchTerm.moreTerms.type !== '') searchTermUrl += `&filter=type:eq:${searchTerm.moreTerms.type}`;
 
-                if (searchTerm.moreTerms.dateCreatedFrom !== '') searchTermUrl += `&filter=created:ge:${searchTerm.moreTerms.dateCreatedFrom.format('YYYY-MM-DD')}`;
+                if (searchTerm.moreTerms.dateCreatedFrom) searchTermUrl += `&filter=created:ge:${searchTerm.moreTerms.dateCreatedFrom.format('YYYY-MM-DD')}`;
 
-                if (searchTerm.moreTerms.dateCreatedTo !== '') searchTermUrl += `&filter=created:le:${searchTerm.moreTerms.dateCreatedTo.format('YYYY-MM-DD')}`;
+                if (searchTerm.moreTerms.dateCreatedTo) searchTermUrl += `&filter=created:le:${searchTerm.moreTerms.dateCreatedTo.format('YYYY-MM-DD')}`;
 
-                if (searchTerm.moreTerms.dateModifiedFrom !== '') searchTermUrl += `&filter=lastUpdated:ge:${searchTerm.moreTerms.dateModifiedFrom.format('YYYY-MM-DD')}`;
+                if (searchTerm.moreTerms.dateModifiedFrom) searchTermUrl += `&filter=lastUpdated:ge:${searchTerm.moreTerms.dateModifiedFrom.format('YYYY-MM-DD')}`;
 
-                if (searchTerm.moreTerms.dateModifiedTo !== '') searchTermUrl += `&filter=lastUpdated:le:${searchTerm.moreTerms.dateModifiedTo.format('YYYY-MM-DD')}`;
+                if (searchTerm.moreTerms.dateModifiedTo) searchTermUrl += `&filter=lastUpdated:le:${searchTerm.moreTerms.dateModifiedTo.format('YYYY-MM-DD')}`;
             }
         }
 
@@ -107,8 +108,8 @@ const InterpretationList = React.createClass({
     },
 
     showProgressBar(show) {
-        if (show) Progress.show();
-        else Progress.hide();
+        // if (show) Progress.show();
+        // else Progress.hide();
     },
 
     loadMore(page) {
@@ -172,8 +173,7 @@ const InterpretationList = React.createClass({
     render() {
         return (
 			<div>
-                <Progress.Component />
-				<InfiniteScroll key="interpretationListKey" loader={<div><img src="./src/images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
+				<InfiniteScroll key="interpretationListKey" loader={<div><img src="images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
                     {this.state.items}
 				</InfiniteScroll>
 			</div>
