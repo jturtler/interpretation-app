@@ -18,11 +18,13 @@ const PostComment = React.createClass({
     },
 
     _addComment() {
-        actions.addComment(this.props.interpretationId, this.state.text)
-			.subscribe((data) => {
-    this.props.postCommentSuccess();
-    this.setState({ text: '' });
-		});
+        if (this.state.text !== '') {
+            actions.addComment(this.props.interpretationId, this.state.text)
+                        .subscribe(() => {
+                            this.props.postCommentSuccess();
+                            this.setState({ text: '' });
+                        });
+        }
     },
 
     _onChange(e) {
@@ -41,7 +43,7 @@ const PostComment = React.createClass({
 
         return (
 
-			<div className="postComment hidden" id={postComentTagId} >
+			<div className="postComment" id={postComentTagId} >
 				<table>
                     <tbody>
                         <tr>
@@ -53,7 +55,7 @@ const PostComment = React.createClass({
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <textarea className="commentArea" hintText="Add a comment..." value={this.state.text} onChange={this._onChange} />
+                                                <textarea className="commentArea" placeholder="Add a comment..." value={this.state.text} onChange={this._onChange}/>
                                                 <br />
                                                 <a onClick={this._addComment}>Share you comment</a>
                                             </td>

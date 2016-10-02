@@ -3,6 +3,7 @@ import React from 'react';
 import { Dialog, FlatButton } from 'material-ui';
 import MessageOwner from './MessageOwner.component';
 import CommentArea from './CommentArea.component';
+import { getInstance as getD2 } from 'd2/lib/d2';
 
 import actions from './actions/Interpretation.action';
 
@@ -35,11 +36,9 @@ const Interpretation = React.createClass({
         const divId = this.props.data.id;
 
         if (this.props.data.type === 'REPORT_TABLE') {
-            DHIS.getTable(this._setReportTableOptions());
-            $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
-            $(`#${divId}`).css('height', '400px');
+            this._setReportTable();
         } else if (this.props.data.type === 'CHART') {
-            DHIS.getChart(this._setChartOptions());
+            this._setChart();
         } else if (this.props.data.type === 'MAP') {
            // actions.getMap('', this.props.data.map.id).subscribe(result => {
                 $(`#${divId}`).css('height', '308px');
@@ -62,69 +61,49 @@ const Interpretation = React.createClass({
         return foundData;
     },
 
-    _setChartOptions() {
+    _setChart() {
         const id = this.props.data.objId;
         const divId = this.props.data.id;
-        const relativePeriodKeys = this.props.data.chart.relativePeriods;
-        const rootPeriods = this.props.data.chart.periods;
-        const createdDate = this.props.data.created;
 
-        const options = {};
+        getD2().then(d2 => {
+            const options = {};
+            options.uid = id;
+            options.el = divId;
+            options.id = id;
+            options.url = d2.Api.getApi().baseUrl;
+            options.width = 600;
+            options.height = 400;
+            options.relativePeriodDate = this.props.data.created;
 
-        options.uid = id;
-        options.el = divId;
-        options.id = id;
-        options.url = '../../..';
-        options.width = 600;
-        options.height = 400;
-        options.relativePeriodDate = this.props.data.created;
+            DHIS.getChart(options);
 
-       /* let relativePeriods = this._converRelativePeriods(relativePeriodKeys, createdDate);
-
-        if (relativePeriods.length > 0) {
-            relativePeriods = relativePeriods.concat(rootPeriods);
-            if (this.props.data.chart.series === 'pe') {
-                options.columns = [{
-                    dimension: 'pe',
-                    items: relativePeriods,
-                }];
-            } else if (this.props.data.chart.category === 'pe') {
-                options.rows = [{
-                    dimension: 'pe',
-                    items: relativePeriods,
-                }];
-            } else if (this.props.data.chart.filterDimensions.indexOf('pe') >= 0) {
-                options.filters = [{
-                    dimension: 'pe',
-                    items: relativePeriods,
-                }];
-            }
-        } */
-
-        return options;
+        });
     },
 
-    _setReportTableOptions() {
+    _setReportTable() {
         const id = this.props.data.objId;
         const divId = this.props.data.id;
 
-        const options = {};
+        getD2().then(d2 => {
+            const options = {};
 
-        options.el = divId;
-        options.id = id;
-        options.url = '../../..';
-        options.width = 600;
-        options.height = 400;
-        options.displayDensity = 'compact';
-        options.relativePeriodDate = this.props.data.created;
+            options.el = divId;
+            options.id = id;
+            options.url = d2.Api.getApi().baseUrl;
+            options.width = 600;
+            options.height = 400;
+            options.displayDensity = 'compact';
+            options.relativePeriodDate = this.props.data.created;
 
-        return options;
+            DHIS.getTable(options);
+            $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
+            $(`#${divId}`).css('height', '400px');
+        });
     },
 
     _setMapOptions(data) {
         const id = this.props.data.objId;
         const divId = this.props.data.id;
-        const createdDate = this.props.data.created;
 
         const options = {};
 
@@ -259,12 +238,6 @@ const Interpretation = React.createClass({
         return periods;
     },
 
-    _showCommentHandler() {
-        const postComentTagId = `postComent_${this.props.data.id}`;
-        $(`#${postComentTagId}`).show();
-        $(`#${postComentTagId}`).closest('.interpretationCommentArea').show();
-    },
-
     _likeHandler() {
         actions.updateLike(this.props.data, this.props.data.id).subscribe(() => {
             const likeLinkTagId = `likeLink_${this.props.data.id}`;
@@ -363,8 +336,7 @@ const Interpretation = React.createClass({
 
                     <div className="linkTag">
                         <a onClick={this._likeHandler} id={likeLinkTagId}>  Like </a> |
-                        <a onClick={this._showCommentHandler}>  Comment </a>
-                        <span className={this.props.currentUser.id === this.props.data.userId || this.props.currentUser.superUser ? '' : 'hidden'} >|
+                        <span className={this.props.currentUser.id === this.props.data.userId || this.props.currentUser.superUser ? '' : 'hidden'} >
                         <a onClick={this._showEditHandler}>  Edit </a> |
                         <a onClick={this._deleteHandler}>  Delete </a>
                         </span>

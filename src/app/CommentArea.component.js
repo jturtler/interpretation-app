@@ -59,7 +59,6 @@ const CommentArea = React.createClass({
         return list;
     },
 
-    // _addCommentSuccess(id, text) {
     _addCommentSuccess() {
         actions.listComment(undefined, this.props.interpretationId).subscribe(result => {
             this.setState({

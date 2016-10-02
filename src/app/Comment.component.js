@@ -157,7 +157,7 @@ const Comment = React.createClass({
             clazzName += ' hidden';
         }
 
-      
+
         return (
             <table>
                 <tbody>
