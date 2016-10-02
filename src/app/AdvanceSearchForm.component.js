@@ -30,12 +30,10 @@ export default class AdvanceSearchForm extends Component {
     getInitialData() {
         return {
             type: '',
-            dateModiFrom: null,
-            dateModiTo: null,
             dateCreatedFrom: null,
             dateCreatedTo: null,
-            dateModifiedFrom: null,
-            dateModifiedTo: null,
+            dateModiFrom: null,
+            dateModiTo: null,
             author: { id: '', displayName: '' },
             authorDataSource: [],
             commentator: { id: '', displayName: '' },

@@ -1,5 +1,4 @@
 import React from 'react';
-//import Autocomplete from 'react-autocomplete';
 import { MenuItem, AutoComplete } from 'material-ui';
 import { delayOnceTimeAction } from './utils';
 import { getInstance as getD2 } from 'd2/lib/d2';

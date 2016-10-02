@@ -1,6 +1,5 @@
 
 import React from 'react';
-//import Autocomplete from 'react-autocomplete';
 import { MenuItem, AutoComplete } from 'material-ui';
 import { delayOnceTimeAction } from './utils';
 import { getInstance as getD2 } from 'd2/lib/d2';
@@ -15,20 +14,19 @@ const AutoCompleteUsers = React.createClass({
 
     getInitialState() {
         return {
-            value: this.props.item.displayName,
-            itemList: [],
+            value: (this.props.item) ? this.props.item.displayName : '',
             loading: false,
             open: false,
-            authorDataSource: [],
-            author: { id: '', displayName: '' },
+            userDataSource: [],
+            user: (this.props.item) ? this.props.item : { id: '', displayName: '' },
         };
     },
 
-    _onUpdateAuthors(value) {
+    _onUpdateUsers(value) {
         // this.setState({ value, loading: true, open: false });
-        delayOnceTimeAction.bind(700, this.props.searchId, () => {
+        delayOnceTimeAction.bind(500, this.props.searchId, () => {
             if (value === '') {
-                this.setState({ authorDataSource: [], author: { id: '', displayName: '' } });
+                this.setState({ userDataSource: [], user: { id: '', displayName: '' } });
 
                 this.props.item.id = '';
                 this.props.item.displayName = '';
@@ -38,14 +36,14 @@ const AutoCompleteUsers = React.createClass({
                     const url = `users.json?paging=false&fields=id,displayName,userCredentials[username]&filter=name:ilike:${value}`;
 
                     d2.Api.getApi().get(url).then(result => {
-                        const authorList = [];
+                        const userList = [];
 
                         for (const user of result.users) {
                             const source = { id: user.id, displayName: `${user.displayName} (${user.userCredentials.username})` };
-                            authorList.push({ text: source.displayName, value: <MenuItem primaryText={source.displayName} value={source.id} />, source });
+                            userList.push({ text: source.displayName, value: <MenuItem primaryText={source.displayName} value={source.id} />, source });
                         }
 
-                        this.setState({ authorDataSource: authorList });
+                        this.setState({ userDataSource: userList });
                     })
                     .catch(errorResponse => {
                         console.log(`error ${errorResponse}`);
@@ -55,23 +53,21 @@ const AutoCompleteUsers = React.createClass({
         });
     },
 
-    _onSelectAuthor(value, i) {
-        console.log( value );
-        console.log( i );
-        console.log( this.state.authorDataSource[i].source );
-        // Set real author here with setstate!!
-        this.state.author = this.state.authorDataSource[i].source;
-        this.props.item.id = this.state.author.id;
-        this.props.item.displayName = this.state.author.displayName;
+    _onSelectUser(value, i) {
+        // Set real user here with setstate!!
+        this.state.user = this.state.userDataSource[i].source;
+        this.props.item.id = this.state.user.id;
+        this.props.item.displayName = this.state.user.displayName;
     },
 
     render() {
         return (
             <AutoComplete hintText="Enter User Name"
                 filter={AutoComplete.noFilter}
-                onUpdateInput={this._onUpdateAuthors}
-                onNewRequest={this._onSelectAuthor}
-                dataSource={this.state.authorDataSource}
+                onUpdateInput={this._onUpdateUsers}
+                onNewRequest={this._onSelectUser}
+                dataSource={this.state.userDataSource}
+                searchText={this.state.value}
             />
         );
     },
