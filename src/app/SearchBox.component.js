@@ -16,17 +16,13 @@ export default class SearchBox extends Component {
             moreTerms: undefined,
         };
 
-        this._onChange = this._onChange.bind(this);
-        this._clickSearchIcon = this._clickSearchIcon.bind(this);
+        this._searchKeywordChanged = this._searchKeywordChanged.bind(this);
+        this._searchIconClicked = this._searchIconClicked.bind(this);
         this._openAdvancedSearchForm = this._openAdvancedSearchForm.bind(this);
         this._closeAdvancedSearchForm = this._closeAdvancedSearchForm.bind(this);
         this._advSearchFormReset = this._advSearchFormReset.bind(this);
         this._performAdvancedSearch = this._performAdvancedSearch.bind(this);
-        this._onInputEnterPressed = this._onInputEnterPressed.bind(this);
-
-        this._keywordSelected = this._keywordSelected.bind(this);
-
-        this._handleClose = this._handleClose.bind(this);
+        this._searchedItemSelected = this._searchedItemSelected.bind(this);
     }
 
     bodyscrollingDisable(enable) {
@@ -38,11 +34,11 @@ export default class SearchBox extends Component {
         }
     }
 
-    _onChange(event, value) {
+    _searchKeywordChanged(event, value) {
         this.setState({ value });
     }
 
-    _clickSearchIcon() {
+    _searchIconClicked() {
         if (this.refs.advancedSearchForm) this.refs.advancedSearchForm.collapseMenu();
         this.props.onChangeEvent({ keyword: this.state.value });
     }
@@ -67,13 +63,8 @@ export default class SearchBox extends Component {
     }
 
     _performAdvancedSearch() {
-
-        console.log( '_performAdvancedSearch() called' );
-
         // get data from advanced search form
         const moreTerms = this.refs.advancedSearchForm.getSearchConditions();
-
-        // TODO: If data exists, highlight the down-arrow with color
 
         // Call back with search term and keyword
         this.props.onChangeEvent({ keyword: this.state.value, moreTerms });
@@ -83,17 +74,11 @@ export default class SearchBox extends Component {
         this.bodyscrollingDisable(false);
     }
 
-    _keywordSelected(item) {
+    _searchedItemSelected(item) {
+        // TODO: SEND THE SEARCH OBJECT's interpretation ID!!
+
         this.state.value = item.text;
         this.props.onChangeEvent({ keyword: this.state.value });
-    }
-
-    _onInputEnterPressed() {
-        this.props.onChangeEvent({ keyword: this.state.value });
-    }
-
-    _handleClose() {
-
     }
 
     render() {
@@ -116,13 +101,13 @@ export default class SearchBox extends Component {
                 <tbody>
                 <tr>
                 <td>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._clickSearchIcon}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._searchIconClicked}>
                         <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
                         <path d="M0 0h24v24H0z" fill="none"></path>
                     </svg>
                 </td>
                 <td>
-                    <AutoCompleteSearchKeyword searchId="searchKeyword" onChange={this._onChange} onSelect={this._keywordSelected} onInputEnterPressed={this._onInputEnterPressed} />
+                    <AutoCompleteSearchKeyword searchId="searchKeyword" onChange={this._searchKeywordChanged} onSelect={this._searchedItemSelected} />
                 </td>
                 <td>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="#BBB" height="30" viewBox="0 0 24 24" width="30" className="searchImg" onClick={this._openAdvancedSearchForm}>

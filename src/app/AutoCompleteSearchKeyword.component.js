@@ -10,7 +10,6 @@ const AutoCompleteSearchKeyword = React.createClass({
         value: React.PropTypes.any,
         searchId: React.PropTypes.string,
         onSelect: React.PropTypes.func,
-        onInputEnterPressed: React.PropTypes.func,
         onChange: React.PropTypes.func,
     },
 
@@ -33,12 +32,6 @@ const AutoCompleteSearchKeyword = React.createClass({
 
     collapseMenu() {
         this.setState({ open: false });
-    },
-
-    // TODO: MUST TRY THIS!!
-    _onInputEnterPressed(event) {
-        this.props.onInputEnterPressed(event);
-        this.collapseMenu();
     },
 
     _onUpdatekeywords(value) {

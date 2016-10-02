@@ -29,7 +29,7 @@ const InterpretationList = React.createClass({
 
     onSearchChanged(searchTerm) {
 
-        console.log( 'onSearchChanged called');
+        // console.log( 'onSearchChanged called');
 
 		// set the search terms on state memory and reset the item list
         this.state.searchTerm = searchTerm;
