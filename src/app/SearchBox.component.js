@@ -4,28 +4,6 @@ import { FlatButton, Dialog, DatePicker } from 'material-ui';
 import AdvanceSearchForm from './AdvanceSearchForm.component';
 import AutoCompleteSearchKeyword from './AutoCompleteSearchKeyword.component';
 
-const customStyles = {
-    overlay: {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        zIndex: 1000,
-    },
-    content: {
-        position: 'absolute',
-        top: '100px',
-        left: '20px',
-        right: 'auto',
-        bottom: 'auto',
-        width: '500px',
-        'box-shadow': '3px 3px 2px #DDD',
-        'font-size': '13px !important',
-    },
-};
-
 
 export default class SearchBox extends Component {
     constructor(props) {
@@ -70,13 +48,6 @@ export default class SearchBox extends Component {
     }
 
     _openAdvancedSearchForm() {
-        if (this.refs.advancedSearchForm) this.refs.advancedSearchForm.collapseMenu();
-
-        const offSet = $('div.searchDiv').offset();
-
-        customStyles.content.top = `${Number(offSet.top) + 45}px`;
-        customStyles.content.left = `${offSet.left}px`;
-
         this.setState({ open: true });
         this.bodyscrollingDisable(true);
     }
@@ -96,6 +67,9 @@ export default class SearchBox extends Component {
     }
 
     _performAdvancedSearch() {
+
+        console.log( '_performAdvancedSearch() called' );
+
         // get data from advanced search form
         const moreTerms = this.refs.advancedSearchForm.getSearchConditions();
 
