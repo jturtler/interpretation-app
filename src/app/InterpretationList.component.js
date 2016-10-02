@@ -173,7 +173,7 @@ const InterpretationList = React.createClass({
         return (
 			<div>
                 <Progress.Component />
-				<InfiniteScroll key="interpretationListKey" loader={<div><img src="images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
+				<InfiniteScroll key="interpretationListKey" loader={<div><img src="./src/images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
                     {this.state.items}
 				</InfiniteScroll>
 			</div>

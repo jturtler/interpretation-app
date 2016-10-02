@@ -41,10 +41,10 @@ const Interpretation = React.createClass({
         } else if (this.props.data.type === 'CHART') {
             DHIS.getChart(this._setChartOptions());
         } else if (this.props.data.type === 'MAP') {
-            actions.getMap('', this.props.data.map.id).subscribe(result => {
+           // actions.getMap('', this.props.data.map.id).subscribe(result => {
                 $(`#${divId}`).css('height', '308px');
-                DHIS.getMap(this._setMapOptions(result));
-            });
+                DHIS.getMap(this._setMapOptions());
+           // });
         }
     },
 
@@ -77,8 +77,9 @@ const Interpretation = React.createClass({
         options.url = '../../..';
         options.width = 600;
         options.height = 400;
+        options.relativePeriodDate = this.props.data.created;
 
-        let relativePeriods = this._converRelativePeriods(relativePeriodKeys, createdDate);
+       /* let relativePeriods = this._converRelativePeriods(relativePeriodKeys, createdDate);
 
         if (relativePeriods.length > 0) {
             relativePeriods = relativePeriods.concat(rootPeriods);
@@ -98,7 +99,7 @@ const Interpretation = React.createClass({
                     items: relativePeriods,
                 }];
             }
-        }
+        } */
 
         return options;
     },
@@ -106,7 +107,6 @@ const Interpretation = React.createClass({
     _setReportTableOptions() {
         const id = this.props.data.objId;
         const divId = this.props.data.id;
-        const rootPeriods = this.props.data.reportTable.periods;
 
         const options = {};
 
@@ -116,28 +116,7 @@ const Interpretation = React.createClass({
         options.width = 600;
         options.height = 400;
         options.displayDensity = 'compact';
-
-        let relativePeriods = this._converRelativePeriods(this.props.data.reportTable.relativePeriods, this.props.data.created);
-
-        if (relativePeriods.length > 0) {
-            relativePeriods = relativePeriods.concat(rootPeriods);
-            if (this.props.data.reportTable.columnDimensions.indexOf('pe') >= 0) {
-                options.columns = [{
-                    dimension: 'pe',
-                    items: relativePeriods,
-                }];
-            } else if (this.props.data.reportTable.rowDimensions.indexOf('pe') >= 0) {
-                options.rows = [{
-                    dimension: 'pe',
-                    items: relativePeriods,
-                }];
-            } else if (this.props.data.reportTable.filterDimensions.indexOf('pe') >= 0) {
-                options.filters = [{
-                    dimension: 'pe',
-                    items: relativePeriods,
-                }];
-            }
-        }
+        options.relativePeriodDate = this.props.data.created;
 
         return options;
     },
@@ -154,8 +133,9 @@ const Interpretation = React.createClass({
         options.url = '../../..';
         options.width = 600;
         options.height = 400;
+        options.relativePeriodDate = this.props.data.created;
 
-        let relativePeriods = [];
+       /* let relativePeriods = [];
         options.mapViews = data.mapViews;
 
         for (let i = 0; i < data.mapViews.length; i++) {
@@ -182,7 +162,7 @@ const Interpretation = React.createClass({
                     }];
                 }
             }
-        }
+        } */
 
         return options;
     },
