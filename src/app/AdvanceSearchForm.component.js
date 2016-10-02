@@ -148,17 +148,19 @@ export default class AdvanceSearchForm extends Component {
                             <td className="tdTitle"><span className="searchStyle">Date modified</span></td>
                             <td className="tdData">
                                 <table>
+                                <tbody>
                                 <tr>
-                                <td>
-                                    <DatePicker value={this.state.dateModiFrom} style={{ width: '130px' }} hintText="From" onChange={this._setDateModiFrom} />
-                                </td>
-                                <td>
-                                    <div>-</div>
-                                </td>
-                                <td>
-                                    <DatePicker value={this.state.dateModiTo} style={{ width: '130px' }} hintText="To" onChange={this._setDateModiTo} />
-                                </td>
+                                    <td>
+                                        <DatePicker value={this.state.dateModiFrom} style={{ width: '130px' }} hintText="From" onChange={this._setDateModiFrom} />
+                                    </td>
+                                    <td>
+                                        <div>-</div>
+                                    </td>
+                                    <td>
+                                        <DatePicker value={this.state.dateModiTo} style={{ width: '130px' }} hintText="To" onChange={this._setDateModiTo} />
+                                    </td>
                                 </tr>
+                                </tbody>
                                 </table>
                             </td>
                         </tr>
@@ -181,59 +183,8 @@ export default class AdvanceSearchForm extends Component {
         );
     }
 }
-/*
-                                <AutoComplete hintText="Enter Author Name"
-                                    filter={AutoComplete.noFilter}
-                                    onUpdateInput={this._onUpdateAuthors}
-                                    onNewRequest={this._onSelectAuthor}
-                                    dataSource={this.state.authorDataSource}
-                                />
-
-
-                                <AutoComplete
-                                    floatingLabelText="Same text, different values"
-                                    filter={AutoComplete.noFilter}
-                                    openOnFocus={true}
-                                    dataSource={dataSource3}
-                                />
-
-                                <AutoComplete hintText="Enter Author Name"
-                                    filter={AutoComplete.noFilter}
-                                    onUpdateInput={this._onUpdateAuthors}
-                                    onNewRequest={this._onSelectAuthor}
-                                    dataSource={this.state.authorDataSource}
-                                    dataSourceConfig={dataSourceConfig}
-                                    openOnFocus
-                                />
-
-                                <AutoCompleteUsers searchId="author" item={this.state.author} />
-                                    //dataSourceConfig={{ text: 'textKey', value: 'valueKey' }}
-
-*/
 
 AdvanceSearchForm.propTypes = {
     savedTerms: React.PropTypes.object,
     askPopupClose: React.PropTypes.func,
 };
-// AdvanceSearchForm.defaultProps = { savedTerms: undefined };
-
-// className="searchStyle calendar"
-
-/*
-
-                                <DatePicker key="dateModiFrom"
-                                    className="searchStyle calendar"
-                                    dateFormat="YYYY-MM-DD"
-                                    selected={this.state.dateModiFrom}
-                                    onChange={this._setDateModiFrom}
-                                    placeholderText="From"
-                                />
-                                &nbsp;&nbsp;-&nbsp;&nbsp;
-                                <DatePicker key="dateModiTo"
-                                    className="searchStyle calendar"
-                                    dateFormat="YYYY-MM-DD"
-                                    selected={this.state.dateModiTo}
-                                    onChange={this._setDateModiTo}
-                                    placeholderText="To"
-                                />
-*/

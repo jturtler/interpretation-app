@@ -1,7 +1,6 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import Interpretation from '../../src/app/Interpretation.component';
-import Progress from 'react-progress-3';
 import actions from './actions/Interpretation.action';
 
 const InterpretationList = React.createClass({
@@ -107,8 +106,8 @@ const InterpretationList = React.createClass({
     },
 
     showProgressBar(show) {
-        if (show) Progress.show();
-        else Progress.hide();
+        // if (show) Progress.show();
+        // else Progress.hide();
     },
 
     loadMore(page) {
@@ -172,7 +171,6 @@ const InterpretationList = React.createClass({
     render() {
         return (
 			<div>
-                <Progress.Component />
 				<InfiniteScroll key="interpretationListKey" loader={<div><img src="images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
                     {this.state.items}
 				</InfiniteScroll>
