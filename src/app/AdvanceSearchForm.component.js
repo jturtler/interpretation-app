@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { DatePicker, TextField, SelectField, MenuItem, AutoComplete } from 'material-ui';
+import { DatePicker, SelectField, MenuItem } from 'material-ui';
 // import { Button, FormControl } from 'react-bootstrap';
 // import DatePicker from 'react-bootstrap-date-picker';
 import AutoCompleteUsers from './AutoCompleteUsers.component';
@@ -24,7 +24,6 @@ export default class AdvanceSearchForm extends Component {
         this._authorSelected = this._authorSelected.bind(this);
         this._commentatorSelected = this._commentatorSelected.bind(this);
 
-        this._onUpdateAuthors = this._onUpdateAuthors.bind(this);
         this._onSelectAuthor = this._onSelectAuthor.bind(this);
     }
 
@@ -84,23 +83,7 @@ export default class AdvanceSearchForm extends Component {
         this.state.commentator = user;
     }
 
-    _onUpdateAuthors(value) {
-        console.log( 'onUpdateAuthors');
-
-        const source = { id: '112', displayName: "Hello James" };
-
-        this.setState({
-            authorDataSource: [
-                { text: 'James', value: <MenuItem primaryText="James" value="0" />, source },
-            ],
-        });
-    }
-
     _onSelectAuthor(value, i) {
-        console.log( value );
-        console.log( i );
-        console.log( this.state.authorDataSource[i].source );
-
         // Set real author here with setstate!!
         this.state.author = this.state.authorDataSource[i].source;
     }
@@ -130,6 +113,7 @@ export default class AdvanceSearchForm extends Component {
                             <td className="tdTitle"><span className="searchStyle">Date created</span></td>
                             <td className="tdData">
                                 <table>
+                                <tbody>
                                 <tr>
                                 <td>
                                     <DatePicker value={this.state.dateCreatedFrom} style={{ width: '130px' }} hintText="From" onChange={this._setDateCreatedFrom} />
@@ -141,6 +125,7 @@ export default class AdvanceSearchForm extends Component {
                                     <DatePicker value={this.state.dateCreatedTo} style={{ width: '130px' }} hintText="To" onChange={this._setDateCreatedTo} />
                                 </td>
                                 </tr>
+                                </tbody>
                                 </table>
                             </td>
                         </tr>
