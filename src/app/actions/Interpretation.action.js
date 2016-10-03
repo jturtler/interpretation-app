@@ -5,7 +5,7 @@ import { getInstance as getD2 } from 'd2/lib/d2';
 const actions = Action.createActionsFromNames(['listInterpretation', 'getMap', 'updateLike', 'deleteInterpretation', 'editInterpretation'], 'interpretation');
 
 
-
+// TODO: Does not have fail response, or always response!!!
 actions.listInterpretation
     .subscribe(({ data: [model, page, searchData], complete }) => {
         getD2().then(d2 => {

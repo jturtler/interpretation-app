@@ -44,7 +44,6 @@ export default class SearchBox extends Component {
     }
 
     _openAdvancedSearchForm() {
-        console.log( 'opened avancded')
         // Remove the search text (value) when opening advanced Search
         this.setState({ open: true, value: '' });
         this.bodyscrollingDisable(true);

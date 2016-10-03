@@ -23,16 +23,16 @@ const AutoCompleteSearchKeyword = React.createClass({
         };
     },
 
-    clear() {
-        this.setState({ value: '', keyword: this.getKeywordObj() });
-    },
-
     getKeywordObj(idInput, textInput) {
         const id = (!idInput) ? '' : idInput;
         const text = (!textInput) ? '' : textInput;
         return { id, text };
     },
 
+    clear() {
+        this.setState({ value: '', keyword: this.getKeywordObj() });
+    },
+    
     collapseMenu() {
         this.setState({ open: false });
     },
