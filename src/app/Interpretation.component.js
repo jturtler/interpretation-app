@@ -40,10 +40,10 @@ const Interpretation = React.createClass({
         } else if (this.props.data.type === 'CHART') {
             this._setChart();
         } else if (this.props.data.type === 'MAP') {
-           // actions.getMap('', this.props.data.map.id).subscribe(result => {
+           actions.getMap('', this.props.data.map.id).subscribe(result => {
                 $(`#${divId}`).css('height', '308px');
-                DHIS.getMap(this._setMapOptions());
-           // });
+                DHIS.getMap(this._setMapOptions(result));
+           });
         }
     },
 
@@ -70,14 +70,12 @@ const Interpretation = React.createClass({
             options.uid = id;
             options.el = divId;
             options.id = id;
-            //options.url = d2.Api.getApi().baseUrl;
-            options.url = '../../..';
+            options.url = d2.Api.getApi().baseUrl.replace('api', '');
             options.width = 600;
             options.height = 400;
             options.relativePeriodDate = this.props.data.created;
 
             DHIS.getChart(options);
-
         });
     },
 
@@ -90,8 +88,7 @@ const Interpretation = React.createClass({
 
             options.el = divId;
             options.id = id;
-            // options.url = d2.Api.getApi().baseUrl;
-            options.url = '../../..';
+            options.url = d2.Api.getApi().baseUrl.replace('api', '');
             options.width = 600;
             options.height = 400;
             options.displayDensity = 'compact';
@@ -103,47 +100,61 @@ const Interpretation = React.createClass({
         });
     },
 
+    relativePeriodKeys: ['THIS_MONTH', 'LAST_MONTH', 'LAST_3_MONTHS', 'LAST_6_MONTHS', 'LAST_12_MONTHS', 'THIS_YEAR', 'LAST_YEAR', 'LAST_5_YEARS'],
+
     _setMapOptions(data) {
         const id = this.props.data.objId;
         const divId = this.props.data.id;
+        const createdDate = this.props.data.created;
 
         const options = {};
 
         options.el = divId;
-        options.id = id;
+        //options.id = id;
         options.url = '../../..';
         options.width = 600;
         options.height = 400;
-        options.relativePeriodDate = this.props.data.created;
+        // options.relativePeriodDate = this.props.data.created;
 
-       /* let relativePeriods = [];
         options.mapViews = data.mapViews;
 
         for (let i = 0; i < data.mapViews.length; i++) {
             const mapView = data.mapViews[i];
+            if (this._findItemFromList(mapView.filters, 'dimension', 'pe') !== undefined) {
+                let relativePeriods = [];
+                for (let j = 0; j < mapView.filters.length; j++) {
+                    const items = mapView.filters[j].items;
+                    for (let k = 0; k < items.length; k++) {
+                        if (this.relativePeriodKeys.indexOf(items[k].id) >= 0) {
+                            relativePeriods = relativePeriods.concat(this._converRelativePeriods(items[k].id, createdDate));
+                        }
+                    }
+                    if (relativePeriods.length > 0) {
+                        options.mapViews[i].filters[j].items = relativePeriods;
+                    }
+                }
+            }
+        }
+
+       /* for (let i = 0; i < data.mapViews.length; i++) {
+            const mapView = data.mapViews[i];
             const relativePeriodKeys = mapView.relativePeriods;
             const periods = this._converRelativePeriods(relativePeriodKeys, createdDate);
+
+            for (const key in relativePeriodKeys) {
+                if (relativePeriodKeys[key]) {
+                    mapView.relativePeriods[key] = false;
+                }
+            }
+
             relativePeriods = relativePeriods.concat(periods);
 
             if (relativePeriods.length > 0) {
-                if (this._findItemFromList(mapView.columns, 'id', 'pe') !== undefined) {
-                    options.mapViews[i].columns = [{
-                        dimension: 'pe',
-                        items: relativePeriods,
-                    }];
-                } else if (this._findItemFromList(mapView.rows, 'id', 'pe') !== undefined) {
-                    options.mapViews[i].rows = [{
-                        dimension: 'pe',
-                        items: relativePeriods,
-                    }];
-                } else if (this._findItemFromList(mapView.filters, 'id', 'pe') !== undefined) {
-                    options.mapViews[i].filters = [{
-                        dimension: 'pe',
-                        items: relativePeriods,
-                    }];
-                }
+                options.mapViews[i].periods = relativePeriods;
             }
         } */
+
+        
 
         return options;
     },
@@ -152,7 +163,7 @@ const Interpretation = React.createClass({
         return (n.startsWith('0')) ? eval(n[1]) : eval(n);
     },
 
-    _converRelativePeriods(relativePeriods, createdDate) {
+    _converRelativePeriods(relativePeriodKey, createdDate) {
         let periods = [];
 
         const created = createdDate.substring(0, 10).split('-');
@@ -163,53 +174,50 @@ const Interpretation = React.createClass({
 
         const currentYear = date.getFullYear();
 
-        for (const key in relativePeriods) {
-            if (relativePeriods[key]) {
-                // Yearly periods
-                if (key === 'thisYear') {
-                    periods.push({ id: currentYear });
-                }
-                if (key === 'lastYear') {
-                    const lastYear = currentYear - 1;
-                    periods.push({ id: lastYear });
-                }
-                if (key === 'last5Years') {
-                    const start = currentYear - 5;
-                    const end = currentYear - 1;
-                    for (let year = start; year >= end; year++) {
-                        periods.push({ id: year });
-                    }
-                }
-                // Monthy periods
-                if (key === 'thisMonth') {
-                    let currentMonth = date.getMonth() + 1;// Month from Date Object starts from 0
-                    currentMonth = (currentMonth > 10) ? currentMonth : `0${currentMonth}`;
-                    periods.push({ id: `${currentYear}${currentMonth}` });
-                }
-                if (key === 'lastMonth') {
-                    let currentMonth = date.getMonth();// Month from Date Object starts from 0
-                    currentMonth = (currentMonth > 10) ? currentMonth : `0${currentMonth}`;
-                    periods.push({ id: `${currentYear}${currentMonth}` });
-                }
-                if (key === 'monthsThisYear') {
-                    const currentMonth = date.getMonth();// Month from Date Object starts from 0
-                    for (let m = 1; m <= currentMonth; m++) {
-                        const k = (m > 10) ? m : `0${m}`;
-                        periods.push({ id: `${currentYear}${k}` });
-                    }
-                }
-                if (key === 'last12Months') {
-                    periods = periods.concat(this._getLastNMonth(12, currentYear, date.getMonth()));
-                }
-                if (key === 'last3Months') {
-                    periods = periods.concat(this._getLastNMonth(3, currentYear, date.getMonth()));
-                }
-                if (key === 'last6Months') {
-                    periods = periods.concat(this._getLastNMonth(6, currentYear, date.getMonth()));
-                }
-                // monthsLastYear
+        // Yearly periods
+        if (relativePeriodKey === 'THIS_YEAR') {
+            periods.push({ id: currentYear.toString(), name: currentYear.toString() });
+        }
+        if (relativePeriodKey === 'LAST_YEAR') {
+            const lastYear = currentYear - 1;
+            periods.push({ id: lastYear.toString(), name: lastYear.toString() });
+        }
+        if (relativePeriodKey === 'LAST_5_YEARS') {
+            const start = currentYear - 5;
+            const end = currentYear - 1;
+            for (let year = start; year >= end; year++) {
+                periods.push({ id: year.toString(), name: year.toString() });
             }
         }
+        // Monthy periods
+        if (relativePeriodKey === 'THIS_MONTH') {
+            let currentMonth = date.getMonth() + 1;// Month from Date Object starts from 0
+            currentMonth = (currentMonth > 10) ? currentMonth : `0${currentMonth}`;
+            const period = `${currentYear}${currentMonth}`;
+            periods.push({ id: period, name: period });
+        }
+        if (relativePeriodKey === 'LAST_MONTH') {
+            let currentMonth = date.getMonth();// Month from Date Object starts from 0
+            currentMonth = (currentMonth > 10) ? currentMonth : `0${currentMonth}`;
+            periods.push({ id: `${currentYear}${currentMonth}`, name: `${currentYear}${currentMonth}` });
+        }
+        /* if (relativePeriodKey === 'monthsThisYear') {
+            const currentMonth = date.getMonth();// Month from Date Object starts from 0
+            for (let m = 1; m <= currentMonth; m++) {
+                const k = (m > 10) ? m : `0${m}`;
+                periods.push({ id: `${currentYear}${k}` });
+            }
+        } */
+        if (relativePeriodKey === 'LAST_3_MONTHS') {
+            periods = periods.concat(this._getLastNMonth(12, currentYear, date.getMonth()));
+        }
+        if (relativePeriodKey === 'LAST_3_MONTHS') {
+            periods = periods.concat(this._getLastNMonth(3, currentYear, date.getMonth()));
+        }
+        if (relativePeriodKey === 'LAST_6_MONTHS') {
+            periods = periods.concat(this._getLastNMonth(6, currentYear, date.getMonth()));
+        }
+        // monthsLastYear
 
         return periods;
     },
@@ -220,7 +228,7 @@ const Interpretation = React.createClass({
         let count = 0;
         for (let m = month; m >= 1 && count < noNumber; m--) {
             const k = (m >= 10) ? m : `0${m}`;
-            currentYearPeriods.push({ id: `${year}${k}` });
+            currentYearPeriods.push({ id: `${year}${k}`, name: `${year}${k}` });
             count++;
         }
 
@@ -229,7 +237,7 @@ const Interpretation = React.createClass({
             const lastYear = year - 1;
             for (let m = noNumber; m >= 1 && count < noNumber; m--) {
                 const k = (m >= 10) ? m : `0${m}`;
-                lastYearPeriods.push({ id: `${lastYear}${k}` });
+                lastYearPeriods.push({ id: `${lastYear}${k}`, name: `${lastYear}${k}` });
                 count++;
             }
         }
@@ -346,7 +354,7 @@ const Interpretation = React.createClass({
 
                      <div className={this._getCommentAreaClazz()} >
                         <div id={peopleLikeTagId} className={this.state.likes > 0 ? '' : 'hidden'}>
-                            <img src="./src/images/like.png" /> <a onClick={this._openPeopleLikedHandler}>{this.state.likes} people</a><span> liked this.</span>
+                            <img src="images/like.png" /> <a onClick={this._openPeopleLikedHandler}>{this.state.likes} people</a><span> liked this.</span>
                             <br />
                         </div>
                         <CommentArea key={commentAreaKey} comments={this.state.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
