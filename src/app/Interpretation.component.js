@@ -40,10 +40,10 @@ const Interpretation = React.createClass({
         } else if (this.props.data.type === 'CHART') {
             this._setChart();
         } else if (this.props.data.type === 'MAP') {
-           actions.getMap('', this.props.data.map.id).subscribe(result => {
+            actions.getMap('', this.props.data.map.id).subscribe(result => {
                 $(`#${divId}`).css('height', '308px');
-                DHIS.getMap(this._setMapOptions(result));
-           });
+                this._setMap(result);
+            });
         }
     },
 
@@ -102,61 +102,40 @@ const Interpretation = React.createClass({
 
     relativePeriodKeys: ['THIS_MONTH', 'LAST_MONTH', 'LAST_3_MONTHS', 'LAST_6_MONTHS', 'LAST_12_MONTHS', 'THIS_YEAR', 'LAST_YEAR', 'LAST_5_YEARS'],
 
-    _setMapOptions(data) {
-        const id = this.props.data.objId;
-        const divId = this.props.data.id;
-        const createdDate = this.props.data.created;
+    _setMap(data) {
+        getD2().then(d2 => {
+            const divId = this.props.data.id;
+            const createdDate = this.props.data.created;
 
-        const options = {};
+            const options = {};
 
-        options.el = divId;
-        //options.id = id;
-        options.url = '../../..';
-        options.width = 600;
-        options.height = 400;
-        // options.relativePeriodDate = this.props.data.created;
+            options.el = divId;
+            options.url = d2.Api.getApi().baseUrl.replace('api', '');
+            options.width = 600;
+            options.height = 400;
 
-        options.mapViews = data.mapViews;
+            options.mapViews = data.mapViews;
 
-        for (let i = 0; i < data.mapViews.length; i++) {
-            const mapView = data.mapViews[i];
-            if (this._findItemFromList(mapView.filters, 'dimension', 'pe') !== undefined) {
-                let relativePeriods = [];
-                for (let j = 0; j < mapView.filters.length; j++) {
-                    const items = mapView.filters[j].items;
-                    for (let k = 0; k < items.length; k++) {
-                        if (this.relativePeriodKeys.indexOf(items[k].id) >= 0) {
-                            relativePeriods = relativePeriods.concat(this._converRelativePeriods(items[k].id, createdDate));
+            for (let i = 0; i < data.mapViews.length; i++) {
+                const mapView = data.mapViews[i];
+                if (this._findItemFromList(mapView.filters, 'dimension', 'pe') !== undefined) {
+                    let relativePeriods = [];
+                    for (let j = 0; j < mapView.filters.length; j++) {
+                        const items = mapView.filters[j].items;
+                        for (let k = 0; k < items.length; k++) {
+                            if (this.relativePeriodKeys.indexOf(items[k].id) >= 0) {
+                                relativePeriods = relativePeriods.concat(this._converRelativePeriods(items[k].id, createdDate));
+                            }
+                        }
+                        if (relativePeriods.length > 0) {
+                            options.mapViews[i].filters[j].items = relativePeriods;
                         }
                     }
-                    if (relativePeriods.length > 0) {
-                        options.mapViews[i].filters[j].items = relativePeriods;
-                    }
-                }
-            }
-        }
-
-       /* for (let i = 0; i < data.mapViews.length; i++) {
-            const mapView = data.mapViews[i];
-            const relativePeriodKeys = mapView.relativePeriods;
-            const periods = this._converRelativePeriods(relativePeriodKeys, createdDate);
-
-            for (const key in relativePeriodKeys) {
-                if (relativePeriodKeys[key]) {
-                    mapView.relativePeriods[key] = false;
                 }
             }
 
-            relativePeriods = relativePeriods.concat(periods);
-
-            if (relativePeriods.length > 0) {
-                options.mapViews[i].periods = relativePeriods;
-            }
-        } */
-
-        
-
-        return options;
+            DHIS.getMap(options);
+        });
     },
 
     _convertToNumber(n) {
@@ -208,7 +187,7 @@ const Interpretation = React.createClass({
                 periods.push({ id: `${currentYear}${k}` });
             }
         } */
-        if (relativePeriodKey === 'LAST_3_MONTHS') {
+        if (relativePeriodKey === 'LAST_12_MONTHS') {
             periods = periods.concat(this._getLastNMonth(12, currentYear, date.getMonth()));
         }
         if (relativePeriodKey === 'LAST_3_MONTHS') {
@@ -221,6 +200,60 @@ const Interpretation = React.createClass({
 
         return periods;
     },
+
+    _quarterlyNames: ['Jan - Mar', 'Apr - Jun', 'Jul - Sep', 'Oct - Dec'],
+
+   /* _getLastNQuarterly(noNumber, month, year) {
+        const periodList = [];
+        let quarterlyNo = 0;
+
+        if (month <= 3) {
+            quarterlyNo = 1;
+        } else if (month <= 6) {
+            quarterlyNo = 2;
+        } else if (month <= 9) {
+            quarterlyNo = 3;
+        } else {
+            quarterlyNo = 4;
+        }
+
+        // Current year
+
+        for (let i = quarterlyNo; i > 0; i--) {
+            const key = this._quarterlyNames[i - 1];
+            const period = { id: `${i}-${year}`, name: `${key} ${year}` };
+            periodList.push(period);
+        }
+
+        // For quarterly periods from START_YEAR_PARAM to last year
+
+        for (var yearIdx = (year - 1); yearIdx >= me.START_YEAR_PARAM; yearIdx--)
+        {
+            var value = '4-' + yearIdx;
+            var name = me.quarterlyNames[3] + ' ' + yearIdx;
+            var period = { 'value': value, 'name': name };
+            periodList.push(period);
+
+            var value = '3-' + yearIdx;
+            var name = me.quarterlyNames[2] + ' ' + yearIdx;
+            var period = { 'value': value, 'name': name };
+            periodList.push(period);
+
+
+            var value = '2-' + yearIdx;
+            var name = me.quarterlyNames[1] + ' ' + yearIdx;
+            var period = { 'value': value, 'name': name };
+            periodList.push(period);
+
+
+            var value = '1-' + yearIdx;
+            var name = me.quarterlyNames[0] + ' ' + yearIdx;
+            var period = { 'value': value, 'name': name };
+            periodList.push(period);
+        }
+
+        return periodList;
+    }, */
 
     _getLastNMonth(noNumber, year, month) {
         const currentYearPeriods = [];
