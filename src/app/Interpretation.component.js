@@ -25,14 +25,6 @@ const Interpretation = React.createClass({
     },
 
     componentDidMount() {
-        const currentUserId = this.props.currentUser.id;
-        for (let i = 0; i < this.props.data.likedBy.length; i++) {
-            if (currentUserId === this.props.data.likedBy[i].id) {
-                const likeLinkTagId = `likeLink_${this.props.data.id}`;
-                $(`#${likeLinkTagId}`).replaceWith("<span class='disabledLink'>Like</span>");
-            }
-        }
-
         const divId = this.props.data.id;
 
         if (this.props.data.type === 'REPORT_TABLE') {
@@ -283,9 +275,6 @@ const Interpretation = React.createClass({
 
     _likeHandler() {
         actions.updateLike(this.props.data, this.props.data.id).subscribe(() => {
-            const likeLinkTagId = `likeLink_${this.props.data.id}`;
-            $(`#${likeLinkTagId}`).replaceWith("<span class='disabledLink'>Like</span>");
-
             const likes = this.state.likes + 1;
             const likedBy = this.state.likedBy;
             likedBy.push({ name: this.props.data.user, id: this.props.data.userId });
@@ -298,6 +287,40 @@ const Interpretation = React.createClass({
                 const postComentTagId = `postComent_${this.props.data.id}`;
                 $(`#${peopleLikeTagId}`).show();
                 $(`#${postComentTagId}`).closest('.interpretationCommentArea').show();
+            });
+        });
+    },
+
+    _removeFromArray(list, propertyName, value) {
+        let index;
+
+        for (let i = 0; i < list.length; i++) {
+            if (list[i][propertyName] === value) {
+                index = i;
+            }
+        }
+
+        if (index !== undefined) {
+            list.splice(index, 1);
+        }
+
+        return list;
+    },
+
+    _unlikeHandler() {
+        actions.removeLike(this.props.data, this.props.data.id).subscribe(() => {
+            const likes = this.state.likes - 1;
+            let likedBy = this.state.likedBy;
+            likedBy = this._removeFromArray(likedBy, 'id', this.props.data.userId);
+
+            this.setState({
+                likes,
+                likedBy,
+            }, function () {
+                if (likes === 0) {
+                    const peopleLikeTagId = `peopleLike_${this.props.data.id}`;
+                    $(`#${peopleLikeTagId}`).hide();
+                }
             });
         });
     },
@@ -325,15 +348,6 @@ const Interpretation = React.createClass({
         $(`#${divShowText}`).show();
 
         this.setState({ text });
-    },
-
-    _getCommentAreaClazz() {
-        let commentAreaClazzNames = 'interpretationCommentArea';
-        if (this.props.data.comments.length === 0 && this.state.likes === 0) {
-            commentAreaClazzNames += ' hidden';
-        }
-
-        return commentAreaClazzNames;
     },
 
     _openPeopleLikedHandler() {
@@ -378,14 +392,14 @@ const Interpretation = React.createClass({
                     <MessageOwner key={messageOwnerKey} data={this.props.data} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
 
                     <div className="linkTag">
-                        <a onClick={this._likeHandler} id={likeLinkTagId}>  Like </a> |
+                        {this._findItemFromList(this.props.data.likedBy, 'id', this.props.currentUser.id) === undefined ? <a onClick={this._likeHandler} id={likeLinkTagId}>  Like </a> : <a onClick={this._unlikeHandler} id={likeLinkTagId}>  Unlike </a>} 
                         <span className={this.props.currentUser.id === this.props.data.userId || this.props.currentUser.superUser ? '' : 'hidden'} >
-                        <a onClick={this._showEditHandler}>  Edit </a> |
+                        <a onClick={this._showEditHandler}> |  Edit </a> |
                         <a onClick={this._deleteHandler}>  Delete </a>
                         </span>
                     </div>
 
-                     <div className={this._getCommentAreaClazz()} >
+                     <div className="interpretationCommentArea">
                         <div id={peopleLikeTagId} className={this.state.likes > 0 ? '' : 'hidden'}>
                             <img src="images/like.png" /> <a onClick={this._openPeopleLikedHandler}>{this.state.likes} people</a><span> liked this.</span>
                             <br />

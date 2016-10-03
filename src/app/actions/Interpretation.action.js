@@ -2,7 +2,7 @@
 import Action from 'd2-ui/lib/action/Action';
 import { getInstance as getD2 } from 'd2/lib/d2';
 
-const actions = Action.createActionsFromNames(['listInterpretation', 'getMap', 'updateLike', 'deleteInterpretation', 'editInterpretation'], 'interpretation');
+const actions = Action.createActionsFromNames(['listInterpretation', 'getMap', 'updateLike', 'removeLike', 'deleteInterpretation', 'editInterpretation'], 'interpretation');
 
 
 // TODO: Does not have fail response, or always response!!!
@@ -50,6 +50,16 @@ actions.deleteInterpretation
 actions.updateLike.subscribe(({ data: [model, id], complete }) => {
     getD2().then(d2 => {
         d2.Api.getApi().post(`interpretations/${id}/like`)
+			.then(complete)
+			.catch(errorResponse => {
+    console.log(errorResponse);
+			});
+    });
+});
+
+actions.removeLike.subscribe(({ data: [model, id], complete }) => {
+    getD2().then(d2 => {
+        d2.Api.getApi().delete(`interpretations/${id}/like`)
 			.then(complete)
 			.catch(errorResponse => {
     console.log(errorResponse);
