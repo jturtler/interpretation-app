@@ -16,6 +16,7 @@ actions.listInterpretation
     complete(result);
 })
 .catch(error);
+        });
     });
 
 
@@ -78,4 +79,3 @@ actions.editInterpretation
     });
 
 export default actions;
-
