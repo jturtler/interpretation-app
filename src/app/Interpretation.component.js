@@ -39,8 +39,6 @@ const Interpretation = React.createClass({
     },
 
     _handleWindowResize() {
-        console.log( 'windows resize width');
-        console.log( $(window).width() );
         // If browser window width is less than 900, do not request for redraw                
         if ($(window).width() > dataInfo.minMainBodyWidth) {
             this._drawIntepretation(true);
@@ -105,7 +103,8 @@ const Interpretation = React.createClass({
         const divId = this.props.data.id;
 
         $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
-        $(`#${divId}`).css('height', '400px').css('width', width);
+        $(`#${divId}`).css('width', width);
+        // $(`#${divId}`).css('height', '400px').css('width', width);
 
         // Report Table do not need to redraw when browser window side changes
         if (!isRedraw) {
