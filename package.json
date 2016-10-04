@@ -22,9 +22,7 @@
   "author": "James Chang",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "jquery": "^2.2.3",
-    "react-bootstrap": "^0.30.5",
-    "redux-tooltip": "^0.6.1"
+    "jquery": "^2.2.3"
   },
   "devDependencies": {
     "babel-core": "^6.7.2",
@@ -66,7 +64,7 @@
     "style-loader": "^0.13.0",
     "webpack": "^1.12.14",
     "webpack-dev-server": "^1.14.1",
-	"rc-tooltip": "^3.4.2"
+	  "rc-tooltip": "^3.4.2"
   },
   "pre-commit": [
     "test",
