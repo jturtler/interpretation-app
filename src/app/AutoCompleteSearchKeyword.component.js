@@ -1,6 +1,6 @@
 import React from 'react';
 import { MenuItem, AutoComplete } from 'material-ui';
-import { delayOnceTimeAction, otherUtils } from './utils';
+import { delayOnceTimeAction, restUtil, otherUtils } from './utils';
 import { getInstance as getD2 } from 'd2/lib/d2';
 
 
@@ -29,43 +29,168 @@ const AutoCompleteSearchKeyword = React.createClass({
         return { id, text };
     },
 
+    getPlaceHolderItems() {
+        const placeHolderItems = [];
+
+        placeHolderItems.push(this.createPlaceHolderObj('Chart Favorite', './src/images/chart.png', 'Chart Favorite Searching...'));
+        placeHolderItems.push(this.createPlaceHolderObj('Report Table Favorite', './src/images/table.png', 'Report Table Favorite Searching...'));
+        placeHolderItems.push(this.createPlaceHolderObj('Map Favorite', './src/images/map.png', 'Map Favorite Searching...'));
+        placeHolderItems.push(this.createPlaceHolderObj('Author', './src/images/user_small.png', 'Author Searching...'));
+        placeHolderItems.push(this.createPlaceHolderObj('Commentator', './src/images/user_small.png', 'Commentator Searching...'));
+        placeHolderItems.push(this.createPlaceHolderObj('Interpretation Text', './src/images/document_small.png', 'Interpretation Text Searching...'));
+        placeHolderItems.push(this.createPlaceHolderObj('Comment Text', './src/images/comment.png', 'Comment Text Searching...'));
+
+        return placeHolderItems;
+    },
+
+    performMultiItemSearch(d2, value, updateItemList) {
+        const d2Api = d2.Api.getApi();
+
+        // UpdateItemList with placeholder of each section first..
+        updateItemList(this.getPlaceHolderItems());
+
+
+        // Chart Favorit Search
+        restUtil.requestGetHelper(d2Api,
+            `interpretations?paging=false&fields=id,text,chart[id,name,title]&filter=chart.name:ilike:${value}`,
+            (result) => {
+                const keywordList = [];
+
+                for (const interpretation of result.interpretations) {
+                    const source = this.getKeywordObj(interpretation.id, interpretation.chart.name);
+
+                    keywordList.push(this.createSelectionObj(source, './src/images/chart.png', 'Chart Favorite'));
+                }
+
+                updateItemList(keywordList, 'Chart Favorite');
+            });
+
+        // Report Table Favorite Search
+        restUtil.requestGetHelper(d2Api,
+            `interpretations?paging=false&fields=id,text,reportTable[id,name,title]&filter=reportTable.name:ilike:${value}`,
+            (result) => {
+                const keywordList = [];
+
+                for (const interpretation of result.interpretations) {
+                    const source = this.getKeywordObj(interpretation.id, interpretation.reportTable.name);
+
+                    keywordList.push(this.createSelectionObj(source, './src/images/table.png', 'Report Table Favorite'));
+                }
+
+                updateItemList(keywordList, 'Report Table Favorite');
+            });
+
+        // Map Favorite Search
+        restUtil.requestGetHelper(d2Api,
+            `interpretations?paging=false&fields=id,text,map[id,name,title]&filter=map.name:ilike:${value}`,
+            (result) => {
+                const keywordList = [];
+
+                for (const interpretation of result.interpretations) {
+                    const source = this.getKeywordObj(interpretation.id, interpretation.map.name);
+
+                    keywordList.push(this.createSelectionObj(source, './src/images/map.png', 'Map Favorite'));
+                }
+
+                updateItemList(keywordList, 'Map Favorite');
+            });
+
+        // Author Search
+        restUtil.requestGetHelper(d2Api,
+            `interpretations?paging=false&fields=id,text,user[id,name]&filter=user.name:ilike:${value}`,
+            (result) => {
+                const keywordList = [];
+
+                for (const interpretation of result.interpretations) {
+                    const source = this.getKeywordObj(interpretation.id, interpretation.user.name);
+
+                    keywordList.push(this.createSelectionObj(source, './src/images/user_small.png', 'Author'));
+                }
+
+                updateItemList(keywordList, 'Author');
+            });
+
+        // Commentator Search
+        restUtil.requestGetHelper(d2Api,
+            `interpretations?paging=false&fields=id,text,comments[user[id,name]]&filter=comments.user.name:ilike:${value}`,
+            (result) => {
+                const keywordList = [];
+
+                for (const interpretation of result.interpretations) {
+                    for (const comment of interpretation.comments) {
+                        if (comment.user.name.search(new RegExp(value, 'i')) >= 0) {
+                            const source = this.getKeywordObj(interpretation.id, comment.user.name);
+
+                            keywordList.push(this.createSelectionObj(source, './src/images/user_small.png', 'Commentator'));
+                        }
+                    }
+                }
+
+                updateItemList(keywordList, 'Commentator');
+            });
+
+
+        // Interpretation Text Search
+        restUtil.requestGetHelper(d2Api,
+            `interpretations?paging=false&fields=id,text&filter=text:ilike:${value}`,
+            (result) => {
+                const keywordList = [];
+
+                for (const interpretation of result.interpretations) {
+                    const source = this.getKeywordObj(interpretation.id, interpretation.text);
+
+                    keywordList.push(this.createSelectionObj(source, './src/images/document_small.png', 'Interpretation Text'));
+                }
+
+                updateItemList(keywordList, 'Interpretation Text');
+            });
+
+
+
+        // Comment Text Search
+        restUtil.requestGetHelper(d2Api,
+            `interpretations?paging=false&fields=id,text,comments[text]&filter=comments.text:ilike:${value}`,
+            (result) => {
+                const keywordList = [];
+
+                for (const interpretation of result.interpretations) {
+                    for (const comment of interpretation.comments) {
+                        if (comment.text.search(new RegExp(value, 'i')) >= 0) {
+                            const source = this.getKeywordObj(interpretation.id, comment.text);
+
+                            keywordList.push(this.createSelectionObj(source, './src/images/comment.png', 'Comment Text'));
+                        }
+                    }
+                }
+
+                updateItemList(keywordList, 'Comment Text');
+            });
+    },
+
+    createSelectionObj(source, imageSrc, title) {
+        return { text: source.text,
+                value: <MenuItem value={source.id}>
+                            <img alt={title} height="14" width="14" src={imageSrc} />
+                            &nbsp;&nbsp;<span>{source.text}</span>
+                        </MenuItem>,
+                source };
+    },
+
+    createPlaceHolderObj(text, imageSrc, title) {
+        return { text,
+                value: <div className="divLoadingPlaceHolder">
+                        <img src="./src/images/loadingSmall.gif" /> Loading -&nbsp;
+                        <img alt={text} height="14" width="14" src={imageSrc} /> {title}
+                    </div>,
+                source: { id: '', text: '' } };
+    },
+
     clear() {
         this.setState({ value: '', keyword: this.getKeywordObj() });
     },
-    
+
     collapseMenu() {
         this.setState({ open: false });
-    },
-
-    _onUpdatekeywords(value) {
-
-        this.setState({ value, loading: true, open: false });
-        // Call back the parent passed in method for change 
-        this.props.onChange(event, value);
-
-
-        delayOnceTimeAction.bind(500, this.props.searchId, () => {
-            if (value === '') {
-                this.setState({ keywordDataSource: [], keyword: this.getKeywordObj() });
-                this.props.onSelect(this.getKeywordObj());
-            }
-            else {
-                getD2().then(d2 => {
-
-                    this.performMultiItemSearch(d2, value, (resultItems, loadType) => {
-                        // add to the result
-                        console.log( 'FINISHED ONE SEARCH' );
-                        console.log( resultItems );
-
-                        const newList = this.combineList(this.state.keywordDataSource, resultItems);
-
-                        otherUtils.removeFromList(newList, 'text', loadType);
-
-                        this.setState({ keywordDataSource: newList });
-                    });
-                });
-            }
-        });
     },
 
     combineList(keywordDataSource, resultItems) {
@@ -76,49 +201,32 @@ const AutoCompleteSearchKeyword = React.createClass({
         return newArray;
     },
 
-    performMultiItemSearch(d2, value, updateItemList) {
-        // 1. Favorite Name
-        // TODO: SEARCH BY MANY DIFFERENT METHOD!!
-        //      1. Favorite Name
+    _onUpdatekeywords(value) {
+        this.setState({ value, loading: true, open: false });
+        // Call back the parent passed in method for change 
+        this.props.onChange(event, value);
 
-        // updateItemList with placeholder of each section first..
-        const placeHolderItems = [];
-        placeHolderItems.push({ text: 'interpretation', value: <div><img src="./src/images/like.png" /> <span>loading</span></div>, source: { id: '', text: '' } });
-        placeHolderItems.push({ text: 'test', value: <div><img src="./src/images/like.png" /> <span>loading</span></div>, source: { id: '', text: '' } });
-
-        updateItemList(placeHolderItems);
-
-
-        // Replace with loading message..
-
-        const url = `interpretations?paging=false&fields=id,text&filter=text:ilike:${value}`;
-
-        d2.Api.getApi().get(url).then(result => {
-            const keywordList = [];
-
-            for (const item of result.interpretations) {
-                const source = this.getKeywordObj(item.id, item.text);
-                keywordList.push({ text: source.text, value: <MenuItem primaryText={source.text} value={source.id} />, source });
+        delayOnceTimeAction.bind(500, this.props.searchId, () => {
+            if (value === '') {
+                this.setState({ keywordDataSource: [], keyword: this.getKeywordObj() });
+                this.props.onSelect(this.getKeywordObj());
             }
+            else {
+                getD2().then(d2 => {
+                    // Clear the dropdown List
+                    this.setState({ keywordDataSource: [] });
 
-            updateItemList(keywordList, 'interpretation');
+                    this.performMultiItemSearch(d2, value, (resultItems, loadType) => {
+                        // Add to the result
+                        const newList = this.combineList(this.state.keywordDataSource, resultItems);
+
+                        otherUtils.removeFromList(newList, 'text', loadType);
+
+                        this.setState({ keywordDataSource: newList });
+                    });
+                });
+            }
         });
-
-        setTimeout(() => {
-            const newVal = '7777';
-            const url2 = `interpretations?paging=false&fields=id,text&filter=text:ilike:${newVal}`;
-
-            d2.Api.getApi().get(url2).then(result => {
-                const keywordList = [];
-
-                for (const item of result.interpretations) {
-                    const source = this.getKeywordObj(item.id, item.text);
-                    keywordList.push({ text: source.text, value: <MenuItem primaryText={source.text} value={source.id} />, source });
-                }
-
-                updateItemList(keywordList, 'test');
-            });
-        }, 2000);
     },
 
     _onSelectkeyword(value, i) {

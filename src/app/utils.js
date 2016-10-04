@@ -25,6 +25,14 @@ export const dateUtil = {
     },
 };
 
+export const restUtil = {
+    requestGetHelper(d2Api, url, successFunc) {
+        d2Api.get(url).then(result => {
+            successFunc(result);
+        });
+    },
+};
+
 export const otherUtils = {
     removeFromList(list, propertyName, value) {
         let index;
