@@ -49,15 +49,35 @@ export default React.createClass({
 
                 <HeaderBar />
 				<mainPage>
-					<div>
-						<SearchBox
-    onChangeEvent={this._onSearchChange}
-    hintText="Search by name"
-    value={this.state.value}
-						/>
-					</div>
 
-					<InterpretationList d2={this.props.d2} ref="lists" />
+                    <table className="tblMainPage">
+                    <tbody>
+                    <tr>
+                    <td>
+                        <div className="divMainArea">
+                            <div>
+                                <SearchBox
+                                    onChangeEvent={this._onSearchChange}
+                                    hintText="Search by name"
+                                    value={this.state.value}
+                                />
+                            </div>
+
+                            <InterpretationList d2={this.props.d2} ref="lists" />
+                        </div>
+                    </td>
+                    <td>
+
+                        <div className="divRightArea">
+                            <div style={{ height: '600px' }}>
+                                <br />
+                            </div>
+                        </div>
+                    </td>
+                    </tr>
+                    </tbody>
+                    </table>
+
 				</mainPage>
 			</div>
         );
