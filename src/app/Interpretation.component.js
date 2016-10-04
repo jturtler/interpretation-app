@@ -4,6 +4,7 @@ import { Dialog, FlatButton } from 'material-ui';
 import MessageOwner from './MessageOwner.component';
 import CommentArea from './CommentArea.component';
 import { getInstance as getD2 } from 'd2/lib/d2';
+import { delayOnceTimeAction } from './utils';
 
 import actions from './actions/Interpretation.action';
 import Tooltip from 'rc-tooltip';
@@ -28,18 +29,34 @@ const Interpretation = React.createClass({
     },
 
     componentDidMount() {
-        const divId = this.props.data.id;
+        window.addEventListener('resize', this._handleWindowResize);
+        this._reDrawingIntepretation();
+    },
 
-        if (this.props.data.type === 'REPORT_TABLE') {
-            this._setReportTable();
-        } else if (this.props.data.type === 'CHART') {
-            this._setChart();
-        } else if (this.props.data.type === 'MAP') {
-            actions.getMap('', this.props.data.map.id).subscribe(result => {
-                $(`#${divId}`).css('height', '308px');
-                this._setMap(result);
-            });
-        }
+    componentWillUnmount() {
+        window.removeEventListener('resize', this._handleWindowResize);
+    },
+
+    _handleWindowResize() {
+        this._reDrawingIntepretation();
+    },
+
+
+    _reDrawingIntepretation() {
+        delayOnceTimeAction.bind(1000, `resultInterpretation${this.props.data.id}`, () => {
+            const divId = this.props.data.id;
+            $(`#${divId}`).html('');
+
+            if (this.props.data.type === 'REPORT_TABLE') {
+                this._setReportTable();
+            } else if (this.props.data.type === 'CHART') {
+                this._setChart();
+            } else if (this.props.data.type === 'MAP') {
+                actions.getMap('', this.props.data.map.id).subscribe(result => {
+                    this._setMap(result);
+                });
+            }
+        });
     },
 
     _findItemFromList(listData, searchProperty, searchValue) {
@@ -58,7 +75,8 @@ const Interpretation = React.createClass({
 
     _setChart() {
         const id = this.props.data.objId;
-        const divId = this.props.data.id;
+        const divId = this.props.data.id;        
+        const width = $('.divMainArea').width() - 100;
 
         getD2().then(d2 => {
             const options = {};
@@ -66,7 +84,7 @@ const Interpretation = React.createClass({
             options.el = divId;
             options.id = id;
             options.url = d2.Api.getApi().baseUrl.replace('api', '');
-            options.width = 600;
+            options.width = width;
             options.height = 400;
             options.relativePeriodDate = this.props.data.created;
 
@@ -75,6 +93,7 @@ const Interpretation = React.createClass({
     },
 
     _setReportTable() {
+        const width = $('.divMainArea').width() - 100;
         const id = this.props.data.objId;
         const divId = this.props.data.id;
 
@@ -84,7 +103,7 @@ const Interpretation = React.createClass({
             options.el = divId;
             options.id = id;
             options.url = d2.Api.getApi().baseUrl.replace('api', '');
-            options.width = 600;
+            options.width = width;
             options.height = 400;
             options.displayDensity = 'compact';
             options.relativePeriodDate = this.props.data.created;
@@ -99,14 +118,17 @@ const Interpretation = React.createClass({
 
     _setMap(data) {
         getD2().then(d2 => {
+            const width = $('.divMainArea').width() - 100;
             const divId = this.props.data.id;
             const createdDate = this.props.data.created;
+
+            $(`#${divId}`).css('height', '308px');
 
             const options = {};
 
             options.el = divId;
             options.url = d2.Api.getApi().baseUrl.replace('api', '');
-            options.width = 600;
+            options.width = width;
             options.height = 400;
 
             options.mapViews = data.mapViews;
