@@ -5,6 +5,7 @@ import MessageOwner from './MessageOwner.component';
 import CommentArea from './CommentArea.component';
 import { getInstance as getD2 } from 'd2/lib/d2';
 import { delayOnceTimeAction } from './utils';
+import { dataInfo } from './data';
 
 import actions from './actions/Interpretation.action';
 import Tooltip from 'rc-tooltip';
@@ -30,7 +31,7 @@ const Interpretation = React.createClass({
 
     componentDidMount() {
         window.addEventListener('resize', this._handleWindowResize);
-        this._reDrawingIntepretation();
+        this._drawIntepretation();
     },
 
     componentWillUnmount() {
@@ -38,20 +39,26 @@ const Interpretation = React.createClass({
     },
 
     _handleWindowResize() {
-        this._reDrawingIntepretation();
+        console.log( 'windows resize width');
+        console.log( $(window).width() );
+        // If browser window width is less than 900, do not request for redraw                
+        if ($(window).width() > dataInfo.minMainBodyWidth) {
+            this._drawIntepretation(true);
+        }
     },
 
 
-    _reDrawingIntepretation() {
+    _drawIntepretation(isRedraw) {
         delayOnceTimeAction.bind(1000, `resultInterpretation${this.props.data.id}`, () => {
             const divId = this.props.data.id;
-            $(`#${divId}`).html('');
 
             if (this.props.data.type === 'REPORT_TABLE') {
-                this._setReportTable();
+                this._setReportTable(isRedraw);
             } else if (this.props.data.type === 'CHART') {
+                if (isRedraw) $(`#${divId}`).html('');
                 this._setChart();
             } else if (this.props.data.type === 'MAP') {
+                if (isRedraw) $(`#${divId}`).html('');
                 actions.getMap('', this.props.data.map.id).subscribe(result => {
                     this._setMap(result);
                 });
@@ -75,8 +82,8 @@ const Interpretation = React.createClass({
 
     _setChart() {
         const id = this.props.data.objId;
-        const divId = this.props.data.id;        
-        const width = $('.divMainArea').width() - 100;
+        const divId = this.props.data.id;
+        const width = dataInfo.getleftAreaWidth();
 
         getD2().then(d2 => {
             const options = {};
@@ -92,33 +99,37 @@ const Interpretation = React.createClass({
         });
     },
 
-    _setReportTable() {
-        const width = $('.divMainArea').width() - 100;
+    _setReportTable(isRedraw) {
+        const width = dataInfo.getleftAreaWidth();
         const id = this.props.data.objId;
         const divId = this.props.data.id;
 
-        getD2().then(d2 => {
-            const options = {};
+        $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
+        $(`#${divId}`).css('height', '400px').css('width', width);
 
-            options.el = divId;
-            options.id = id;
-            options.url = d2.Api.getApi().baseUrl.replace('api', '');
-            options.width = width;
-            options.height = 400;
-            options.displayDensity = 'compact';
-            options.relativePeriodDate = this.props.data.created;
+        // Report Table do not need to redraw when browser window side changes
+        if (!isRedraw) {
+            getD2().then(d2 => {
+                const options = {};
 
-            DHIS.getTable(options);
-            $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
-            $(`#${divId}`).css('height', '400px');
-        });
+                options.el = divId;
+                options.id = id;
+                options.url = d2.Api.getApi().baseUrl.replace('api', '');
+                options.width = width;
+                options.height = 400;
+                options.displayDensity = 'compact';
+                options.relativePeriodDate = this.props.data.created;
+
+                DHIS.getTable(options);
+            });
+        }
     },
 
     relativePeriodKeys: ['THIS_MONTH', 'LAST_MONTH', 'LAST_3_MONTHS', 'LAST_6_MONTHS', 'LAST_12_MONTHS', 'THIS_YEAR', 'LAST_YEAR', 'LAST_5_YEARS'],
 
     _setMap(data) {
         getD2().then(d2 => {
-            const width = $('.divMainArea').width() - 100;
+            const width = dataInfo.getleftAreaWidth();
             const divId = this.props.data.id;
             const createdDate = this.props.data.created;
 
