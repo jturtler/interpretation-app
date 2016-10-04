@@ -50,34 +50,36 @@ export default React.createClass({
                 <HeaderBar />
 				<mainPage>
 
-                    <table className="tblMainPage">
-                    <tbody>
-                    <tr>
-                    <td>
-                        <div className="divMainArea">
-                            <div>
-                                <SearchBox
-                                    onChangeEvent={this._onSearchChange}
-                                    hintText="Search by name"
-                                    value={this.state.value}
-                                />
+                    <div className="divMainPage">
+
+                        <table className="tblMainPage">
+                        <tbody>
+                        <tr>
+                        <td>
+                            <div className="divMainArea">
+                                <div className="divSearchArea">
+                                    <SearchBox
+                                        onChangeEvent={this._onSearchChange}
+                                        hintText="Search by name"
+                                        value={this.state.value}
+                                    />
+                                </div>
+
+                                <InterpretationList d2={this.props.d2} ref="lists" />
                             </div>
+                        </td>
+                        <td>
 
-                            <InterpretationList d2={this.props.d2} ref="lists" />
-                        </div>
-                    </td>
-                    <td>
-
-                        <div className="divRightArea">
-                            <div style={{ height: '600px' }}>
-                                <br />
+                            <div className="divRightArea">
+                                <div style={{ height: '600px' }}>
+                                    <br />
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    </tr>
-                    </tbody>
-                    </table>
-
+                        </td>
+                        </tr>
+                        </tbody>
+                        </table>
+                    </div>
 				</mainPage>
 			</div>
         );
