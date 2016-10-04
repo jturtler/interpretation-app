@@ -6,6 +6,8 @@ import CommentArea from './CommentArea.component';
 import { getInstance as getD2 } from 'd2/lib/d2';
 
 import actions from './actions/Interpretation.action';
+import Tooltip from 'rc-tooltip';
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 const Interpretation = React.createClass({
     propTypes: {
@@ -21,6 +23,7 @@ const Interpretation = React.createClass({
             likedBy: this.props.data.likedBy,
             open: false,
             comments: this.props.data.comments.reverse(),
+            isTooltipActive: false,
         };
     },
 
@@ -362,10 +365,16 @@ const Interpretation = React.createClass({
         });
     },
 
+    _getPeopleLikeList() {
+        const list = this.state.likedBy.slice(0, 10);
+        return <div>{list.map(likedByUserName => <span key={likedByUserName.id}>{likedByUserName.name}<br /></span>)} {this.state.likedBy.length > 10 ? <span>more...</span> : '' }</div>;
+    },
+
     render() {
         const likeLinkTagId = `likeLink_${this.props.data.id}`;
         const interpretationTagId = `interpretation_${this.props.data.id}`;
         const peopleLikeTagId = `peopleLike_${this.props.data.id}`;
+        const peopleLikeLinkTagId = `peopleLikeLink_${this.props.data.id}`;
         const commentAreaKey = `commentArea_${this.props.data.id}`;
         const messageOwnerKey = `messageOwnerKey_${this.props.data.id}`;
         const likeDialogKey = `likeDialogKey_${this.props.data.id}`;
@@ -401,7 +410,14 @@ const Interpretation = React.createClass({
 
                      <div className="interpretationCommentArea">
                         <div id={peopleLikeTagId} className={this.state.likes > 0 ? '' : 'hidden'}>
-                            <img src="images/like.png" /> <a onClick={this._openPeopleLikedHandler}>{this.state.likes} people</a><span> liked this.</span>
+                            <img src="images/like.png" />
+                            <Tooltip
+                                placement="left"
+                                overlay={this._getPeopleLikeList()}
+                                arrowContent={<div className="rc-tooltip-arrow-inner"></div>} >
+                                    <a onClick={this._openPeopleLikedHandler} id={peopleLikeLinkTagId}>{this.state.likes} people </a>
+                            </Tooltip>
+                            <span> liked this.</span>
                             <br />
                         </div>
                         <CommentArea key={commentAreaKey} comments={this.state.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
