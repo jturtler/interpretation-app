@@ -420,3 +420,22 @@ div.advancedSearchForm
 .rc-tooltip-arrow-inner {
    border-right-color: #131212 !important;
 }
+
+
+/* ------------------------ */
+/* --- Right Side panel --- */
+/* ------------------------ */
+
+.header {
+    background-color: gray;
+    font-weight: bold;
+}
+
+.rightPanel table {
+    border: 1px solid black;
+}
+
+.rightPanel td {
+    height: 25px;
+    vertical-align: middle;
+}

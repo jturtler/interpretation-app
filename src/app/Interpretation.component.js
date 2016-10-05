@@ -313,27 +313,11 @@ const Interpretation = React.createClass({
         });
     },
 
-    _removeFromArray(list, propertyName, value) {
-        let index;
-
-        for (let i = 0; i < list.length; i++) {
-            if (list[i][propertyName] === value) {
-                index = i;
-            }
-        }
-
-        if (index !== undefined) {
-            list.splice(index, 1);
-        }
-
-        return list;
-    },
-
     _unlikeHandler() {
         actions.removeLike(this.props.data, this.props.data.id).subscribe(() => {
             const likes = this.state.likes - 1;
             let likedBy = this.state.likedBy;
-            likedBy = this._removeFromArray(likedBy, 'id', this.props.data.userId);
+            likedBy = otherUtils.removeFromArray(likedBy, 'id', this.props.data.userId);
 
             this.setState({
                 likes,

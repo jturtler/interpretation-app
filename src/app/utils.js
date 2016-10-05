@@ -59,10 +59,17 @@ export const otherUtils = {
             const item = listData[i];
             if (item[searchProperty] === searchValue) {
                 foundData = item;
-                return false;
             }
         }
 
         return foundData;
+    },
+
+    sortByKey(array, key) {
+        return array.sort((a, b) => {
+            const x = a[key];
+            const y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
     },
 };

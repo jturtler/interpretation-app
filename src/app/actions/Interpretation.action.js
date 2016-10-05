@@ -7,9 +7,14 @@ const actions = Action.createActionsFromNames(['listInterpretation', 'getMap', '
 
 // TODO: Does not have fail response, or always response!!!
 actions.listInterpretation
-.subscribe(({ data: [model, page, searchData], complete, error }) => {
+.subscribe(({ data: [model, searchData, page], complete, error }) => {
     getD2().then(d2 => {
-        const url = `interpretations?fields=id,type,text,created,likes,likedBy[id,name],user[id,name],comments[id,created,text,user[id,name]],chart[id,name,series,category,filterDimensions,relativePeriods,periods],map[id,name],reportTable[id,name,relativePeriods,filterDimensions,rowDimensions,columnDimensions,periods]&page=${page}&pageSize=10${searchData}`;
+        let url = `interpretations?fields=id,type,text,created,likes,likedBy[id,name],user[id,name],comments[id,created,text,user[id,name]],chart[id,name,series,category,filterDimensions,relativePeriods,periods],map[id,name],reportTable[id,name,relativePeriods,filterDimensions,rowDimensions,columnDimensions,periods]${searchData}`;
+        if (page !== undefined) {
+            url += `&page=${page}&pageSize=10`;
+        } else {
+            url += '&paging=false';
+        }
 
         d2.Api.getApi().get(url)
         .then(result => {

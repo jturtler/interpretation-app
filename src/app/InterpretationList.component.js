@@ -1,9 +1,9 @@
 import React from 'react';
 import { CircularProgress } from 'material-ui';
 import InfiniteScroll from 'react-infinite-scroller';
-import Interpretation from '../../src/app/Interpretation.component';
+import Interpretation from './Interpretation.component';
 import actions from './actions/Interpretation.action';
-import { dateUtil } from './utils';
+import { dateUtil, otherUtils } from './utils';
 
 
 const InterpretationList = React.createClass({
@@ -130,7 +130,7 @@ const InterpretationList = React.createClass({
     loadMore(page, afterFunc) {
         const searchData = this.getSearchTerms(this.state.searchTerm);
 
-        actions.listInterpretation('', page, searchData).subscribe(result => {
+        actions.listInterpretation('', searchData, page).subscribe(result => {
             const d2 = this.props.d2;
             const d2Api = d2.Api.getApi();
 
@@ -158,28 +158,12 @@ const InterpretationList = React.createClass({
         );
     },
 
-    removeFromArray(list, propertyName, value) {
-        let index;
-
-        for (let i = 0; i < list.length; i++) {
-            if (list[i][propertyName] === value) {
-                index = i;
-            }
-        }
-
-        if (index !== undefined) {
-            list.splice(index, 1);
-        }
-
-        return list;
-    },
-
     _deleteInterpretationSuccess(id) {
         const items = this.state.items;
 
         for (let i = 0; i < items.length; i++) {
             const children = items[i].props.children;
-            this.removeFromArray(children, 'key', id);
+            otherUtils.removeFromArray(children, 'key', id);
         }
 
         this.setState({ items });
