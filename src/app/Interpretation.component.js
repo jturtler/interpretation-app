@@ -90,7 +90,7 @@ const Interpretation = React.createClass({
         const divId = this.props.data.id;
 
         $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
-        $(`#${divId}`).css('width', width);
+        $(`#${divId}`).css('width', width).css('maxHeight', '600px');
         // $(`#${divId}`).css('height', '400px').css('width', width);
 
         // Report Table do not need to redraw when browser window side changes

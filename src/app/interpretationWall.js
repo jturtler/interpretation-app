@@ -6,7 +6,7 @@ import withStateFrom from 'd2-ui/lib/component-helpers/withStateFrom';
 
 import SearchBox from './SearchBox.component';
 import InterpretationList from './InterpretationList.component';
-import TopInterpretations from './TopInterpretations.component';
+import TopRankItems from './TopRankItems.component';
 
 const injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
@@ -48,6 +48,10 @@ export default React.createClass({
         this.refs.lists.onSearchChanged(searchTerm);
     },
 
+    _onTopRankItemClicked(searchTerm) {
+        this.refs.lists.onSearchChanged(searchTerm);
+    },
+
     render() {
         return (
             <div className="app-wrapper">
@@ -76,8 +80,8 @@ export default React.createClass({
                         <td>
 
                             <div className="divRightArea">
-                                <div style={{ height: '600px' }}>
-                                    <TopInterpretations currentUser={this.state.currentUser} />
+                                <div style={{ minHeight: '500px' }}>
+                                    <TopRankItems currentUser={this.state.currentUser} onTopRankItemClicked={this._onTopRankItemClicked} />
                                 </div>
                             </div>
                         </td>

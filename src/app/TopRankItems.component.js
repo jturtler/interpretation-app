@@ -3,11 +3,12 @@ import actions from './actions/Interpretation.action';
 
 import { otherUtils } from './utils';
 
-const TopInterpretations = React.createClass({
+const TopRankItems = React.createClass({
     propTypes: {
         data: React.PropTypes.object,
         currentUser: React.PropTypes.object,
         deleteInterpretationSuccess: React.PropTypes.func,
+        onTopRankItemClicked: React.PropTypes.func,
     },
 
     getInitialState() {
@@ -117,6 +118,18 @@ const TopInterpretations = React.createClass({
         return `${prefix}_${id}`;
     },
 
+    _topInterpretationClicked(id) {
+        this.props.onTopRankItemClicked({ id });
+    },
+
+    _topAuthorClicked(id) {
+        this.props.onTopRankItemClicked({ moreTerms: { author: { id } } });
+    },
+
+    _topCommentatorClicked(id) {
+        this.props.onTopRankItemClicked({ moreTerms: { commentator: { id } } });
+    },
+
     render() {
         return (
            <table className="rightPanel">
@@ -128,7 +141,7 @@ const TopInterpretations = React.createClass({
                     {this.state.top5Interpretations.map((data, index) =>
                         <tr key={this._getKeys(data.id, 'top5Interpretations')} >
                             <td>
-                                 <a>#{this._increaseIdx(index)} {data.text}</a>
+                                 <a onClick={this._topInterpretationClicked.bind(null, data.id)}>#{this._increaseIdx(index)} {data.text.substring(0, 25)}</a>
                             </td>
                         </tr>
                     )}
@@ -140,19 +153,19 @@ const TopInterpretations = React.createClass({
                      {this.state.top5Authors.map((data, index) =>
                         <tr key={this._getKeys(data.id, 'top5Authors')} >
                             <td>
-                                <a>#{this._increaseIdx(index)} {data.name}</a>
+                                <a onClick={this._topAuthorClicked.bind(null, data.id)}>#{this._increaseIdx(index)} {data.name}</a>
                             </td>
                         </tr>
                     )}
 
                     <tr>
-                        <td className="header">Top 5 authors (last 30 days)</td>
+                        <td className="header">Top 5 Commentator (last 30 days)</td>
                     </tr>
 
                     {this.state.top5Commentators.map((data, index) =>
                         <tr key={this._getKeys(data.id, 'top5Commentators')} >
                             <td>
-                                <a>#{this._increaseIdx(index)} {data.name}</a>
+                                <a onClick={this._topCommentatorClicked.bind(null, data.id)}>#{this._increaseIdx(index)} {data.name}</a>
                             </td>
                         </tr>
                     )}
@@ -162,4 +175,4 @@ const TopInterpretations = React.createClass({
     },
 });
 
-export default TopInterpretations;
+export default TopRankItems;

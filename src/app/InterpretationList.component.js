@@ -100,7 +100,7 @@ const InterpretationList = React.createClass({
 
                 if (searchTerm.moreTerms.commentator && searchTerm.moreTerms.commentator.id !== '') searchTermUrl += `&filter=comments.user.id:eq:${searchTerm.moreTerms.commentator.id}`;
 
-                if (searchTerm.moreTerms.type !== '') searchTermUrl += `&filter=type:eq:${searchTerm.moreTerms.type}`;
+                if (searchTerm.moreTerms.type) searchTermUrl += `&filter=type:eq:${searchTerm.moreTerms.type}`;
 
                 if (searchTerm.moreTerms.dateCreatedFrom) searchTermUrl += `&filter=created:ge:${dateUtil.formatDateYYYYMMDD(searchTerm.moreTerms.dateCreatedFrom, '-')}`;
 
