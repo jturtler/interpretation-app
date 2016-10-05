@@ -6,6 +6,7 @@ import CommentArea from './CommentArea.component';
 import { getInstance as getD2 } from 'd2/lib/d2';
 import { delayOnceTimeAction } from './utils';
 import { dataInfo } from './data';
+import { otherUtils } from './utils';
 
 import actions from './actions/Interpretation.action';
 import Tooltip from 'rc-tooltip';
@@ -62,20 +63,6 @@ const Interpretation = React.createClass({
                 });
             }
         });
-    },
-
-    _findItemFromList(listData, searchProperty, searchValue) {
-        let foundData;
-
-        for (let i = 0; i < listData.length; i++) {
-            const item = listData[i];
-            if (item[searchProperty] === searchValue) {
-                foundData = item;
-                return false;
-            }
-        }
-
-        return foundData;
     },
 
     _setChart() {
@@ -145,7 +132,7 @@ const Interpretation = React.createClass({
 
             for (let i = 0; i < data.mapViews.length; i++) {
                 const mapView = data.mapViews[i];
-                if (this._findItemFromList(mapView.filters, 'dimension', 'pe') !== undefined) {
+                if (otherUtils.findItemFromList(mapView.filters, 'dimension', 'pe') !== undefined) {
                     let relativePeriods = [];
                     for (let j = 0; j < mapView.filters.length; j++) {
                         const items = mapView.filters[j].items;
@@ -433,7 +420,7 @@ const Interpretation = React.createClass({
                     <MessageOwner key={messageOwnerKey} data={this.props.data} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
 
                     <div className="linkTag">
-                        {this._findItemFromList(this.props.data.likedBy, 'id', this.props.currentUser.id) === undefined ? <a onClick={this._likeHandler} id={likeLinkTagId}>  Like </a> : <a onClick={this._unlikeHandler} id={likeLinkTagId}>  Unlike </a>} 
+                        {otherUtils.findItemFromList(this.props.data.likedBy, 'id', this.props.currentUser.id) === undefined ? <a onClick={this._likeHandler} id={likeLinkTagId}>  Like </a> : <a onClick={this._unlikeHandler} id={likeLinkTagId}>  Unlike </a>} 
                         <span className={this.props.currentUser.id === this.props.data.userId || this.props.currentUser.superUser ? '' : 'hidden'} >
                         <a onClick={this._showEditHandler}> |  Edit </a> |
                         <a onClick={this._deleteHandler}>  Delete </a>

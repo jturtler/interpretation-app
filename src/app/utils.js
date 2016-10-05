@@ -51,4 +51,18 @@ export const otherUtils = {
 
         return index;
     },
+
+    findItemFromList(listData, searchProperty, searchValue) {
+        let foundData;
+
+        for (let i = 0; i < listData.length; i++) {
+            const item = listData[i];
+            if (item[searchProperty] === searchValue) {
+                foundData = item;
+                return false;
+            }
+        }
+
+        return foundData;
+    },
 };
