@@ -39,7 +39,7 @@ const TopRankItems = React.createClass({
     _loadTopList() {
         const startDate = this._getNDateBefore(30);
         const endDate = this._getNDateBefore(1);
-        const searchData = `&filter=created:ge:${startDate}&filter=created:le:${endDate}`;
+        const searchData = `&filter=created:ge:${startDate}`;
 
         actions.listInterpretation('', searchData).subscribe(result => {
             this.setState({
