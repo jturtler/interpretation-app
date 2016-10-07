@@ -2,6 +2,7 @@
 import React from 'react';
 import { IntlProvider, FormattedRelative } from 'react-intl';
 import { Avatar } from 'material-ui';
+import { otherUtils } from './utils';
 
 import actions from './actions/Comment.action';
 
@@ -32,8 +33,8 @@ const Comment = React.createClass({
     },
 
     _displayContent() {
-        const showContent = this._parseStringToHTML(this.state.showContent);
-        const hideContent = this._parseStringToHTML(this.state.hideContent);
+        const showContent = otherUtils.parseStringToHTML(this.state.showContent);
+        const hideContent = otherUtils.parseStringToHTML(this.state.hideContent);
 
         const divShowContent = `showContent_${this.props.data.id}`;
         const divHideContent = `hideContent_${this.props.data.id}`;
@@ -63,10 +64,6 @@ const Comment = React.createClass({
             hideContent,
             oldText,
         };
-    },
-
-    _parseStringToHTML(str) {
-        return $.parseHTML(str);
     },
 
     _deleteHandler() {

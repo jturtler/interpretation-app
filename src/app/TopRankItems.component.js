@@ -141,7 +141,7 @@ const TopRankItems = React.createClass({
                     {this.state.top5Interpretations.map((data, index) =>
                         <tr key={this._getKeys(data.id, 'top5Interpretations')} >
                             <td>
-                                 <a onClick={this._topInterpretationClicked.bind(null, data.id)}>#{this._increaseIdx(index)} {data.text.substring(0, 25)}</a>
+                                 <a title={data.text} onClick={this._topInterpretationClicked.bind(null, data.id)}>#{this._increaseIdx(index)} {data.text.substring(0, 25)} {data.text.length > 25 ? '...' : ''}</a>
                             </td>
                         </tr>
                     )}
