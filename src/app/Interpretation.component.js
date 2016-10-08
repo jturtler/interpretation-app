@@ -217,58 +217,6 @@ const Interpretation = React.createClass({
 
     _quarterlyNames: ['Jan - Mar', 'Apr - Jun', 'Jul - Sep', 'Oct - Dec'],
 
-   /* _getLastNQuarterly(noNumber, month, year) {
-        const periodList = [];
-        let quarterlyNo = 0;
-
-        if (month <= 3) {
-            quarterlyNo = 1;
-        } else if (month <= 6) {
-            quarterlyNo = 2;
-        } else if (month <= 9) {
-            quarterlyNo = 3;
-        } else {
-            quarterlyNo = 4;
-        }
-
-        // Current year
-
-        for (let i = quarterlyNo; i > 0; i--) {
-            const key = this._quarterlyNames[i - 1];
-            const period = { id: `${i}-${year}`, name: `${key} ${year}` };
-            periodList.push(period);
-        }
-
-        // For quarterly periods from START_YEAR_PARAM to last year
-
-        for (var yearIdx = (year - 1); yearIdx >= me.START_YEAR_PARAM; yearIdx--)
-        {
-            var value = '4-' + yearIdx;
-            var name = me.quarterlyNames[3] + ' ' + yearIdx;
-            var period = { 'value': value, 'name': name };
-            periodList.push(period);
-
-            var value = '3-' + yearIdx;
-            var name = me.quarterlyNames[2] + ' ' + yearIdx;
-            var period = { 'value': value, 'name': name };
-            periodList.push(period);
-
-
-            var value = '2-' + yearIdx;
-            var name = me.quarterlyNames[1] + ' ' + yearIdx;
-            var period = { 'value': value, 'name': name };
-            periodList.push(period);
-
-
-            var value = '1-' + yearIdx;
-            var name = me.quarterlyNames[0] + ' ' + yearIdx;
-            var period = { 'value': value, 'name': name };
-            periodList.push(period);
-        }
-
-        return periodList;
-    }, */
-
     _getLastNMonth(noNumber, year, month) {
         const currentYearPeriods = [];
 
@@ -299,7 +247,7 @@ const Interpretation = React.createClass({
         actions.updateLike(this.props.data, this.props.data.id).subscribe(() => {
             const likes = this.state.likes + 1;
             const likedBy = this.state.likedBy;
-            likedBy.push({ name: this.props.data.user, id: this.props.data.userId });
+            likedBy.push({ name: this.props.currentUser.name, id: this.props.currentUser.id });
 
             this.setState({
                 likes,
@@ -316,8 +264,8 @@ const Interpretation = React.createClass({
     _unlikeHandler() {
         actions.removeLike(this.props.data, this.props.data.id).subscribe(() => {
             const likes = this.state.likes - 1;
-            let likedBy = this.state.likedBy;
-            likedBy = otherUtils.removeFromArray(likedBy, 'id', this.props.data.userId);
+            const likedBy = this.state.likedBy;
+            otherUtils.removeFromList(likedBy, 'id', this.props.currentUser.id);
 
             this.setState({
                 likes,
