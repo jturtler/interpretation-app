@@ -37,7 +37,7 @@ const AutoCompleteSearchKeyword = React.createClass({
         placeHolderItems.push(this.createPlaceHolderObj('Map Favorite', 'images/map.png', 'Map Favorite Searching...'));
         placeHolderItems.push(this.createPlaceHolderObj('Author', 'images/user_small.png', 'Author Searching...'));
         placeHolderItems.push(this.createPlaceHolderObj('Commentator', 'images/user_small.png', 'Commentator Searching...'));
-        placeHolderItems.push(this.createPlaceHolderObj('Interpretation Text', 'images/document_small.png', 'Interpretation Text Searching...'));
+        placeHolderItems.push(this.createPlaceHolderObj('Interpretation Text', 'images/interpretation.png', 'Interpretation Text Searching...'));
         placeHolderItems.push(this.createPlaceHolderObj('Comment Text', 'images/comment.png', 'Comment Text Searching...'));
 
         return placeHolderItems;
@@ -139,7 +139,7 @@ const AutoCompleteSearchKeyword = React.createClass({
                 for (const interpretation of result.interpretations) {
                     const source = this.getKeywordObj(interpretation.id, interpretation.text);
 
-                    keywordList.push(this.createSelectionObj(source, 'images/document_small.png', 'Interpretation Text'));
+                    keywordList.push(this.createSelectionObj(source, 'images/interpretation.png', 'Interpretation Text'));
                 }
 
                 updateItemList(keywordList, 'Interpretation Text');
