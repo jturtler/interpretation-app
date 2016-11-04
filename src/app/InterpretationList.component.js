@@ -78,6 +78,12 @@ const InterpretationList = React.createClass({
             } else if (interpretation.type === 'REPORT_TABLE') {
                 data.objId = interpretation.reportTable.id;
                 data.name = interpretation.reportTable.name;
+            } else if (interpretation.type === 'EVENT_REPORT') {
+                data.objId = interpretation.eventReport.id;
+                data.name = interpretation.eventReport.name;
+            } else if (interpretation.type === 'EVENT_CHART') {
+                data.objId = interpretation.eventChart.id;
+                data.name = interpretation.eventChart.name;
             }
 
             dataList.push(data);
@@ -163,7 +169,7 @@ const InterpretationList = React.createClass({
 
         for (let i = 0; i < items.length; i++) {
             const children = items[i].props.children;
-            otherUtils.removeFromArray(children, 'key', id);
+            otherUtils.removeFromList(children, 'key', id);
         }
 
         this.setState({ items });
@@ -176,7 +182,7 @@ const InterpretationList = React.createClass({
                     <CircularProgress size={2} />
                 </div>
                 <div className="intpreContents">
-                    <InfiniteScroll key="interpretationListKey" loader={<div><img src="src/images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
+                    <InfiniteScroll key="interpretationListKey" loader={<div><img src="images/ajaxLoaderBar.gif" /></div>} loadMore={this.loadMore} hasMore={this.state.hasMore} useWindow>
                         {this.state.items}
                     </InfiniteScroll>
                 </div>

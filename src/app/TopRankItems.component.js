@@ -131,45 +131,34 @@ const TopRankItems = React.createClass({
 
     render() {
         return (
-           <table className="rightPanel">
-                <tbody>
-                    <tr>
-                        <td className="header">Top 5 interpretations (last 30 days)</td>
-                    </tr>
-
+           <div>
+                <div className="header">Top 5 interpretations (last 30 days)</div>
+                <ul className="rightList">
                     {this.state.top5Interpretations.map((data, index) =>
-                        <tr key={this._getKeys(data.id, 'top5Interpretations')} >
-                            <td>
-                                 <a title={data.text} onClick={this._topInterpretationClicked.bind(null, data.id)}>#{this._increaseIdx(index)} {data.text.substring(0, 25)} {data.text.length > 25 ? '...' : ''}</a>
-                            </td>
-                        </tr>
+                        <li key={this._getKeys(data.id, 'top5Interpretations')} >
+                            #{this._increaseIdx(index)} <a title={data.text} onClick={this._topInterpretationClicked.bind(null, data.id)}>{data.text.substring(0, 25)} {data.text.length > 25 ? '...' : ''}</a>
+                        </li>
                     )}
+                 </ul>
 
-                     <tr>
-                        <td className="header">Top 5 authors (last 30 days)</td>
-                    </tr>
-
+                 <div className="header">Top 5 authors (last 30 days)</div>
+                 <ul className="rightList">
                      {this.state.top5Authors.map((data, index) =>
-                        <tr key={this._getKeys(data.id, 'top5Authors')} >
-                            <td>
-                                <a onClick={this._topAuthorClicked.bind(null, data.id)}>#{this._increaseIdx(index)} {data.name}</a>
-                            </td>
-                        </tr>
+                        <li key={this._getKeys(data.id, 'top5Authors')} >
+                            #{this._increaseIdx(index)} <a onClick={this._topAuthorClicked.bind(null, data.id)}>{data.name}</a>
+                        </li>
                     )}
+                 </ul>
 
-                    <tr>
-                        <td className="header">Top 5 Commentator (last 30 days)</td>
-                    </tr>
-
+                 <div className="header">Top 5 Commentator (last 30 days)</div>
+                 <ul className="rightList">
                     {this.state.top5Commentators.map((data, index) =>
-                        <tr key={this._getKeys(data.id, 'top5Commentators')} >
-                            <td>
-                                <a onClick={this._topCommentatorClicked.bind(null, data.id)}>#{this._increaseIdx(index)} {data.name}</a>
-                            </td>
-                        </tr>
+                        <li key={this._getKeys(data.id, 'top5Commentators')} >
+                            #{this._increaseIdx(index)} <a onClick={this._topCommentatorClicked.bind(null, data.id)}>{data.name}</a>
+                        </li>
                     )}
-                </tbody>
-           </table>
+                </ul>
+           </div>
 		);
     },
 });
