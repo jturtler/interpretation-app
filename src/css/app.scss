@@ -5,7 +5,7 @@ $left-bar-width: 295px;
 
 html {
   background-color: #f3f3f3;
-  font-family: Roboto, Arial, sans-serif;
+  font-family: Arial,Helvetica Neue,'sans-serif'!important;
   font-size: 9pt;
 }
 
@@ -56,6 +56,13 @@ html {
   vertical-align: top;
 }
 
+
+.tblMainPage td:nth-child(1)
+{
+  padding-right: 10px;
+  padding-left: 3px;
+}
+
 .divMainArea
 {
   min-width: 650px;
@@ -67,7 +74,6 @@ html {
   width: 210px;
   border: 1px solid #ddd;
   border-radius: 3px;
-  padding: 2px;
   margin-left: 10px;
   margin-bottom: 2px;
   box-shadow: #e1e1e1 0 1px 1px 0;
@@ -170,8 +176,6 @@ html {
 .interpretationCommentArea
 {
   margin-top: 5px;
-  padding: 9px 10px 7px 10px;
-  background-color: #e9edef;
   border-radius: 3px;
 }
 
@@ -205,9 +209,8 @@ html {
 }
 
 .userLink {
-    font-size: 10pt;
-	text-decoration: none;
-    color: #366cd8;
+	  text-decoration: none;
+    color: #3162c5;
 }
 
 .bold{
@@ -427,8 +430,13 @@ div.advancedSearchForm
 /* ------------------------ */
 
 .header {
-    background-color: gray;
+    background-color: #e6e6e6;
     font-weight: bold;
+    padding-left: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
 .rightPanel table {
@@ -442,4 +450,45 @@ div.advancedSearchForm
 
 .floatRight {
     float:right;
+}
+
+
+.rightList
+{
+  list-style:none;
+  padding-left: 10px;
+}
+
+.rightList li
+{
+  height: 25px;
+}
+
+.verticalAlignTop
+{
+  vertical-align: top;
+}
+
+
+/* ------------------------ */
+/* --- Right Side panel --- */
+/* ------------------------ */
+
+.greyBackground
+{
+    background-color: #efefef;
+    margin-top: 1px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.linkArea
+{
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.paddingLeft
+{
+  padding-left: 5px;
 }

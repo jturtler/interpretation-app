@@ -162,16 +162,16 @@ const Comment = React.createClass({
                         <td className="valignTop"><Avatar color="black" size={32} style={style}>{initChars}</Avatar></td>
                         <td>
                             <div className="interpretationComment">
-                                <a className="bold userLink">{this.state.data.user.name} </a>
                                 <div className="interpretationText">
                                      <div id={divShowText} >
+                                        <a className="bold userLink">{this.state.data.user.name} </a>
                                         <span id={divShowContent}></span>
                                         <span className={clazzName} onClick={this._handleClick}> ... more</span>
                                         <span className="hideContent hidden" id={divHideContent}></span>
                                     </div>
                                     <div className="hidden" id={divEditText}>
                                         <textarea className="commentArea" value={this.state.text} onChange={this._onChange} />
-                                        <a onClick={this._editCommentText}>  OK </a> | <a onClick={this._cancelCommentText}>  Cancel</a>
+                                        <a onClick={this._editCommentText}>OK</a><label className="linkArea">·</label><a onClick={this._cancelCommentText}>Cancel</a>
                                     </div>
                                 </div>
 
@@ -181,12 +181,12 @@ const Comment = React.createClass({
                                     </IntlProvider>
                                 </span>
                                 <span className={this.props.currentUser.id === this.state.data.user.id || this.props.currentUser.superUser ? '' : 'hidden'} >
-                                    <a onClick={this._showEditHandler}>  Edit </a>|
-                                    <a onClick={this._deleteHandler}>  Delete </a>
+                                   <label className="linkArea"></label><a onClick={this._showEditHandler}>Edit</a>
+                                   <label className="linkArea">·</label><a onClick={this._deleteHandler}>Delete</a>
                                 </span>
                             </div>
                         </td>
-                    </tr>                
+                    </tr>
                 </tbody>
             </table>
         );

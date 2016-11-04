@@ -50,7 +50,6 @@ const Interpretation = React.createClass({
     _drawIntepretation(isRedraw) {
         delayOnceTimeAction.bind(1000, `resultInterpretation${this.props.data.id}`, () => {
             const divId = this.props.data.id;
-
             if (this.props.data.type === 'REPORT_TABLE') {
                 this._setReportTable(isRedraw);
             } else if (this.props.data.type === 'CHART') {
@@ -61,6 +60,12 @@ const Interpretation = React.createClass({
                 actions.getMap('', this.props.data.map.id).subscribe(result => {
                     this._setMap(result);
                 });
+            } else if (this.props.data.type === 'EVENT_REPORT') {
+                if (isRedraw) $(`#${divId}`).html('');
+                this._setEventReport();
+            } else if (this.props.data.type === 'EVENT_CHART') {
+                if (isRedraw) $(`#${divId}`).html('');
+                this._setEventChart();
             }
         });
     },
@@ -111,9 +116,77 @@ const Interpretation = React.createClass({
         }
     },
 
+    _setEventReport() {
+        const width = dataInfo.getleftAreaWidth();
+        const id = this.props.data.objId;
+        const divId = this.props.data.id;
+
+
+        $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
+        $(`#${divId}`).css('width', width).css('maxHeight', '600px');
+
+        // Report Table do not need to redraw when browser window side changes
+        getD2().then(d2 => {
+            const options = {};
+            options.el = divId;
+            options.id = id;
+            options.url = d2.Api.getApi().baseUrl.replace('api', '');
+            options.width = width;
+            options.height = 400;
+            options.displayDensity = 'compact';
+            options.fontSize = 'small';
+            options.relativePeriodDate = this.props.data.created;
+
+            DHIS.getEventReport(options);
+        });
+    },
+
+    _setEventChart() {
+        const id = this.props.data.objId;
+        const divId = this.props.data.id;
+        const width = dataInfo.getleftAreaWidth();
+
+        getD2().then(d2 => {
+            const options = {};
+            options.uid = id;
+            options.el = divId;
+            options.id = id;
+            options.url = d2.Api.getApi().baseUrl.replace('api', '');
+            options.width = width;
+            options.height = 400;
+            options.relativePeriodDate = this.props.data.created;
+
+            options.domainAxisStyle = {
+                labelRotation: 45,
+                labelFont: '10px sans-serif',
+                labelColor: '#111',
+            };
+
+            options.rangeAxisStyle = {
+                labelFont: '9px sans-serif',
+            };
+
+            options.legendStyle = {
+                labelFont: 'normal 10px sans-serif',
+                labelColor: '#222',
+                labelMarkerSize: 10,
+                titleFont: 'bold 12px sans-serif',
+                titleColor: '#333',
+            };
+
+            options.seriesStyle = {
+                labelColor: '#333',
+                labelFont: '9px sans-serif',
+            };
+
+            DHIS.getEventChart(options);
+        });
+    },
+
     relativePeriodKeys: ['THIS_MONTH', 'LAST_MONTH', 'LAST_3_MONTHS', 'LAST_6_MONTHS', 'LAST_12_MONTHS', 'THIS_YEAR', 'LAST_YEAR', 'LAST_5_YEARS'],
 
     _setMap(data) {
+        const me = this;
         getD2().then(d2 => {
             const width = dataInfo.getleftAreaWidth();
             const divId = this.props.data.id;
@@ -132,13 +205,14 @@ const Interpretation = React.createClass({
 
             for (let i = 0; i < data.mapViews.length; i++) {
                 const mapView = data.mapViews[i];
+               // mapView.relativePeriodDate = createdDate.substring(0, 10);
                 if (otherUtils.findItemFromList(mapView.filters, 'dimension', 'pe') !== undefined) {
                     let relativePeriods = [];
                     for (let j = 0; j < mapView.filters.length; j++) {
                         const items = mapView.filters[j].items;
                         for (let k = 0; k < items.length; k++) {
                             if (this.relativePeriodKeys.indexOf(items[k].id) >= 0) {
-                                relativePeriods = relativePeriods.concat(this._converRelativePeriods(items[k].id, createdDate));
+                                relativePeriods = relativePeriods.concat(me._converRelativePeriods(items[k].id, createdDate));
                             }
                         }
                         if (relativePeriods.length > 0) {
@@ -352,23 +426,23 @@ const Interpretation = React.createClass({
                     <MessageOwner key={messageOwnerKey} data={this.props.data} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
 
                     <div className="linkTag">
-                        {otherUtils.findItemFromList(this.props.data.likedBy, 'id', this.props.currentUser.id) === undefined ? <a onClick={this._likeHandler} id={likeLinkTagId}>  Like </a> : <a onClick={this._unlikeHandler} id={likeLinkTagId}>  Unlike </a>} 
+                        {otherUtils.findItemFromList(this.props.data.likedBy, 'id', this.props.currentUser.id) === undefined ? <a onClick={this._likeHandler} id={likeLinkTagId}>Like</a> : <a onClick={this._unlikeHandler} id={likeLinkTagId}>Unlike</a> } 
                         <span className={this.props.currentUser.id === this.props.data.userId || this.props.currentUser.superUser ? '' : 'hidden'} >
-                        <a onClick={this._showEditHandler}> |  Edit </a> |
-                        <a onClick={this._deleteHandler}>  Delete </a>
+                        <label className="linkArea">·</label><a onClick={this._showEditHandler}>Edit</a>
+                        <label className="linkArea">·</label><a onClick={this._deleteHandler}>Delete</a>
                         </span>
                     </div>
 
                      <div className="interpretationCommentArea">
-                        <div id={peopleLikeTagId} className={this.state.likes > 0 ? '' : 'hidden'}>
-                            <img src="images/like.png" />
+                        <div id={peopleLikeTagId} className={this.state.likes > 0 ? 'greyBackground likeArea paddingLeft' : 'hidden greyBackground likeArea'}>
+                            <img src="images/like.png" className="verticalAlignTop" />
                             <Tooltip
                                 placement="left"
                                 overlay={this._getPeopleLikeList()}
                                 arrowContent={<div className="rc-tooltip-arrow-inner"></div>} >
                                     <a onClick={this._openPeopleLikedHandler} id={peopleLikeLinkTagId}>{this.state.likes} people </a>
                             </Tooltip>
-                            <span> liked this.</span>
+                            <span> liked this</span><label className="linkArea">·</label><span>{this.state.comments.length} people commented</span>
                             <br />
                         </div>
                         <CommentArea key={commentAreaKey} comments={this.state.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
