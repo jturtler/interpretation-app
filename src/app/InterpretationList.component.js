@@ -3,8 +3,9 @@ import { CircularProgress } from 'material-ui';
 import InfiniteScroll from 'react-infinite-scroller';
 import Interpretation from './Interpretation.component';
 import actions from './actions/Interpretation.action';
+import { dataInfo } from './data';
 import { dateUtil, otherUtils } from './utils';
-
+import { getInstance as getD2 } from 'd2/lib/d2';
 
 const InterpretationList = React.createClass({
     propTypes: {
@@ -30,16 +31,35 @@ const InterpretationList = React.createClass({
         };
     },
 
-    searchLoading(loading) {
-        if (loading) {
-            $( '.intpreContents' ).hide();
-            $( '.intpreLoading' ).show();
-        }
-        else {
-            $( '.intpreLoading' ).hide();
-            $( '.intpreContents' ).show();
+    componentDidMount() {
+        window.addEventListener('resize', this._handleWindowResize);
+        this._drawIntepretation();
+    },
+
+    _handleWindowResize() {
+        // If browser window width is less than 900, do not request for redraw                
+        if ($(window).width() > dataInfo.minMainBodyWidth) {
+            this._drawIntepretation();
         }
     },
+
+    _drawIntepretation(isRedraw) {
+        this.loadCharts();
+        this.loadAggregateReports();
+    }
+
+    searchLoading(loading) {
+        if (loading) {
+            $('.intpreContents').hide();
+            $('.intpreLoading').show();
+        } else {
+            $('.intpreLoading').hide();
+            $('.intpreContents').show();
+        }
+    },
+
+    aggchartItems: [],
+    aggReportItems: [],
 
     onSearchChanged(searchTerm) {
         this.searchLoading(true);
@@ -72,12 +92,14 @@ const InterpretationList = React.createClass({
             if (interpretation.type === 'CHART') {
                 data.objId = interpretation.chart.id;
                 data.name = interpretation.chart.name;
+                this.aggchartItems.push(interpretation);
             } else if (interpretation.type === 'MAP') {
                 data.objId = interpretation.map.id;
                 data.name = interpretation.map.name;
             } else if (interpretation.type === 'REPORT_TABLE') {
                 data.objId = interpretation.reportTable.id;
                 data.name = interpretation.reportTable.name;
+                 this.aggReportItems.push(interpretation);
             } else if (interpretation.type === 'EVENT_REPORT') {
                 data.objId = interpretation.eventReport.id;
                 data.name = interpretation.eventReport.name;
@@ -123,6 +145,60 @@ const InterpretationList = React.createClass({
         return searchTermUrl;
     },
 
+    loadCharts() {
+        getD2().then(d2 => {
+            const url = d2.Api.getApi().baseUrl.replace('api', '');
+            const width = dataInfo.getleftAreaWidth();
+
+            const chartItems = [];
+            for (let i = 0; i < this.aggchartItems.length; i++) {
+                const id = this.aggchartItems[i].objId;
+                const divId = this.aggchartItems[i].id;
+
+                const options = {};
+                options.uid = id;
+                options.el = divId;
+                options.id = id;
+                options.width = width;
+                options.height = 400;
+                options.preventMask = false;
+                options.relativePeriodDate = this.aggchartItems[i].created;
+                chartItems.push(options);
+            }
+
+            chartPlugin.url = url;
+            chartPlugin.showTitles = false;
+            chartPlugin.preventMask = false;
+            chartPlugin.load(chartItems);
+        });
+    },
+
+    loadAggregateReports() {
+        getD2().then(d2 => {
+            const url = d2.Api.getApi().baseUrl.replace('api', '');
+            const width = dataInfo.getleftAreaWidth();
+
+            const items = [];
+            for (let i = 0; i < this.aggReportItems.length; i++) {
+                const id = this.aggReportItems[i].objId;
+                const divId = this.aggReportItems[i].id;
+
+                const options = {};
+                options.el = divId;
+                options.id = id;
+                options.width = width;
+                options.height = 400;
+                options.displayDensity = 'compact';
+                options.relativePeriodDate = this.aggReportItems[i].created;
+                items.push(options);
+            }
+
+            reportTablePlugin.url = url;
+            reportTablePlugin.showTitles = false;
+            reportTablePlugin.load(items);
+        });
+    },
+
     addToDivList(dataList, hasMore, resultPage) {
         this.setState({
             items: this.state.items.concat([this.createDiv(dataList, resultPage)]), hasMore,
@@ -145,6 +221,9 @@ const InterpretationList = React.createClass({
             const resultPage = result.pager.page;
 
             this.addToDivList(dataList, hasMore, resultPage);
+
+            this.loadCharts();
+            this.loadAggregateReports();
 
             if (afterFunc) afterFunc();
         });

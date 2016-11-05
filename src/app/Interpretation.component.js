@@ -17,6 +17,7 @@ const Interpretation = React.createClass({
         data: React.PropTypes.object,
         currentUser: React.PropTypes.object,
         deleteInterpretationSuccess: React.PropTypes.func,
+        aggChartList: React.PropTypes.array,
     },
 
     getInitialState() {
@@ -30,10 +31,12 @@ const Interpretation = React.createClass({
         };
     },
 
+
     componentDidMount() {
         window.addEventListener('resize', this._handleWindowResize);
         this._drawIntepretation();
     },
+
 
     componentWillUnmount() {
         window.removeEventListener('resize', this._handleWindowResize);
@@ -50,85 +53,35 @@ const Interpretation = React.createClass({
     _drawIntepretation(isRedraw) {
         delayOnceTimeAction.bind(1000, `resultInterpretation${this.props.data.id}`, () => {
             const divId = this.props.data.id;
+            if (isRedraw) {
+                $(`#${divId}`).html('<img src="images/ajax-loader-circle.gif" />');
+            }
+
             if (this.props.data.type === 'REPORT_TABLE') {
-                this._setReportTable(isRedraw);
+                this._setReportTable();
             } else if (this.props.data.type === 'CHART') {
-                if (isRedraw) $(`#${divId}`).html('');
-                this._setChart();
+               // if (isRedraw) $(`#${divId}`).html('');
             } else if (this.props.data.type === 'MAP') {
-                if (isRedraw) $(`#${divId}`).html('');
+                //if (isRedraw) $(`#${divId}`).html('');
                 actions.getMap('', this.props.data.map.id).subscribe(result => {
                     this._setMap(result);
                 });
             } else if (this.props.data.type === 'EVENT_REPORT') {
-                if (isRedraw) $(`#${divId}`).html('');
+               // if (isRedraw) $(`#${divId}`).html('');
                 this._setEventReport();
             } else if (this.props.data.type === 'EVENT_CHART') {
-                if (isRedraw) $(`#${divId}`).html('');
+                //if (isRedraw) $(`#${divId}`).html('');
                 this._setEventChart();
             }
         });
     },
 
-    _setChart() {
-        const id = this.props.data.objId;
-        const divId = this.props.data.id;
+    _setReportTable() {
         const width = dataInfo.getleftAreaWidth();
-
-        getD2().then(d2 => {
-            const options = {};
-            options.uid = id;
-            options.el = divId;
-            options.id = id;
-            options.url = d2.Api.getApi().baseUrl.replace('api', '');
-            options.width = width;
-            options.height = 400;
-            options.preventMask = false;
-            options.relativePeriodDate = this.props.data.created;
-
-
-            const chartItems = [];
-            chartItems.push(options);
-
-            chartPlugin.url = d2.Api.getApi().baseUrl.replace('api', '');
-            chartPlugin.showTitles = false;
-            chartPlugin.preventMask = false;
-            chartPlugin.load(chartItems);
-        });
-
-    },
-
-    _setReportTable(isRedraw) {
-        const width = dataInfo.getleftAreaWidth();
-        const id = this.props.data.objId;
         const divId = this.props.data.id;
 
         $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
         $(`#${divId}`).css('width', width).css('maxHeight', '600px');
-        // $(`#${divId}`).css('height', '400px').css('width', width);
-
-        // Report Table do not need to redraw when browser window side changes
-        if (!isRedraw) {
-            getD2().then(d2 => {
-                const options = {};
-
-                options.el = divId;
-                options.id = id;
-                options.url = d2.Api.getApi().baseUrl.replace('api', '');
-                options.width = width;
-                options.height = 400;
-                options.displayDensity = 'compact';
-                options.relativePeriodDate = this.props.data.created;
-
-                const items = [];
-                items.push(options);
-
-                reportTablePlugin.url = d2.Api.getApi().baseUrl.replace('api', '');
-                reportTablePlugin.showTitles = true;
-                reportTablePlugin.load(items);
-
-            });
-        }
     },
 
     _setEventReport() {
@@ -434,7 +387,7 @@ const Interpretation = React.createClass({
                     <div>
                         <div className="interpretationItem">
                             <div className="title">{this.props.data.name}</div>
-                            <div id={this.props.data.id}></div>
+                            <div id={this.props.data.id} className="center"><img src="images/ajax-loader-circle.gif" /></div>
                         </div>
                     </div>
 
