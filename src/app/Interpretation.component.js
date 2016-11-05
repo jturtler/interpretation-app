@@ -83,10 +83,19 @@ const Interpretation = React.createClass({
             options.url = d2.Api.getApi().baseUrl.replace('api', '');
             options.width = width;
             options.height = 400;
+            options.preventMask = false;
             options.relativePeriodDate = this.props.data.created;
 
-            DHIS.getChart(options);
+
+            const chartItems = [];
+            chartItems.push(options);
+
+            chartPlugin.url = d2.Api.getApi().baseUrl.replace('api', '');
+            chartPlugin.showTitles = false;
+            chartPlugin.preventMask = false;
+            chartPlugin.load(chartItems);
         });
+
     },
 
     _setReportTable(isRedraw) {
@@ -111,7 +120,13 @@ const Interpretation = React.createClass({
                 options.displayDensity = 'compact';
                 options.relativePeriodDate = this.props.data.created;
 
-                DHIS.getTable(options);
+                const items = [];
+                items.push(options);
+
+                reportTablePlugin.url = d2.Api.getApi().baseUrl.replace('api', '');
+                reportTablePlugin.showTitles = true;
+                reportTablePlugin.load(items);
+
             });
         }
     },
