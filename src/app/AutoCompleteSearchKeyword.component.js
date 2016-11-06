@@ -168,11 +168,17 @@ const AutoCompleteSearchKeyword = React.createClass({
     },
 
     createSelectionObj(source, imageSrc, title) {
+        /*
+                    value: <MenuItem value={source.id} className="searchItemStyle" menuItemClassName="searchItemStyle" menuItemStyle="searchItemStyle">
+                                <img alt={title} height="14" width="14" src={imageSrc} />
+                                &nbsp;&nbsp;<span>{source.text}</span>
+                            </MenuItem>,
+        */
         return { text: source.text,
-                value: <MenuItem value={source.id}>
+                value: <div value={source.id} className="searchItemStyle">
                             <img alt={title} height="14" width="14" src={imageSrc} />
-                            &nbsp;&nbsp;<span>{source.text}</span>
-                        </MenuItem>,
+                            &nbsp;&nbsp;&nbsp;<span>{source.text}</span>
+                        </div>,
                 source };
     },
 
