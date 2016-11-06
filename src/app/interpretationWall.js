@@ -78,7 +78,6 @@ export default React.createClass({
                             </div>
                         </td>
                         <td>
-
                             <div className="divRightArea">
                                 <div style={{ minHeight: '500px' }}>
                                     <TopRankItems currentUser={this.state.currentUser} onTopRankItemClicked={this._onTopRankItemClicked} />

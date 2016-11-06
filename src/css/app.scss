@@ -11,6 +11,7 @@ html {
 
 .app-wrapper {
   margin-top: 4rem;
+  font-size: 12px;
 }
 
 .left-bar {
@@ -59,7 +60,7 @@ html {
 
 .tblMainPage td:nth-child(1)
 {
-  padding-right: 10px;
+  padding-right: 3px;
   padding-left: 3px;
 }
 
@@ -74,11 +75,10 @@ html {
   width: 210px;
   border: 1px solid #ddd;
   border-radius: 3px;
-  margin-left: 10px;
+  margin-left: 8px;
   margin-bottom: 2px;
   box-shadow: #e1e1e1 0 1px 1px 0;
   background-color: white;
-
 }
 
 .divSearchArea
@@ -188,6 +188,7 @@ html {
   overflow: auto;
   padding: 4px 0px 0px 6px;
   font-family: Roboto,Arial,sans-serif;
+  font-size: 12px;
 }
 
 .commentButton
@@ -298,8 +299,9 @@ a{
 .searchImg
 {
   margin-left: 4px;
-  margin-right: 12px;
-  padding-bottom: 6px;
+  margin-right: 4px;
+  margin-top: 6px;
+  padding-bottom: 4px;
   vertical-align: middle;
   cursor: pointer;
 }
