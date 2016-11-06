@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircularProgress } from 'material-ui';
+import { CircularProgress, FloatingActionButton } from 'material-ui';
 import InfiniteScroll from 'react-infinite-scroller';
 import Interpretation from './Interpretation.component';
 import actions from './actions/Interpretation.action';
@@ -43,10 +43,10 @@ const InterpretationList = React.createClass({
         }
     },
 
-    _drawIntepretation(isRedraw) {
+    _drawIntepretation() {
         this.loadCharts();
         this.loadAggregateReports();
-    }
+    },
 
     searchLoading(loading) {
         if (loading) {
@@ -265,6 +265,7 @@ const InterpretationList = React.createClass({
                         {this.state.items}
                     </InfiniteScroll>
                 </div>
+
 			</div>
 		);
     },
