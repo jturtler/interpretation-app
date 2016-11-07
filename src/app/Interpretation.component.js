@@ -53,26 +53,41 @@ const Interpretation = React.createClass({
     _drawIntepretation(isRedraw) {
         delayOnceTimeAction.bind(1000, `resultInterpretation${this.props.data.id}`, () => {
             const divId = this.props.data.id;
-            if (isRedraw) {
-                $(`#${divId}`).html('<img src="images/ajax-loader-circle.gif" />');
-            }
+           
 
             if (this.props.data.type === 'REPORT_TABLE') {
                 this._setReportTable();
             } else if (this.props.data.type === 'CHART') {
                // if (isRedraw) $(`#${divId}`).html('');
+                if (isRedraw) {
+                    $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
+                }
             } else if (this.props.data.type === 'MAP') {
                 //if (isRedraw) $(`#${divId}`).html('');
+                 if (isRedraw) {
+                    $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
+                }
                 actions.getMap('', this.props.data.map.id).subscribe(result => {
                     this._setMap(result);
                 });
             } else if (this.props.data.type === 'EVENT_REPORT') {
+                if (isRedraw) {
+                    $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
+                }
                // if (isRedraw) $(`#${divId}`).html('');
                 this._setEventReport();
             } else if (this.props.data.type === 'EVENT_CHART') {
+                if (isRedraw) {
+                    $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
+                }
                 //if (isRedraw) $(`#${divId}`).html('');
                 this._setEventChart();
             }
+        });
+
+        delayOnceTimeAction.bind(5000, `imgLoading${this.props.data.id}`, () => {
+             const divId = this.props.data.id;
+             $(`#${divId}`).find( "img.loadingImg" ).remove();
         });
     },
 
@@ -387,7 +402,7 @@ const Interpretation = React.createClass({
                     <div>
                         <div className="interpretationItem">
                             <div className="title">{this.props.data.name}</div>
-                            <div id={this.props.data.id} className="center"><img src="images/ajax-loader-circle.gif" /></div>
+                            <div id={this.props.data.id} className="center"><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>
                         </div>
                     </div>
 
