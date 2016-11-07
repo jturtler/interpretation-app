@@ -23,6 +23,11 @@ const AutoCompleteSearchKeyword = React.createClass({
         };
     },
 
+    componentDidMount() {
+        // Change input 'type' from 'text' to 'search' - has 'x' clear mark on html5 browser.
+        $('div.autoCompleteTextField').find('input[type="text"]').attr('type', 'search');
+    },
+
     getKeywordObj(idInput, textInput) {
         const id = (!idInput) ? '' : idInput;
         const text = (!textInput) ? '' : textInput;
@@ -249,7 +254,7 @@ const AutoCompleteSearchKeyword = React.createClass({
 
     render() {
         return (
-            <AutoComplete hintText="Search Interpretation"
+            <AutoComplete hintText="Search Interpretation" className="autoCompleteTextField"
                 filter={AutoComplete.noFilter}
                 onUpdateInput={this._onUpdatekeywords}
                 onNewRequest={this._onSelectkeyword}
