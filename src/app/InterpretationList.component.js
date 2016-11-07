@@ -45,7 +45,7 @@ const InterpretationList = React.createClass({
 
     _drawIntepretation() {
         this.loadCharts();
-        this.loadAggregateReports();
+        //this.loadAggregateReports();
     },
 
     searchLoading(loading) {
@@ -99,7 +99,7 @@ const InterpretationList = React.createClass({
             } else if (interpretation.type === 'REPORT_TABLE') {
                 data.objId = interpretation.reportTable.id;
                 data.name = interpretation.reportTable.name;
-                 this.aggReportItems.push(interpretation);
+                this.aggReportItems.push(interpretation);
             } else if (interpretation.type === 'EVENT_REPORT') {
                 data.objId = interpretation.eventReport.id;
                 data.name = interpretation.eventReport.name;
