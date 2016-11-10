@@ -43,45 +43,57 @@ const Interpretation = React.createClass({
     },
 
     _handleWindowResize() {
-        // If browser window width is less than 900, do not request for redraw                
-        if ($(window).width() > dataInfo.minMainBodyWidth) {
-            this._drawIntepretation(true);
+        // If browser window width is less than 900, do not request for redraw   
+        if ($('.intpreContents').width() < 650) {
+            $('.intpreContents').width(650);
         }
+        else {
+            $('.intpreContents').width(dataInfo.getleftAreaWidth());
+        }
+
+        this._drawIntepretation(true);
+
+        /* if ($(window).width() > dataInfo.minMainBodyWidth) {
+            this._drawIntepretation(true);
+        } */
     },
 
 
     _drawIntepretation(isRedraw) {
         delayOnceTimeAction.bind(1000, `resultInterpretation${this.props.data.id}`, () => {
             const divId = this.props.data.id;
-           
 
             if (this.props.data.type === 'REPORT_TABLE') {
                 this._setReportTable();
             } else if (this.props.data.type === 'CHART') {
                // if (isRedraw) $(`#${divId}`).html('');
-                if (isRedraw) {
-                    $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
-                }
+                //if (isRedraw) {
+                   // $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
+               // }
             } else if (this.props.data.type === 'MAP') {
                 //if (isRedraw) $(`#${divId}`).html('');
-                 if (isRedraw) {
+                if (isRedraw) {
                     $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
                 }
                 actions.getMap('', this.props.data.map.id).subscribe(result => {
                     this._setMap(result);
                 });
             } else if (this.props.data.type === 'EVENT_REPORT') {
-                if (isRedraw) {
-                    $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
-                }
+               // if (isRedraw) {
+                //    $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
+                //}
                // if (isRedraw) $(`#${divId}`).html('');
-                this._setEventReport();
-            } else if (this.props.data.type === 'EVENT_CHART') {
-                if (isRedraw) {
-                    $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
+                if (!isRedraw) {
+                    this._setEventReport();
                 }
+            } else if (this.props.data.type === 'EVENT_CHART') {
+               // if (isRedraw) {
+               //     $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
+               // }
                 //if (isRedraw) $(`#${divId}`).html('');
-                this._setEventChart();
+                if (!isRedraw) {
+                    this._setEventChart();
+                }
             }
         });
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { CircularProgress, FloatingActionButton } from 'material-ui';
 import InfiniteScroll from 'react-infinite-scroller';
+import { CircularProgress } from 'material-ui';
 import Interpretation from './Interpretation.component';
 import actions from './actions/Interpretation.action';
 import { dataInfo } from './data';
@@ -33,20 +33,19 @@ const InterpretationList = React.createClass({
 
     componentDidMount() {
         window.addEventListener('resize', this._handleWindowResize);
-        this._drawIntepretation();
     },
 
     _handleWindowResize() {
-        // If browser window width is less than 900, do not request for redraw                
-        if ($(window).width() > dataInfo.minMainBodyWidth) {
-            this._drawIntepretation();
+        // If browser window width is less than 900, do not request for redraw   
+        if ($('.intpreContents').width() < 650) {
+            $('.intpreContents').width(650);
         }
+        else {
+            $('.intpreContents').width(dataInfo.getleftAreaWidth());
+        }
+
     },
 
-    _drawIntepretation() {
-        this.loadCharts();
-        //this.loadAggregateReports();
-    },
 
     searchLoading(loading) {
         if (loading) {
@@ -58,7 +57,7 @@ const InterpretationList = React.createClass({
         }
     },
 
-    aggchartItems: [],
+    curAggchartItems: [],
     aggReportItems: [],
 
     onSearchChanged(searchTerm) {
@@ -79,6 +78,8 @@ const InterpretationList = React.createClass({
 		// Can not use itemList itself into the 'setState' since
 		// we didn't resolve it yet?
         const dataList = [];
+        this.aggReportItems = [];
+        this.curAggchartItems = [];
 
         for (let i = 0; i < itemList.length; i++) {
             const interpretation = itemList[i];
@@ -92,7 +93,7 @@ const InterpretationList = React.createClass({
             if (interpretation.type === 'CHART') {
                 data.objId = interpretation.chart.id;
                 data.name = interpretation.chart.name;
-                this.aggchartItems.push(interpretation);
+                this.curAggchartItems.push(interpretation);
             } else if (interpretation.type === 'MAP') {
                 data.objId = interpretation.map.id;
                 data.name = interpretation.map.name;
@@ -145,16 +146,16 @@ const InterpretationList = React.createClass({
         return searchTermUrl;
     },
 
-    loadCharts() {
+    loadCharts(aggchartItems) {
         getD2().then(d2 => {
             const url = d2.Api.getApi().baseUrl.replace('api', '');
             const width = dataInfo.getleftAreaWidth();
 
             const chartItems = [];
-            for (let i = 0; i < this.aggchartItems.length; i++) {
-                const id = this.aggchartItems[i].objId;
-                const divId = this.aggchartItems[i].id;
-
+            for (let i = 0; i < aggchartItems.length; i++) {
+                const id = aggchartItems[i].objId;
+                const divId = aggchartItems[i].id;
+               
                 const options = {};
                 options.uid = id;
                 options.el = divId;
@@ -162,7 +163,7 @@ const InterpretationList = React.createClass({
                 options.width = width;
                 options.height = 400;
                 options.preventMask = false;
-                options.relativePeriodDate = this.aggchartItems[i].created;
+                options.relativePeriodDate = aggchartItems[i].created;
                 chartItems.push(options);
             }
 
@@ -222,7 +223,7 @@ const InterpretationList = React.createClass({
 
             this.addToDivList(dataList, hasMore, resultPage);
 
-            this.loadCharts();
+            this.loadCharts(this.curAggchartItems);
             this.loadAggregateReports();
 
             if (afterFunc) afterFunc();
