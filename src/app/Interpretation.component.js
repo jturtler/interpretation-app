@@ -417,7 +417,7 @@ const Interpretation = React.createClass({
 
                     <div>
                         <div className="interpretationItem">
-                            <div className="title"><span>{this.props.data.name}</span> <label className="linkArea"> | <a onClick={this._exploreInterpretation} className="smalfFont" target="_blank">Explore</a></label></div>
+                            <div className="title"><span>{this.props.data.name}</span> <label className="linkArea"> <span className="smallFont">|</span> <a onClick={this._exploreInterpretation} className="smallFont" target="_blank">Explore</a></label></div>
                             <div id={this.props.data.id} className="center"><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>
                         </div>
                     </div>
