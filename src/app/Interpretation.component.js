@@ -65,13 +65,7 @@ const Interpretation = React.createClass({
 
             if (this.props.data.type === 'REPORT_TABLE') {
                 this._setReportTable();
-            } else if (this.props.data.type === 'CHART') {
-               // if (isRedraw) $(`#${divId}`).html('');
-                //if (isRedraw) {
-                   // $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
-               // }
             } else if (this.props.data.type === 'MAP') {
-                //if (isRedraw) $(`#${divId}`).html('');
                 if (isRedraw) {
                     $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
                 }
@@ -79,18 +73,10 @@ const Interpretation = React.createClass({
                     this._setMap(result);
                 });
             } else if (this.props.data.type === 'EVENT_REPORT') {
-               // if (isRedraw) {
-                //    $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
-                //}
-               // if (isRedraw) $(`#${divId}`).html('');
                 if (!isRedraw) {
                     this._setEventReport();
                 }
             } else if (this.props.data.type === 'EVENT_CHART') {
-               // if (isRedraw) {
-               //     $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
-               // }
-                //if (isRedraw) $(`#${divId}`).html('');
                 if (!isRedraw) {
                     this._setEventChart();
                 }
@@ -98,8 +84,8 @@ const Interpretation = React.createClass({
         });
 
         delayOnceTimeAction.bind(5000, `imgLoading${this.props.data.id}`, () => {
-             const divId = this.props.data.id;
-             $(`#${divId}`).find( "img.loadingImg" ).remove();
+            const divId = this.props.data.id;
+            $(`#${divId}`).find('img.loadingImg').remove();
         });
     },
 
@@ -225,6 +211,7 @@ const Interpretation = React.createClass({
         return (n.startsWith('0')) ? eval(n[1]) : eval(n);
     },
 
+    // Quaterly && 6-month period
     _converRelativePeriods(relativePeriodKey, createdDate) {
         let periods = [];
 
@@ -390,6 +377,23 @@ const Interpretation = React.createClass({
         return <div>{list.map(likedByUserName => <span key={likedByUserName.id}>{likedByUserName.name}<br /></span>)} {this.state.likedBy.length > 10 ? <span>more...</span> : '' }</div>;
     },
 
+    _exploreInterpretation() {
+        let link = '';
+        if (this.props.data.type === 'REPORT_TABLE') {
+            link = 'dhis-web-pivot';
+        } else if (this.props.data.type === 'CHART') {
+            link = 'dhis-web-visualizer';
+        } else if (this.props.data.type === 'MAP') {
+            link = 'dhis-web-mapping';
+        } else if (this.props.data.type === 'EVENT_REPORT') {
+            link = 'dhis-web-event-reports';
+        } else if (this.props.data.type === 'EVENT_CHART') {
+            link = 'dhis-web-event-visualizer';
+        }
+
+        window.location.href = `../../../${link}/index.html?id=${this.props.data.objId}`;
+    },
+
     render() {
         const likeLinkTagId = `likeLink_${this.props.data.id}`;
         const interpretationTagId = `interpretation_${this.props.data.id}`;
@@ -413,7 +417,7 @@ const Interpretation = React.createClass({
 
                     <div>
                         <div className="interpretationItem">
-                            <div className="title">{this.props.data.name}</div>
+                            <div className="title"><span>{this.props.data.name}</span> <label className="linkArea"> | <a onClick={this._exploreInterpretation} className="smalfFont" target="_blank">Explore</a></label></div>
                             <div id={this.props.data.id} className="center"><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>
                         </div>
                     </div>
