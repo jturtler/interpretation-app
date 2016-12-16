@@ -26,7 +26,7 @@ const Interpretation = React.createClass({
             likes: this.props.data.likes,
             likedBy: this.props.data.likedBy,
             open: false,
-            comments: this.props.data.comments.reverse(),
+            comments: this.props.data.comments,
             isTooltipActive: false,
         };
     },
@@ -43,8 +43,9 @@ const Interpretation = React.createClass({
     },
 
     _handleWindowResize() {
+        console.log("width : " + $('.intpreContents') );
         // If browser window width is less than 900, do not request for redraw
-        if ($('.intpreContents').width() < 650) {
+        if ($('.intpreContents').width() < 650 || dataInfo.getleftAreaWidth() < 650) {
             $('.intpreContents').width(650);
         }
         else {
@@ -403,7 +404,7 @@ const Interpretation = React.createClass({
         ];
 
         return (
-			<div id={interpretationTagId} key={interpretationTagId}>
+			<div id={interpretationTagId} key={interpretationTagId} className="interpretations">
 				<div className="interpretationContainer" >
 
                     <div>

@@ -87,6 +87,11 @@ html {
   margin-bottom: 10px;
 }
 
+.interpretations
+{
+  padding-top:10px;   
+}
+
 .interpretationContainer
 {
   border: 1px solid #ddd;
@@ -179,8 +184,10 @@ html {
 .interpretationCommentArea
 {
   margin-top: 5px;
-  border-radius: 3px;
+  border: 1px solid #bfb8b8;
   font-size: 12px;
+  border-radius: 5px;
+  padding: 1px;
 }
 
 .commentArea
@@ -240,6 +247,7 @@ html {
     text-align: center;
     line-height: 14px;
     letter-spacing: -.1px;
+    margin-top: 8px;
 }
 
 .contentTable
@@ -247,6 +255,8 @@ html {
 	overflow: auto;
 	width: 600;
 	height: 400;
+  //padding-left: 100px;
+  //padding-right: 100px;
 }
 
 .linkTag
@@ -516,6 +526,8 @@ div.advancedSearchForm
 .center 
 {
   text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .smallFont
