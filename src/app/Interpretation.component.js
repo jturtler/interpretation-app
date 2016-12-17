@@ -43,7 +43,6 @@ const Interpretation = React.createClass({
     },
 
     _handleWindowResize() {
-        console.log("width : " + $('.intpreContents') );
         // If browser window width is less than 900, do not request for redraw
         if ($('.intpreContents').width() < 650 || dataInfo.getleftAreaWidth() < 650) {
             $('.intpreContents').width(650);
@@ -52,7 +51,7 @@ const Interpretation = React.createClass({
             $('.intpreContents').width(dataInfo.getleftAreaWidth());
         }
 
-        this._drawIntepretation(true);
+        // this._drawIntepretation(true);
     },
 
 
@@ -86,6 +85,30 @@ const Interpretation = React.createClass({
         });
     },
 
+    _hasRelativePeriods(relativePeriods) {
+        if (this.props.data.type === 'MAP') {
+            for (const key in relativePeriods) {
+                if (relativePeriods[key] && this.relativePeriodKeys.indexOf(key) < 0) {
+                    return true;
+                }
+            }
+        } else if (this.props.data.type === 'EVENT_REPORT') {
+            for (const key in relativePeriods) {
+                if (relativePeriods[key]) {
+                    return true;
+                }
+            }
+        } else if (this.props.data.type === 'EVENT_CHART') {
+            for (const key in relativePeriods) {
+                if (relativePeriods[key]) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    },
+
     _setReportTable() {
         const width = dataInfo.getleftAreaWidth();
         const divId = this.props.data.id;
@@ -116,6 +139,14 @@ const Interpretation = React.createClass({
             options.relativePeriodDate = this.props.data.created;
 
             DHIS.getEventReport(options);
+
+            
+            const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
+            if (hasRelative) {
+                const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
+                $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event report.');
+                $(`#${relativePeriodMsgId}`).show();
+            }
         });
     },
 
@@ -158,12 +189,22 @@ const Interpretation = React.createClass({
             };
 
             DHIS.getEventChart(options);
+
+            
+            const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
+            if (hasRelative) {
+                    const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
+                    $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event chart.');
+                    $(`#${relativePeriodMsgId}`).show();
+            }
+
         });
     },
 
     relativePeriodKeys: [
         'THIS_MONTH',
         'LAST_MONTH',
+        'monthsThisYear',
         'LAST_3_MONTHS',
         'LAST_6_MONTHS',
         'LAST_12_MONTHS',
@@ -210,6 +251,14 @@ const Interpretation = React.createClass({
             }
 
             DHIS.getMap(options);
+
+            const hasRelative = this._hasRelativePeriods(this.props.data.map.mapViews.relativePeriods);
+            if (hasRelative) {
+                    const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
+                    $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the map.');
+                    $(`#${relativePeriodMsgId}`).show();
+            }
+
         });
     },
 
@@ -394,6 +443,7 @@ const Interpretation = React.createClass({
         const commentAreaKey = `commentArea_${this.props.data.id}`;
         const messageOwnerKey = `messageOwnerKey_${this.props.data.id}`;
         const likeDialogKey = `likeDialogKey_${this.props.data.id}`;
+        const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
 
         const peopleLikedByDialogActions = [
             <FlatButton type="button"
@@ -413,6 +463,8 @@ const Interpretation = React.createClass({
                             <div id={this.props.data.id} className="center"><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>
                         </div>
                     </div>
+                    
+                    <div id={relativePeriodMsgId} className="relativePeriodWarming"></div>
 
                     <MessageOwner key={messageOwnerKey} data={this.props.data} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
 
