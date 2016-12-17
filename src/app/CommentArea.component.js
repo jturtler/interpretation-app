@@ -126,13 +126,13 @@ const CommentArea = React.createClass({
             });
         }, 100);
 
-       setTimeout(() => {
-           this.setState({
-               hideComments: [],
-               showComments: list,
-               showAll: true,
-           });
-       }, 300);
+        setTimeout(() => {
+            this.setState({
+                hideComments: [],
+                showComments: list,
+                showAll: true,
+            });
+        }, 300);
     },
 
     render() {

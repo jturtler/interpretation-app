@@ -138,11 +138,9 @@ const InterpretationList = React.createClass({
         // If browser window width is less than 900, do not request for redraw
         if ($('.intpreContents').width() < 650) {
             $('.intpreContents').width(650);
-        }
-        else {
+        } else {
             $('.intpreContents').width(dataInfo.getleftAreaWidth());
         }
-
     },
 
     loadCharts(aggchartItems) {

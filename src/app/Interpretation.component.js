@@ -140,7 +140,6 @@ const Interpretation = React.createClass({
 
             DHIS.getEventReport(options);
 
-            
             const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
             if (hasRelative) {
                 const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
@@ -190,12 +189,11 @@ const Interpretation = React.createClass({
 
             DHIS.getEventChart(options);
 
-            
             const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
             if (hasRelative) {
-                    const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
-                    $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event chart.');
-                    $(`#${relativePeriodMsgId}`).show();
+                const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
+                $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event chart.');
+                $(`#${relativePeriodMsgId}`).show();
             }
 
         });
@@ -254,9 +252,9 @@ const Interpretation = React.createClass({
 
             const hasRelative = this._hasRelativePeriods(this.props.data.map.mapViews.relativePeriods);
             if (hasRelative) {
-                    const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
-                    $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the map.');
-                    $(`#${relativePeriodMsgId}`).show();
+                const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
+                $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the map.');
+                $(`#${relativePeriodMsgId}`).show();
             }
 
         });
@@ -463,7 +461,7 @@ const Interpretation = React.createClass({
                             <div id={this.props.data.id} className="center"><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>
                         </div>
                     </div>
-                    
+
                     <div id={relativePeriodMsgId} className="relativePeriodWarming"></div>
 
                     <MessageOwner key={messageOwnerKey} data={this.props.data} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
