@@ -53,7 +53,7 @@ const CommentArea = React.createClass({
             this.setState({
                 hideComments: [],
                 showComments: [],
-            }); 
+            });
 
             this.setState(this._getSubComments(result.comments, this.state.showAll), function () {
                 const postComentTagId = `postComent_${this.props.interpretationId}`;
