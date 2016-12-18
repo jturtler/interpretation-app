@@ -135,11 +135,13 @@ const InterpretationList = React.createClass({
     },
 
     _handleWindowResize() {
-        // If browser window width is less than 900, do not request for redraw
+       // If browser window width is less than 900, do not request for redraw
         if ($('.intpreContents').width() < 650) {
             $('.intpreContents').width(650);
+             $('.searchDiv').width(649);
         } else {
             $('.intpreContents').width(dataInfo.getleftAreaWidth());
+            $('.searchDiv').width(dataInfo.getleftAreaWidth() - 1);
         }
     },
 

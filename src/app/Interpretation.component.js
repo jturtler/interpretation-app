@@ -46,9 +46,10 @@ const Interpretation = React.createClass({
         // If browser window width is less than 900, do not request for redraw
         if ($('.intpreContents').width() < 650 || dataInfo.getleftAreaWidth() < 650) {
             $('.intpreContents').width(650);
-        }
-        else {
+            $('.searchDiv').width(649);
+        } else {
             $('.intpreContents').width(dataInfo.getleftAreaWidth());
+            $('.searchDiv').width(dataInfo.getleftAreaWidth() - 1);
         }
 
         // this._drawIntepretation(true);
