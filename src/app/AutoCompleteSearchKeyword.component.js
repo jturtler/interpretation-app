@@ -67,7 +67,7 @@ const AutoCompleteSearchKeyword = React.createClass({
                     keywordList.push(this.createSelectionObj(source, 'images/chart.png', 'Chart Favorite'));
                 }
 
-                updateItemList(keywordList, 'Chart Favorite');
+                updateItemList(keywordList, 'Chart Favorite', 'Chart');
             });
 
         // Report Table Favorite Search
@@ -82,7 +82,7 @@ const AutoCompleteSearchKeyword = React.createClass({
                     keywordList.push(this.createSelectionObj(source, 'images/table.png', 'Report Table Favorite'));
                 }
 
-                updateItemList(keywordList, 'Report Table Favorite');
+                updateItemList(keywordList, 'Report Table Favorite', 'Report Table');
             });
 
         // Map Favorite Search
@@ -97,7 +97,7 @@ const AutoCompleteSearchKeyword = React.createClass({
                     keywordList.push(this.createSelectionObj(source, 'images/map.png', 'Map Favorite'));
                 }
 
-                updateItemList(keywordList, 'Map Favorite');
+                updateItemList(keywordList, 'Map Favorite', 'Map');
             });
 
         // Author Search
@@ -112,7 +112,7 @@ const AutoCompleteSearchKeyword = React.createClass({
                     keywordList.push(this.createSelectionObj(source, 'images/user_small.png', 'Author'));
                 }
 
-                updateItemList(keywordList, 'Author');
+                updateItemList(keywordList, 'Author', 'Author');
             });
 
         // Commentator Search
@@ -131,7 +131,7 @@ const AutoCompleteSearchKeyword = React.createClass({
                     }
                 }
 
-                updateItemList(keywordList, 'Commentator');
+                updateItemList(keywordList, 'Commentator', 'Commentator');
             });
 
 
@@ -147,7 +147,7 @@ const AutoCompleteSearchKeyword = React.createClass({
                     keywordList.push(this.createSelectionObj(source, 'images/interpretation.png', 'Interpretation Text'));
                 }
 
-                updateItemList(keywordList, 'Interpretation Text');
+                updateItemList(keywordList, 'Interpretation Text', 'Interpretation Text');
             });
 
 
@@ -168,15 +168,23 @@ const AutoCompleteSearchKeyword = React.createClass({
                     }
                 }
 
-                updateItemList(keywordList, 'Comment Text');
+                updateItemList(keywordList, 'Comment Text', 'Comment Text');
             });
+    },
+
+    createHeaderPart(text, title) {
+        return { text,
+                value: <div className="divSearchItemHeaderPart">
+                            <span className="spanSearchItemHeaderName">{title}</span>
+                        </div>,
+                source: { id: '', text: '' } };
     },
 
     createSelectionObj(source, imageSrc, title) {
         return { text: source.text,
                 value: <div value={source.id} className="searchItemStyle">
                             <img alt={title} height="14" width="14" src={imageSrc} />
-                            &nbsp;&nbsp;&nbsp;<span>{source.text}</span>
+                            <span className="searchItemName">{source.text}</span>
                         </div>,
                 source };
     },
@@ -220,11 +228,14 @@ const AutoCompleteSearchKeyword = React.createClass({
                     // Clear the dropdown List
                     this.setState({ keywordDataSource: [] });
 
-                    this.performMultiItemSearch(d2, value, (resultItems, loadType) => {
+                    this.performMultiItemSearch(d2, value, (resultItems, loadTypeName, sectionName) => {
+                        if (resultItems.length > 0) resultItems.unshift(this.createHeaderPart(loadTypeName, sectionName));
+
                         // Add to the result
                         const newList = this.combineList(this.state.keywordDataSource, resultItems);
 
-                        otherUtils.removeFromList(newList, 'text', loadType);
+                        // remove previous list??
+                        otherUtils.removeFromList(newList, 'text', loadTypeName);
 
                         this.setState({ keywordDataSource: newList });
                     });
@@ -253,6 +264,8 @@ const AutoCompleteSearchKeyword = React.createClass({
                 dataSource={this.state.keywordDataSource}
                 fullWidth
                 searchText={this.state.value}
+                menuStyle={{ maxHeight: '400px' }}
+                openOnFocus
             />
         );
     },
