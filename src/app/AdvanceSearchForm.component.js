@@ -111,7 +111,7 @@ export default class AdvanceSearchForm extends Component {
         const hintStyle = { fontSize: '14px' };
         const underlineStyle = { width: '400px' };
         const menuStyle = { fontSize: '14px' };
-        const fontStyle =  { fontSize: '14px' };
+        const fontStyle = { fontSize: '14px' };
 
         return (
             <div className="advanceSearchForm">

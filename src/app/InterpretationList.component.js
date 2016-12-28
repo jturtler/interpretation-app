@@ -4,7 +4,7 @@ import { CircularProgress } from 'material-ui';
 import Interpretation from './Interpretation.component';
 import actions from './actions/Interpretation.action';
 import { dataInfo } from './data';
-import { dateUtil, otherUtils } from './utils';
+import { dateUtil, restUtil, otherUtils } from './utils';
 import { getInstance as getD2 } from 'd2/lib/d2';
 
 const InterpretationList = React.createClass({
@@ -45,13 +45,28 @@ const InterpretationList = React.createClass({
         this.state.searchTerm = searchTerm;
         this.state.items = [];
 
-        // Search for Interpretation with first page.  searchTerm are passed as memory
-        this.loadMore(1, () => {
-            this.searchLoading(false);
+
+        // For search, let's simplify it by -->
+        // retrieving all the ID of the all the search sections
+        // combine and trim out the duplicate ones
+        // and send the ID list to 'loadMore'
+        this.checkAndHandleKeywordCase(searchTerm, (idList) => {
+            if (idList === undefined) {
+                // no keyword case
+                this.loadMore(1, () => {
+                    this.searchLoading(false);
+                });
+            } else {
+                // NOTE: THIS CASE DOES NOT WORK WITH PAGING!!!  <-- SINCE we already have list, not by query 'page' use..?
+                this.loadSearchResult(idList, () => {
+                    this.searchLoading(false);
+                });
+            }
         });
+        // Search for Interpretation with first page.  searchTerm are passed as memory
     },
 
-    getFormattedData(itemList) {
+    structureData_AndPutInGlobalList(itemList) {
 		// Can not use itemList itself into the 'setState' since
 		// we didn't resolve it yet?
         const dataList = [];
@@ -96,12 +111,11 @@ const InterpretationList = React.createClass({
         let searchTermUrl = '';
 
         if (searchTerm !== undefined) {
-            // TODO: Will be changed from text to object
-            if (searchTerm.id) searchTermUrl += `&filter=id:eq:${searchTerm.id}`;
-
-            if (searchTerm.keyword) searchTermUrl += `&filter=text:ilike:${searchTerm.keyword}`;
-
-            if (searchTerm.moreTerms !== undefined) {
+            // TODO: Search by ID should be moved out of this!!
+            if (searchTerm.id) {
+                searchTermUrl += `&filter=id:eq:${searchTerm.id}`;
+            }
+            else if (searchTerm.moreTerms !== undefined) {
                 if (searchTerm.moreTerms.author && searchTerm.moreTerms.author.id !== '') searchTermUrl += `&filter=user.id:eq:${searchTerm.moreTerms.author.id}`;
 
                 if (searchTerm.moreTerms.commentator && searchTerm.moreTerms.commentator.id !== '') searchTermUrl += `&filter=comments.user.id:eq:${searchTerm.moreTerms.commentator.id}`;
@@ -178,7 +192,7 @@ const InterpretationList = React.createClass({
             $('.divRightArea').css('position', 'fixed');
             $('.divRightArea').css('right', '0px');
         }
-        console.log( 'width: ' + $('.intpreContents').width() );
+        //console.log( 'width: ' + $('.intpreContents').width() );
     },
 
     loadCharts(aggchartItems) {
@@ -245,19 +259,43 @@ const InterpretationList = React.createClass({
         return this.props.d2.currentUser.authorities.has('ALL');
     },
 
-    loadMore(page, afterFunc) {
-        const searchData = this.getSearchTerms(this.state.searchTerm);
+    loadSearchResult(idList, afterFunc) {
+        const searchQuery = `&filter=id:in:[${idList.toString()}]&order=created:desc`;
 
-        actions.listInterpretation('', searchData, page).subscribe(result => {
+        actions.listInterpretation('', searchQuery).subscribe(result => {
             const d2 = this.props.d2;
             const d2Api = d2.Api.getApi();
 
-            const dataList = this.getFormattedData(result.interpretations, d2Api.baseUrl);
+            // NOTE: Changed the name of the method to long and descriptive.  Break up the method purpose if you can.
+            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, d2Api.baseUrl);
+
+            this.addToDivList(dataList, false, 1);
+
+            // QUESTION: Could we pass this as local list? Rather than using global list?
+            this.loadCharts(this.curAggchartItems);
+            this.loadAggregateReports();
+
+            if (afterFunc) afterFunc();
+
+            this.setTableCentering();
+        });
+    },
+
+    loadMore(page, afterFunc) {
+        const searchQuery = this.getSearchTerms(this.state.searchTerm);
+
+        actions.listInterpretation('', searchQuery, page).subscribe(result => {
+            const d2 = this.props.d2;
+            const d2Api = d2.Api.getApi();
+
+            // NOTE: Changed the name of the method to long and descriptive.  Break up the method purpose if you can.
+            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, d2Api.baseUrl);
             const hasMore = (result.pager.page < result.pager.pageCount);
             const resultPage = result.pager.page;
 
             this.addToDivList(dataList, hasMore, resultPage);
 
+            // QUESTION: Could we pass this as local list? Rather than using global list?
             this.loadCharts(this.curAggchartItems);
             this.loadAggregateReports();
 
@@ -279,6 +317,80 @@ const InterpretationList = React.createClass({
             if (timesRun >= 15) clearInterval(interval);
             $('table.pivot').css('margin', '0 auto');
         }, 500);
+    },
+
+    checkAndHandleKeywordCase(searchTerm, returnFunc) {
+        if (searchTerm !== undefined && searchTerm.keyword) {
+            this.performKeywordSearchRequest(searchTerm.keyword, returnFunc);
+        } else {
+            returnFunc(); // with false?
+        }
+    },
+
+
+    performKeywordSearchRequest(keyword, doneFunc) {
+        const d2 = this.props.d2;
+        const d2Api = d2.Api.getApi();
+
+        const searchIdListObject = {};
+        const searchPerformList = [
+            { type: 'chart', performed: false, query: `interpretations?paging=false&fields=id&filter=chart.name:ilike:${keyword}` },
+            { type: 'report', performed: false, query: `interpretations?paging=false&fields=id&filter=reportTable.name:ilike:${keyword}` },
+            { type: 'chartEvent', performed: false, query: `interpretations?paging=false&fields=id&filter=eventChart.name:ilike:${keyword}` },
+            { type: 'reportEvent', performed: false, query: `interpretations?paging=false&fields=id&filter=eventReport.name:ilike:${keyword}` },
+            { type: 'map', performed: false, query: `interpretations?paging=false&fields=id&filter=map.name:ilike:${keyword}` },
+            { type: 'author', performed: false, query: `interpretations?paging=false&fields=id&filter=user.name:ilike:${keyword}` },
+            { type: 'commentator', performed: false, query: `interpretations?paging=false&fields=id&filter=comments.user.name:ilike:${keyword}` },
+            { type: 'interpretationText', performed: false, query: `interpretations?paging=false&fields=id&filter=text:ilike:${keyword}` },
+            { type: 'commentText', performed: false, query: `interpretations?paging=false&fields=id&filter=comments.text:ilike:${keyword}` },
+        ];
+
+        for (const searchItem of searchPerformList) {
+            restUtil.requestGetHelper(d2Api, searchItem.query, (result) => {
+                this.combineIdList(result, searchIdListObject);
+
+                searchItem.performed = true;
+
+                console.log(searchItem);
+
+                this.checkDoneList(searchPerformList, doneFunc, searchIdListObject);
+            });
+        }
+    },
+
+    combineIdList(result, searchIdListObject) {
+        // use object and its property to easily make the unique list (without duplicates)
+        if (result !== undefined && result.interpretations !== undefined) {
+            for (const interpretation of result.interpretations) {
+                searchIdListObject[interpretation.id] = {};
+            }
+        }
+    },
+
+    checkDoneList(searchPerformList, returnFunc, searchIdListObject) {
+        let unfinished = false;
+
+        for (const searchItem of searchPerformList) {
+            if (!searchItem.performed) {
+                unfinished = true;
+                break;
+            }
+        }
+
+        console.log( 'unfinished: ' + unfinished );
+        //console.log( 'done list check: ' + JSON.stringify(searchPerformList) );
+
+        if (!unfinished) {
+            const idList = [];
+            // convert the object properties as list
+            for (const propName in searchIdListObject) {
+                idList.push(propName);
+            }
+
+            console.log(idList);
+
+            returnFunc(idList);
+        }
     },
 
     createDiv(dataList, page) {
