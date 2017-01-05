@@ -182,19 +182,19 @@ const InterpretationList = React.createClass({
 
     _handleWindowResize() {
         const width = dataInfo.getleftAreaCalcWidth();
-        // If browser window width is less than 900, do not request for redraw
-        if ($('.intpreContents').width() < 650 || width < 650) {
-            $('.intpreContents').width(650);
-            $('.searchDiv').width(649);
-            $('.divRightArea').css('position', '');
-            $('.divRightArea').css('right', '');
-        } else {
-            $('.intpreContents').width(width);
-            $('.searchDiv').width(width - 1);
-            $('.divRightArea').css('position', 'fixed');
-            $('.divRightArea').css('right', '0px');
-        }
-        //console.log( 'width: ' + $('.intpreContents').width() );
+        const minLeftWidth = dataInfo.minLeftAreaWidth;
+        const maxLeftWidth = dataInfo.maxLeftAreaWidth;
+        const rightAreaOffSetPos = dataInfo.offSetRightAreaPosition;
+        let leftEndPosition = width;
+
+        if ($('.intpreContents').width() < minLeftWidth || width < minLeftWidth) leftEndPosition = minLeftWidth;
+        else if ($('.intpreContents').width() >= maxLeftWidth || width >= maxLeftWidth) leftEndPosition = maxLeftWidth;
+
+        const rightStartPosition = leftEndPosition + rightAreaOffSetPos;
+
+        $('.intpreContents').width(leftEndPosition);
+        $('.divSearchArea,.searchDiv').width(leftEndPosition - 1);
+        $('.divRightArea').css('position', 'fixed').css('left', `${rightStartPosition}px`);
     },
 
     loadCharts(aggchartItems) {
@@ -212,7 +212,7 @@ const InterpretationList = React.createClass({
                 options.el = divId;
                 options.id = id;
                 options.width = width;
-                options.height = 400;
+                options.height = dataInfo.interpObjHeight;
                 options.preventMask = false;
                 options.relativePeriodDate = aggchartItems[i].created;
                 chartItems.push(options);
@@ -239,7 +239,7 @@ const InterpretationList = React.createClass({
                 options.el = divId;
                 options.id = id;
                 options.width = width;
-                options.height = 400;
+                options.height = dataInfo.interpObjHeight;
                 options.displayDensity = 'compact';
                 options.relativePeriodDate = this.aggReportItems[i].created;
                 items.push(options);
