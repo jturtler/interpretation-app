@@ -39,26 +39,28 @@ const InterpretationList = React.createClass({
 
     onSearchChanged(searchTerm) {
         this.searchLoading(true);
-        // console.log( 'onSearchChanged called');
 
 		// set the search terms on state memory and reset the item list
         this.state.searchTerm = searchTerm;
         this.state.items = [];
-
+        // Clear the previously displayed list first?
+        //this.setState({ searchTerm, items: [] });
 
         // For search, let's simplify it by -->
         // retrieving all the ID of the all the search sections
         // combine and trim out the duplicate ones
         // and send the ID list to 'loadMore'
-        this.checkAndHandleKeywordCase(searchTerm, (idList) => {
-            if (idList === undefined) {
-                // no keyword case
+        this.checkAndHandleKeywordCase(searchTerm, (keywordSearchedIdList) => {
+            if (keywordSearchedIdList === undefined) {
+                //console.log('onSearchChanged -> loadMore CASE');
+                // no search keyword entered case
                 this.loadMore(1, () => {
                     this.searchLoading(false);
                 });
             } else {
                 // NOTE: THIS CASE DOES NOT WORK WITH PAGING!!!  <-- SINCE we already have list, not by query 'page' use..?
-                this.loadSearchResult(idList, () => {
+                //console.log('onSearchChanged -> loadSearchedListCase CASE');
+                this.loadSearchedListCase(keywordSearchedIdList, () => {
                     this.searchLoading(false);
                 });
             }
@@ -112,10 +114,10 @@ const InterpretationList = React.createClass({
 
         if (searchTerm !== undefined) {
             // TODO: Search by ID should be moved out of this!!
-            if (searchTerm.id) {
-                searchTermUrl += `&filter=id:eq:${searchTerm.id}`;
-            }
-            else if (searchTerm.moreTerms !== undefined) {
+            if (searchTerm.idList && searchTerm.idList.length > 0) {
+                // id changed to array
+                searchTermUrl += `&filter=id:in:[${searchTerm.idList.toString()}]&order=created:desc`;
+            } else if (searchTerm.moreTerms !== undefined) {
                 if (searchTerm.moreTerms.author && searchTerm.moreTerms.author.id !== '') searchTermUrl += `&filter=user.id:eq:${searchTerm.moreTerms.author.id}`;
 
                 if (searchTerm.moreTerms.commentator && searchTerm.moreTerms.commentator.id !== '') searchTermUrl += `&filter=comments.user.id:eq:${searchTerm.moreTerms.commentator.id}`;
@@ -259,7 +261,7 @@ const InterpretationList = React.createClass({
         return this.props.d2.currentUser.authorities.has('ALL');
     },
 
-    loadSearchResult(idList, afterFunc) {
+    loadSearchedListCase(idList, afterFunc) {
         const searchQuery = `&filter=id:in:[${idList.toString()}]&order=created:desc`;
 
         actions.listInterpretation('', searchQuery).subscribe(result => {
@@ -283,6 +285,8 @@ const InterpretationList = React.createClass({
 
     loadMore(page, afterFunc) {
         const searchQuery = this.getSearchTerms(this.state.searchTerm);
+
+        //console.log( 'loadMore query: ' + searchQuery );
 
         actions.listInterpretation('', searchQuery, page).subscribe(result => {
             const d2 = this.props.d2;
@@ -350,8 +354,7 @@ const InterpretationList = React.createClass({
                 this.combineIdList(result, searchIdListObject);
 
                 searchItem.performed = true;
-
-                console.log(searchItem);
+                //console.log(searchItem);
 
                 this.checkDoneList(searchPerformList, doneFunc, searchIdListObject);
             });
@@ -377,18 +380,12 @@ const InterpretationList = React.createClass({
             }
         }
 
-        console.log( 'unfinished: ' + unfinished );
-        //console.log( 'done list check: ' + JSON.stringify(searchPerformList) );
-
         if (!unfinished) {
             const idList = [];
             // convert the object properties as list
             for (const propName in searchIdListObject) {
                 idList.push(propName);
             }
-
-            console.log(idList);
-
             returnFunc(idList);
         }
     },
