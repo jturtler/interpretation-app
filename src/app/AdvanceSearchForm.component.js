@@ -59,18 +59,18 @@ export default class AdvanceSearchForm extends Component {
         let summaryStr = '';
 
         // TODO: Trim - otherUtils.trim
-        if (this.state.type) summaryStr += `Type: ${this.state.type}`;
-        if (this.state.dateCreatedFrom) summaryStr += `dateCreatedFrom: ${this.state.dateCreatedFrom}`;
-        if (this.state.dateCreatedTo) summaryStr += `dateCreatedTo: ${this.state.dateCreatedTo}`;
-        if (this.state.dateModiFrom) summaryStr += `dateModiFrom: ${this.state.dateModiFrom}`;
-        if (this.state.dateModiTo) summaryStr += `dateModiTo: ${this.state.dateModiTo}`;
-        if (this.state.author.id) summaryStr += `author: ${this.state.author.displayName}`;
-        if (this.state.commentator.id) summaryStr += `commentator: ${this.state.commentator.displayName}`;
-        if (this.state.interpretationText) summaryStr += `interpretationText: ${this.state.interpretationText}`;
-        if (this.state.favoritesName) summaryStr += `favoritesName: ${this.state.favoritesName}`;
-        if (this.state.commentText) summaryStr += `commentText: ${this.state.commentText}`;
+        if (this.state.type) summaryStr += `Type: ${this.state.type}, `;
+        if (this.state.dateCreatedFrom) summaryStr += `dateCreatedFrom: ${this.state.dateCreatedFrom}, `;
+        if (this.state.dateCreatedTo) summaryStr += `dateCreatedTo: ${this.state.dateCreatedTo}, `;
+        if (this.state.dateModiFrom) summaryStr += `dateModiFrom: ${this.state.dateModiFrom}, `;
+        if (this.state.dateModiTo) summaryStr += `dateModiTo: ${this.state.dateModiTo}, `;
+        if (this.state.author.id) summaryStr += `author: ${this.state.author.displayName}, `;
+        if (this.state.commentator.id) summaryStr += `commentator: ${this.state.commentator.displayName}, `;
+        if (this.state.interpretationText) summaryStr += `interpretationText: ${this.state.interpretationText}, `;
+        if (this.state.favoritesName) summaryStr += `favoritesName: ${this.state.favoritesName}, `;
+        if (this.state.commentText) summaryStr += `commentText: ${this.state.commentText}, `;
 
-        if (summaryStr) summaryStr = `${otherUtils.advSearchStr}: ${summaryStr}`;
+        if (summaryStr) summaryStr = `${otherUtils.advSearchStr}: ${summaryStr.substring(0, summaryStr.length - 2)}`;
 
         return summaryStr;
     }

@@ -14,7 +14,8 @@ const AppVersionInfo = React.createClass({
         $.get('manifest.webapp', function(data) {
             const versionInfo = $.parseJSON(data);
             if (versionInfo.version) {
-                $('.appVersionInfo').text(`ver ${versionInfo.version}`);
+                const versionInfoStr = `ver ${versionInfo.version}`;
+                $('.appVersionInfo').text(versionInfoStr).attr('title', versionInfoStr);
             }
         });
     },
