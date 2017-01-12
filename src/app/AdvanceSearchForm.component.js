@@ -51,8 +51,8 @@ export default class AdvanceSearchForm extends Component {
     resetForm() {
         this.setState(this.getInitialData());
 
-        this.refs.author.clear();
-        this.refs.commentator.clear();
+        if (this.refs.author !== undefined) this.refs.author.clear();
+        if (this.refs.commentator !== undefined) this.refs.commentator.clear();
     }
 
     generateAdvSearchText() {
@@ -70,15 +70,9 @@ export default class AdvanceSearchForm extends Component {
         if (this.state.favoritesName) summaryStr += `favoritesName: ${this.state.favoritesName}`;
         if (this.state.commentText) summaryStr += `commentText: ${this.state.commentText}`;
 
-        if (summaryStr) summaryStr = `[ADV]: ${summaryStr}`;
-
-        console.log( 'summaryStr: ' + summaryStr );
+        if (summaryStr) summaryStr = `${otherUtils.advSearchStr}: ${summaryStr}`;
 
         return summaryStr;
-    }
-
-    checkAdvancedSearch(inputStr) {
-        return (otherUtils.trim(inputStr).indexOf('[ADV]') === 0);
     }
 
     _clickCloseBtn() {
@@ -134,7 +128,6 @@ export default class AdvanceSearchForm extends Component {
     }
 
     render() {
-        //const inputStyle = { width: '400px' };
         const hintStyle = { fontSize: '14px' };
         const underlineStyle = { width: '400px' };
         const menuStyle = { fontSize: '14px' };
