@@ -6,7 +6,7 @@ export const dataInfo = {
     maxLeftAreaWidth: 1000,
     rightAreaWidth: 210,
     offSetTotalWidth: 46,
-    contentDivOffSet: 45,
+    contentDivOffSet: 20,  // 10 or 45
     offSetRightAreaPosition: 23,
 
     interpObjHeight: 400,
@@ -17,6 +17,6 @@ export const dataInfo = {
         return $(window).width() - this.rightAreaWidth - this.offSetTotalWidth;
     },
     getInterpDivWidth() {
-        return $('.intpreContents').width() - this.contentDivOffSet;
+        return $('.interpretationContainer').width() - this.contentDivOffSet;
     },
 };
