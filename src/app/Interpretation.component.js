@@ -177,7 +177,6 @@ const Interpretation = React.createClass({
                 $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event chart.');
                 $(`#${relativePeriodMsgId}`).show();
             }
-
         });
     },
 
