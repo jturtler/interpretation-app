@@ -206,7 +206,7 @@ const InterpretationList = React.createClass({
     loadCharts(aggchartItems) {
         getD2().then(d2 => {
             const url = d2.Api.getApi().baseUrl.replace('api', '');
-            const width = dataInfo.getInterpDivWidth();
+            //const width = dataInfo.getInterpDivWidth();
 
             const chartItems = [];
             for (let i = 0; i < aggchartItems.length; i++) {
@@ -217,7 +217,7 @@ const InterpretationList = React.createClass({
                 options.uid = id;
                 options.el = divId;
                 options.id = id;
-                options.width = width;
+                //options.width = width;
                 options.height = dataInfo.interpObjHeight;
                 options.preventMask = false;
                 options.relativePeriodDate = aggchartItems[i].created;
@@ -234,7 +234,7 @@ const InterpretationList = React.createClass({
     loadAggregateReports() {
         getD2().then(d2 => {
             const url = d2.Api.getApi().baseUrl.replace('api', '');
-            const width = dataInfo.getInterpDivWidth();
+            //const width = dataInfo.getInterpDivWidth();
 
             const items = [];
             for (let i = 0; i < this.aggReportItems.length; i++) {
@@ -244,7 +244,7 @@ const InterpretationList = React.createClass({
                 const options = {};
                 options.el = divId;
                 options.id = id;
-                options.width = width;
+                //options.width = width;
                 options.height = dataInfo.interpObjHeight;
                 options.displayDensity = 'compact';
                 options.relativePeriodDate = this.aggReportItems[i].created;

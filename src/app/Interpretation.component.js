@@ -92,7 +92,7 @@ const Interpretation = React.createClass({
     },
 
     _setReportTable() {
-        const width = dataInfo.getInterpDivWidth();
+        //const width = dataInfo.getInterpDivWidth();
         const divId = this.props.data.id;
 
         $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
