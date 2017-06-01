@@ -122,12 +122,12 @@ const Interpretation = React.createClass({
 
             DHIS.getEventReport(options);
 
-            const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
+           /* const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
             if (hasRelative) {
                 const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
                 $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event report.');
                 $(`#${relativePeriodMsgId}`).show();
-            }
+            } */
         });
     },
 
@@ -179,12 +179,12 @@ const Interpretation = React.createClass({
                 }
             });
 
-            const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
+           /* const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
             if (hasRelative) {
                 const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
                 $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event chart.');
                 $(`#${relativePeriodMsgId}`).show();
-            }
+            } */
         });
     },
 
