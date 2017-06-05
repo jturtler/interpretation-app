@@ -17,7 +17,7 @@ const Interpretation = React.createClass({
         data: React.PropTypes.object,
         currentUser: React.PropTypes.object,
         deleteInterpretationSuccess: React.PropTypes.func,
-        aggChartList: React.PropTypes.array,
+        //aggChartList: React.PropTypes.array,
     },
 
     getInitialState() {
@@ -51,14 +51,14 @@ const Interpretation = React.createClass({
                     this._setMap(result);
                 });
             } else if (this.props.data.type === 'EVENT_REPORT') {
-                if (!isRedraw) {
-                    this._setEventReport();
-                }
-            } else if (this.props.data.type === 'EVENT_CHART') {
+                this._setReportTable();
+            }
+            // CHANGE - #4
+            /* else if (this.props.data.type === 'EVENT_CHART') {
                 if (!isRedraw) {
                     this._setEventChart();
                 }
-            }
+            }*/
         });
 
         delayOnceTimeAction.bind(8000, `imgLoading${this.props.data.id}`, () => {
@@ -74,7 +74,9 @@ const Interpretation = React.createClass({
                     return true;
                 }
             }
-        } else if (this.props.data.type === 'EVENT_REPORT') {
+        }
+        // CHANGE - #5
+        /* else if (this.props.data.type === 'EVENT_REPORT') {
             for (const key in relativePeriods) {
                 if (relativePeriods[key]) {
                     return true;
@@ -86,7 +88,7 @@ const Interpretation = React.createClass({
                     return true;
                 }
             }
-        }
+        }*/
 
         return false;
     },
@@ -97,95 +99,6 @@ const Interpretation = React.createClass({
 
         $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
         $(`#${divId}`).css('maxHeight', `${dataInfo.interpObjMaxHeight}px`);
-    },
-
-    _setEventReport() {
-        //const width = dataInfo.getInterpDivWidth(); //dataInfo.getleftAreaCalcWidth();
-        const id = this.props.data.objId;
-        const divId = this.props.data.id;
-
-
-        $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
-        $(`#${divId}`).css('maxHeight', `${dataInfo.interpObjMaxHeight}px`);
-
-        // Report Table do not need to redraw when browser window side changes
-        getD2().then(d2 => {
-            const options = {};
-            options.el = divId;
-            options.id = id;
-            options.url = d2.Api.getApi().baseUrl.replace('api', '');
-            //options.width = width;
-            options.height = dataInfo.interpObjHeight;
-            options.displayDensity = 'compact';
-            options.fontSize = 'small';
-            options.relativePeriodDate = this.props.data.created;
-
-            DHIS.getEventReport(options);
-
-            const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
-            if (hasRelative) {
-                const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
-                $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event report.');
-                $(`#${relativePeriodMsgId}`).show();
-            }
-        });
-    },
-
-    _setEventChart() {
-        const id = this.props.data.objId;
-        const divId = this.props.data.id;
-        //const width = dataInfo.getInterpDivWidth(); //dataInfo.getleftAreaCalcWidth();
-
-        getD2().then(d2 => {
-            const options = {};
-            options.uid = id;
-            options.el = divId;
-            options.id = id;
-            options.url = d2.Api.getApi().baseUrl.replace('api', '');
-            //options.width = width;
-            options.height = dataInfo.interpObjHeight;
-            options.relativePeriodDate = this.props.data.created;
-
-            options.domainAxisStyle = {
-                labelRotation: 45,
-                labelFont: '10px sans-serif',
-                labelColor: '#111',
-            };
-
-            options.rangeAxisStyle = {
-                labelFont: '9px sans-serif',
-            };
-
-            options.legendStyle = {
-                labelFont: 'normal 10px sans-serif',
-                labelColor: '#222',
-                labelMarkerSize: 10,
-                titleFont: 'bold 12px sans-serif',
-                titleColor: '#333',
-            };
-
-            options.seriesStyle = {
-                labelColor: '#333',
-                labelFont: '9px sans-serif',
-            };
-
-            DHIS.getEventChart(options);
-
-            this.detectRendered(divId, (rendered, panelTag) => {
-                if (rendered) {
-                    panelTag.css('width', '');
-                    // hide the loading progress images
-                    $(`#${divId}`).find('img.loadingImg').remove();
-                }
-            });
-
-            const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
-            if (hasRelative) {
-                const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
-                $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event chart.');
-                $(`#${relativePeriodMsgId}`).show();
-            }
-        });
     },
 
     detectRendered(divId, returnFunc) {
@@ -434,11 +347,12 @@ const Interpretation = React.createClass({
             link = 'dhis-web-mapping';
         } else if (this.props.data.type === 'EVENT_REPORT') {
             link = 'dhis-web-event-reports';
-        } else {
+        } else if (this.props.data.type === 'EVENT_CHART') {
             link = 'dhis-web-event-visualizer'; // Event chart
         }
 
-        return `${_dhisLoc}${link}/index.html?id=${this.props.data.objId}&interpretationId=${this.props.data.id}`;
+        // ?? ${_dhisLoc}??
+        return (link === '') ? '' : `${_dhisLoc}${link}/index.html?id=${this.props.data.objId}&interpretationId=${this.props.data.id}`;
     },
 
     _exploreInterpretation() {
@@ -508,6 +422,7 @@ const Interpretation = React.createClass({
                         </div>
                         <CommentArea key={commentAreaKey} comments={this.state.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
 
+
                         <Dialog
                             title="People"
                             actions={peopleLikedByDialogActions}
@@ -521,6 +436,7 @@ const Interpretation = React.createClass({
                                 )}
                             </div>
                         </Dialog>
+
 
                     </div>
                 </div>
