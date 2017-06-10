@@ -122,20 +122,12 @@ const Interpretation = React.createClass({
 
             DHIS.getEventReport(options);
 
-<<<<<<< HEAD
-           /* const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
-=======
             const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
->>>>>>> parent of 742502f... Prod change sync
             if (hasRelative) {
                 const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
                 $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event report.');
                 $(`#${relativePeriodMsgId}`).show();
-<<<<<<< HEAD
-            } */
-=======
             }
->>>>>>> parent of 742502f... Prod change sync
         });
     },
 
@@ -187,20 +179,12 @@ const Interpretation = React.createClass({
                 }
             });
 
-<<<<<<< HEAD
-           /* const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
-=======
             const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
->>>>>>> parent of 742502f... Prod change sync
             if (hasRelative) {
                 const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
                 $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event chart.');
                 $(`#${relativePeriodMsgId}`).show();
-<<<<<<< HEAD
-            } */
-=======
             }
->>>>>>> parent of 742502f... Prod change sync
         });
     },
 
@@ -440,7 +424,7 @@ const Interpretation = React.createClass({
         return <div>{list.map(likedByUserName => <span key={likedByUserName.id}>{likedByUserName.name}<br /></span>)} {this.state.likedBy.length > 10 ? <span>more...</span> : '' }</div>;
     },
 
-    _getSourceInterpretationLink() {
+    _exploreInterpretation() {
         let link = '';
         if (this.props.data.type === 'REPORT_TABLE') {
             link = 'dhis-web-pivot';
@@ -454,11 +438,7 @@ const Interpretation = React.createClass({
             link = 'dhis-web-event-visualizer'; // Event chart
         }
 
-        return `${_dhisLoc}${link}/index.html?id=${this.props.data.objId}&interpretationId=${this.props.data.id}`;
-    },
-
-    _exploreInterpretation() {
-        window.location.href = this._getSourceInterpretationLink();
+        window.location.href = `${_dhisLoc}${link}/index.html?id=${this.props.data.objId}`;
     },
 
     render() {
@@ -470,7 +450,6 @@ const Interpretation = React.createClass({
         const messageOwnerKey = `messageOwnerKey_${this.props.data.id}`;
         const likeDialogKey = `likeDialogKey_${this.props.data.id}`;
         const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
-        const sourceLink = this._getSourceInterpretationLink();
 
         const peopleLikedByDialogActions = [
             <FlatButton type="button"
@@ -486,20 +465,14 @@ const Interpretation = React.createClass({
 
                     <div>
                         <div className="interpretationItem">
-                            <div className="title">
-                                <span>{this.props.data.name}</span>
-                                <label className="linkArea">
-                                    <span className="smallFont">|</span>
-                                    <a href={sourceLink} className="userLink leftSpace smallFont" target="_blank">Explore</a>
-                                </label>
-                            </div>
+                            <div className="title"><span>{this.props.data.name}</span> <label className="linkArea"> <span className="smallFont">|</span> <a onClick={this._exploreInterpretation} className="smallFont" target="_blank">Explore</a></label></div>
                             <div id={this.props.data.id} ><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>
                         </div>
                     </div>
 
                     <div id={relativePeriodMsgId} className="relativePeriodWarming"></div>
 
-                    <MessageOwner key={messageOwnerKey} data={this.props.data} sourceLink={sourceLink} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
+                    <MessageOwner key={messageOwnerKey} data={this.props.data} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
 
                     <div className="linkTag">
                         {otherUtils.findItemFromList(this.props.data.likedBy, 'id', this.props.currentUser.id) === undefined ? <a onClick={this._likeHandler} id={likeLinkTagId}>Like</a> : <a onClick={this._unlikeHandler} id={likeLinkTagId}>Unlike</a> } 
@@ -524,6 +497,7 @@ const Interpretation = React.createClass({
                         </div>
                         <CommentArea key={commentAreaKey} comments={this.state.comments} likes={this.state.likes} interpretationId={this.props.data.id} likedBy={this.state.likedBy} currentUser={this.props.currentUser} />
 
+
                         <Dialog
                             title="People"
                             actions={peopleLikedByDialogActions}
@@ -537,6 +511,7 @@ const Interpretation = React.createClass({
                                 )}
                             </div>
                         </Dialog>
+
 
                     </div>
                 </div>
