@@ -122,12 +122,20 @@ const Interpretation = React.createClass({
 
             DHIS.getEventReport(options);
 
+<<<<<<< HEAD
            /* const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
+=======
+            const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
+>>>>>>> parent of 742502f... Prod change sync
             if (hasRelative) {
                 const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
                 $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event report.');
                 $(`#${relativePeriodMsgId}`).show();
+<<<<<<< HEAD
             } */
+=======
+            }
+>>>>>>> parent of 742502f... Prod change sync
         });
     },
 
@@ -179,12 +187,20 @@ const Interpretation = React.createClass({
                 }
             });
 
+<<<<<<< HEAD
            /* const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
+=======
+            const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
+>>>>>>> parent of 742502f... Prod change sync
             if (hasRelative) {
                 const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
                 $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event chart.');
                 $(`#${relativePeriodMsgId}`).show();
+<<<<<<< HEAD
             } */
+=======
+            }
+>>>>>>> parent of 742502f... Prod change sync
         });
     },
 
