@@ -3,30 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Interpretations App</title>
-
-    <script type="text/javascript">
-		var _appUse = "app"; // integrated vs app
-		var _dhisLoc = "../../../"; // '../' vs '../../../'
-    </script>
-  	
-    <script src="jquery.min.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="//dhis2-cdn.org/v221/ext/resources/css/ext-plugin-gray.css" />
-	<script src="//dhis2-cdn.org/v221/ext/ext-all.js"></script>     
-	<!--script type="text/javascript" src="../../../dhis-web-commons/javascripts/ext/ext-all.js"></script-->
+	
+	<link rel="stylesheet" type="text/css" href="//dhis2-cdn.org/v221/ext/resources/css/ext-plugin-gray.css" />
+	<script src="//dhis2-cdn.org/v221/ext/ext-all.js"></script>    
+	 
 	<script type="text/javascript" src="../../../dhis-web-commons/javascripts/openlayers/OpenLayers.js"></script>
 	<script type="text/javascript" src="../../../dhis-web-pivot/reporttable.js"></script>
 	<script type="text/javascript" src="../../../dhis-web-visualizer/chart.js"></script>	
     <script type="text/javascript" src="../../../dhis-web-mapping/map.js"></script>	
 	<script type="text/javascript" src="../../../dhis-web-dashboard-integration/plugin/eventchart.js"></script>
 	<script type="text/javascript" src="../../../dhis-web-dashboard-integration/plugin/eventreport.js"></script>
-    <script src="polyfill.min.js"></script>
-    <script src="app.js"></script>
 		
+	<script type="text/javascript">
+		var _appUse = "app"; // integrated vs app
+		var _dhisLoc = "../../../"; // '../' vs '../../../'
+	</script>
 </head>
 <body>
 	
-    <div id="app"></div>	
+    <div id="app"></div>
+	
+    <script src="polyfill.min.js"></script>
+    <script src="jquery.min.js"></script>
+    <script src="app.js"></script>
+	
+	
 
 </body>
 </html>
