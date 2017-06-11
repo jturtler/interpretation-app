@@ -17,7 +17,7 @@ const Interpretation = React.createClass({
         data: React.PropTypes.object,
         currentUser: React.PropTypes.object,
         deleteInterpretationSuccess: React.PropTypes.func,
-        aggChartList: React.PropTypes.array,
+        //aggChartList: React.PropTypes.array,
     },
 
     getInitialState() {
@@ -424,7 +424,7 @@ const Interpretation = React.createClass({
         return <div>{list.map(likedByUserName => <span key={likedByUserName.id}>{likedByUserName.name}<br /></span>)} {this.state.likedBy.length > 10 ? <span>more...</span> : '' }</div>;
     },
 
-    _exploreInterpretation() {
+    _getSourceInterpretationLink() {
         let link = '';
         if (this.props.data.type === 'REPORT_TABLE') {
             link = 'dhis-web-pivot';
@@ -434,11 +434,16 @@ const Interpretation = React.createClass({
             link = 'dhis-web-mapping';
         } else if (this.props.data.type === 'EVENT_REPORT') {
             link = 'dhis-web-event-reports';
-        } else {
+        } else if (this.props.data.type === 'EVENT_CHART') {
             link = 'dhis-web-event-visualizer'; // Event chart
         }
 
-        window.location.href = `${_dhisLoc}${link}/index.html?id=${this.props.data.objId}`;
+        // ?? ${_dhisLoc}??
+        return (link === '') ? '' : `${_dhisLoc}${link}/index.html?id=${this.props.data.objId}&interpretationId=${this.props.data.id}`;
+    },
+
+    _exploreInterpretation() {
+        window.location.href = this._getSourceInterpretationLink();
     },
 
     render() {
@@ -450,6 +455,7 @@ const Interpretation = React.createClass({
         const messageOwnerKey = `messageOwnerKey_${this.props.data.id}`;
         const likeDialogKey = `likeDialogKey_${this.props.data.id}`;
         const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
+        const sourceLink = this._getSourceInterpretationLink();
 
         const peopleLikedByDialogActions = [
             <FlatButton type="button"
@@ -465,14 +471,20 @@ const Interpretation = React.createClass({
 
                     <div>
                         <div className="interpretationItem">
-                            <div className="title"><span>{this.props.data.name}</span> <label className="linkArea"> <span className="smallFont">|</span> <a onClick={this._exploreInterpretation} className="smallFont" target="_blank">Explore</a></label></div>
+                            <div className="title">
+                                <span>{this.props.data.name}</span>
+                                <label className="linkArea">
+                                    <span className="smallFont">|</span>
+                                    <a href={sourceLink} className="userLink leftSpace smallFont" target="_blank">Explore</a>
+                                </label>
+                            </div>
                             <div id={this.props.data.id} ><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>
                         </div>
                     </div>
 
                     <div id={relativePeriodMsgId} className="relativePeriodWarming"></div>
 
-                    <MessageOwner key={messageOwnerKey} data={this.props.data} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
+                    <MessageOwner key={messageOwnerKey} data={this.props.data} sourceLink={sourceLink} text={this.state.text} editInterpretationTextSuccess={this._editInterpretationTextSuccess} />
 
                     <div className="linkTag">
                         {otherUtils.findItemFromList(this.props.data.likedBy, 'id', this.props.currentUser.id) === undefined ? <a onClick={this._likeHandler} id={likeLinkTagId}>Like</a> : <a onClick={this._unlikeHandler} id={likeLinkTagId}>Unlike</a> } 
