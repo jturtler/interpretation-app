@@ -107,4 +107,8 @@ export const otherUtils = {
         }
         return check;
     },
+
+    convertToNumber(n) {
+        return (n.startsWith('0')) ? eval(n[1]) : eval(n);
+    },
 };

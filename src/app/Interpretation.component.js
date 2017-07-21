@@ -3,6 +3,7 @@ import React from 'react';
 import { Dialog, FlatButton } from 'material-ui';
 import MessageOwner from './MessageOwner.component';
 import CommentArea from './CommentArea.component';
+import AccessInfo from './AccessInfo.component';
 import { getInstance as getD2 } from 'd2/lib/d2';
 import { delayOnceTimeAction } from './utils';
 import { dataInfo } from './data';
@@ -26,16 +27,22 @@ const Interpretation = React.createClass({
             likes: this.props.data.likes,
             likedBy: this.props.data.likedBy,
             open: false,
+            openAccessInfo: false,
             comments: this.props.data.comments,
             isTooltipActive: false,
         };
     },
 
 
+
     componentDidMount() {
+        // this._getAccessInfo();
         this._drawIntepretation();
     },
 
+    componentWillReceiveProps() {
+       //  this._getAccessInfo();
+    },
 
     _drawIntepretation(isRedraw) {
         delayOnceTimeAction.bind(1000, `resultInterpretation${this.props.data.id}`, () => {
@@ -332,10 +339,32 @@ const Interpretation = React.createClass({
         });
     },
 
+
     _getPeopleLikeList() {
         const list = this.state.likedBy.slice(0, 10);
         return <div>{list.map(likedByUserName => <span key={likedByUserName.id}>{likedByUserName.name}<br /></span>)} {this.state.likedBy.length > 10 ? <span>more...</span> : '' }</div>;
     },
+
+    _openAccessInfoHandler() {
+        this.setState({
+            openAccessInfo: true,
+        });
+    },
+
+    _closeAccessInfoHandler() {
+        this.setState({
+            openAccessInfo: false,
+        });
+    },
+
+    // _getAccessInfo() {
+    //     actions.getSharingInfo('', this.props.data.objType, this.props.data.objId).subscribe(accessInfoData => {
+    //         this.setState({
+    //             accessInfoData,
+    //         });
+    //     });
+    // },
+
 
     _getSourceInterpretationLink() {
         let link = '';
@@ -360,6 +389,7 @@ const Interpretation = React.createClass({
     },
 
     render() {
+        const accessLinkTagId = `accessLink_${this.props.data.id}`;
         const likeLinkTagId = `likeLink_${this.props.data.id}`;
         const interpretationTagId = `interpretation_${this.props.data.id}`;
         const peopleLikeTagId = `peopleLike_${this.props.data.id}`;
@@ -378,6 +408,15 @@ const Interpretation = React.createClass({
             />,
         ];
 
+        
+        const accessInfoByDialogActions = [
+            <FlatButton type="button"
+                onClick={this._closeAccessInfoHandler}
+                label="Cancel"
+                primary
+            />,
+        ];
+
         return (
 			<div id={interpretationTagId} key={interpretationTagId} className="interpretations">
 				<div className="interpretationContainer" >
@@ -389,6 +428,9 @@ const Interpretation = React.createClass({
                                 <label className="linkArea">
                                     <span className="smallFont">|</span>
                                     <a href={sourceLink} className="userLink leftSpace smallFont" target="_blank">Explore</a>
+                                    
+                                    <span className="smallFont"> |</span>
+                                    <a onClick={this._openAccessInfoHandler} className="userLink leftSpace smallFont" id={accessLinkTagId}>Access</a>
                                 </label>
                             </div>
                             <div id={this.props.data.id} ><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>
@@ -435,6 +477,17 @@ const Interpretation = React.createClass({
                                     <p key={likedByUserName.id}>{likedByUserName.name}</p>
                                 )}
                             </div>
+                        </Dialog>
+
+                        <Dialog
+                            title="Access"
+                            actions={accessInfoByDialogActions}
+                            modal
+                            open={this.state.openAccessInfo}
+                            onRequestClose={this._closeAccessInfoHandler}
+                        >
+                            <AccessInfo data={this.props.data} userName={this.props.currentUser.name} />
+
                         </Dialog>
 
 
