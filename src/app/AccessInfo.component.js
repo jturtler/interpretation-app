@@ -28,15 +28,15 @@ const AccessInfo = React.createClass({
                                 <th colSpan="2">Intepretation Sharing</th>
                             </tr>
                             <tr>
-                                <td className="bold">Owner:</td>
+                                <td className="bold">Owner</td>
                                 <td>{this.props.userName}</td>
                             </tr>
                             <tr>
-                                <td className="bold">Public Access:</td>
+                                <td className="bold">Public Access</td>
                                 <td>{this._convertSharingCodeToName(this.props.data.publicAccess)}</td>
                             </tr>
                             <tr>
-                                <td className="bold">External Access:</td>
+                                <td className="bold">External Access</td>
                                 <td>{this._convertSharingCodeToName(this.props.data.externalAccess)}</td>
                             </tr>
                             <tr>
@@ -67,7 +67,7 @@ const AccessInfo = React.createClass({
                                 <td>{this._convertSharingCodeToName(this.props.data.objData.externalAccess)}</td>
                             </tr>
                             <tr>
-                                <th colSpan="2" className="bold accessSubHeader">User Group Sharing</th>
+                                <td colSpan="2" className="bold accessSubHeader">User Group Sharing</td>
                             </tr>
                             {this.props.data.objData.userGroupAccesses.map(userGroupAccesse =>
                             <tr>
