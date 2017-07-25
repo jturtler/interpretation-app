@@ -408,7 +408,6 @@ const Interpretation = React.createClass({
             />,
         ];
 
-        
         const accessInfoByDialogActions = [
             <FlatButton type="button"
                 onClick={this._closeAccessInfoHandler}
@@ -486,7 +485,7 @@ const Interpretation = React.createClass({
                             open={this.state.openAccessInfo}
                             onRequestClose={this._closeAccessInfoHandler}
                         >
-                            <AccessInfo data={this.props.data} userName={this.props.currentUser.name} />
+                            <AccessInfo data={this.props.data} />
 
                         </Dialog>
 
