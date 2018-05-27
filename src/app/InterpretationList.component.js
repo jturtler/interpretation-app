@@ -210,7 +210,9 @@ const InterpretationList = React.createClass({
 
     loadCharts(aggchartItems) {
         getD2().then(d2 => {
-            const url = d2.Api.getApi().baseUrl.replace('api', '');
+            let url = d2.Api.getApi().baseUrl.replace('api', '');
+            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
+
             //const width = dataInfo.getInterpDivWidth();
 
             const chartItems = [];
@@ -238,9 +240,10 @@ const InterpretationList = React.createClass({
 
     loadAggregateReports() {
         getD2().then(d2 => {
-            const url = d2.Api.getApi().baseUrl.replace('api', '');
-            //const width = dataInfo.getInterpDivWidth();
+            let url = d2.Api.getApi().baseUrl.replace('api', '');
+            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
 
+            //const width = dataInfo.getInterpDivWidth();
             const items = [];
             for (let i = 0; i < this.aggReportItems.length; i++) {
                 const id = this.aggReportItems[i].objId;

@@ -111,10 +111,13 @@ const Interpretation = React.createClass({
 
         // Report Table do not need to redraw when browser window side changes
         getD2().then(d2 => {
+            let url = d2.Api.getApi().baseUrl.replace('api', '');
+            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
+
             const options = {};
             options.el = divId;
             options.id = id;
-            options.url = d2.Api.getApi().baseUrl.replace('api', '');
+            options.url = url;
             //options.width = width;
             options.height = dataInfo.interpObjHeight;
             options.displayDensity = 'compact';
@@ -138,11 +141,14 @@ const Interpretation = React.createClass({
         //const width = dataInfo.getInterpDivWidth(); //dataInfo.getleftAreaCalcWidth();
 
         getD2().then(d2 => {
+            let url = d2.Api.getApi().baseUrl.replace('api', '');
+            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
+
             const options = {};
             options.uid = id;
             options.el = divId;
             options.id = id;
-            options.url = d2.Api.getApi().baseUrl.replace('api', '');
+            options.url = url;
             //options.width = width;
             options.height = dataInfo.interpObjHeight;
             options.relativePeriodDate = this.props.data.created;
@@ -223,6 +229,9 @@ const Interpretation = React.createClass({
     _setMap(data) {
         const me = this;
         getD2().then(d2 => {
+			let url = d2.Api.getApi().baseUrl.replace('api', '');
+            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
+			
             const width = dataInfo.getInterpDivWidth();
             const divId = this.props.data.id;
             const createdDate = this.props.data.created;
@@ -232,7 +241,7 @@ const Interpretation = React.createClass({
             const options = {};
 
             options.el = divId;
-            options.url = d2.Api.getApi().baseUrl.replace('api', '');
+            options.url = url;
             options.width = width;
             options.height = dataInfo.interpObjHeight;
 
