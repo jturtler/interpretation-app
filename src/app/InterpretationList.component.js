@@ -210,9 +210,6 @@ const InterpretationList = React.createClass({
 
     loadCharts(aggchartItems) {
         getD2().then(d2 => {
-            let url = d2.Api.getApi().baseUrl.replace('api', '');
-            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
-
             //const width = dataInfo.getInterpDivWidth();
 
             const chartItems = [];
@@ -231,7 +228,7 @@ const InterpretationList = React.createClass({
                 chartItems.push(options);
             }
 
-            chartPlugin.url = url;
+            chartPlugin.url = restUtil.getUrlBase_Formatted( d2 );
             chartPlugin.showTitles = false;
             chartPlugin.preventMask = false;
             chartPlugin.load(chartItems);
@@ -240,9 +237,6 @@ const InterpretationList = React.createClass({
 
     loadAggregateReports() {
         getD2().then(d2 => {
-            let url = d2.Api.getApi().baseUrl.replace('api', '');
-            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
-
             //const width = dataInfo.getInterpDivWidth();
             const items = [];
             for (let i = 0; i < this.aggReportItems.length; i++) {
@@ -259,7 +253,7 @@ const InterpretationList = React.createClass({
                 items.push(options);
             }
 
-            reportTablePlugin.url = url;
+            reportTablePlugin.url = restUtil.getUrlBase_Formatted( d2 );
             reportTablePlugin.showTitles = false;
             reportTablePlugin.load(items);
         });

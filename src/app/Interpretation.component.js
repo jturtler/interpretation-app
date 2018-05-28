@@ -5,9 +5,8 @@ import MessageOwner from './MessageOwner.component';
 import CommentArea from './CommentArea.component';
 import AccessInfo from './AccessInfo.component';
 import { getInstance as getD2 } from 'd2/lib/d2';
-import { delayOnceTimeAction } from './utils';
+import { delayOnceTimeAction, restUtil, otherUtils } from './utils';
 import { dataInfo } from './data';
-import { otherUtils } from './utils';
 
 import actions from './actions/Interpretation.action';
 import Tooltip from 'rc-tooltip';
@@ -111,13 +110,11 @@ const Interpretation = React.createClass({
 
         // Report Table do not need to redraw when browser window side changes
         getD2().then(d2 => {
-            let url = d2.Api.getApi().baseUrl.replace('api', '');
-            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
 
             const options = {};
             options.el = divId;
             options.id = id;
-            options.url = url;
+            options.url = restUtil.getUrlBase_Formatted( d2 );
             //options.width = width;
             options.height = dataInfo.interpObjHeight;
             options.displayDensity = 'compact';
@@ -141,14 +138,11 @@ const Interpretation = React.createClass({
         //const width = dataInfo.getInterpDivWidth(); //dataInfo.getleftAreaCalcWidth();
 
         getD2().then(d2 => {
-            let url = d2.Api.getApi().baseUrl.replace('api', '');
-            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
-
             const options = {};
             options.uid = id;
             options.el = divId;
             options.id = id;
-            options.url = url;
+            options.url = restUtil.getUrlBase_Formatted( d2 );
             //options.width = width;
             options.height = dataInfo.interpObjHeight;
             options.relativePeriodDate = this.props.data.created;
@@ -228,10 +222,7 @@ const Interpretation = React.createClass({
 
     _setMap(data) {
         const me = this;
-        getD2().then(d2 => {
-			let url = d2.Api.getApi().baseUrl.replace('api', '');
-            url = d2.Api.getApi().baseUrl.substring( 0, url.length - 1);
-			
+        getD2().then(d2 => {			
             const width = dataInfo.getInterpDivWidth();
             const divId = this.props.data.id;
             const createdDate = this.props.data.created;
@@ -241,7 +232,7 @@ const Interpretation = React.createClass({
             const options = {};
 
             options.el = divId;
-            options.url = url;
+            options.url = restUtil.getUrlBase_Formatted( d2 );
             options.width = width;
             options.height = dataInfo.interpObjHeight;
 
