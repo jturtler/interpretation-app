@@ -49,12 +49,15 @@ export const restUtil = {
             successFunc(result);
         });
     },
-    requestPostHelper(d2Api, url, value, successFunc) {
-        d2Api.post(url, value, { contentType: 'text/plain' })
+    requestPostHelper(d2Api, url, value, successFunc, returnContentType) {
+        const returnContType = (returnContentType === undefined) ? 'text/plain' : returnContentType;
+        requestHelper(d2Api, url, value, successFunc, 'POST', returnContType);
+        /*d2Api.post(url, value, { contentType: 'text/plain' })
             .then(successFunc)
             .catch(errorResponse => {
                 console.log(errorResponse);
             });
+        */
     },
     requestHelper(d2Api, url, value, successFunc, requestType, returnContentType) {
         const reqType = (requestType === undefined) ? 'POST' : requestType;

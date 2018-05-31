@@ -424,23 +424,28 @@ const Interpretation = React.createClass({
         {
             // POST request
 
-            // set image and status, title here..
+            restUtil.requestPostHelper(d2Api, '/api/charts/DkPKc1EUmC2/subscriber', '', () => {
+                // TODO: Need to do universal marking <-- for other interpretataions as well
+                // By Object ID!!!
 
-            // TODO: Need to do universal marking <-- for other interpretataions as well
-            // By Object ID!!!
+                imgTag.removeClass( 'unmarked' );
+                imgTag.addClass( 'marked' );
+                imgTag.attr( 'src', 'images/' + markImgSrcStr );
 
-            imgTag.removeClass( 'unmarked' );
-            imgTag.addClass( 'marked' );
-            imgTag.attr( 'src', 'images/' + markImgSrcStr );
-
+            }, 'application/json' );
         }
         else if ( imgTag.hasClass( 'marked' ) )
         {
             // REMOVE 
+            restUtil.requestHelper(d2Api, '/api/charts/DkPKc1EUmC2/subscriber', '', () => {
+                // TODO: Need to do universal marking 
 
-            imgTag.removeClass( 'marked' );
-            imgTag.addClass( 'unmarked' );
-            imgTag.attr( 'src', 'images/' + unmarkImgSrcStr );
+                imgTag.removeClass( 'marked' );
+                imgTag.addClass( 'unmarked' );
+                imgTag.attr( 'src', 'images/' + unmarkImgSrcStr );
+    
+            }, 'DELETE', 'application/json' );
+
         }        
     },
     // Util.findInArray()
