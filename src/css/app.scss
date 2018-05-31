@@ -315,10 +315,22 @@ a{
 /* Interpretation                                                             */
 /*----------------------------------------------------------------------------*/
 
-
 .tooltip { display: none; }
 .tooltip-on-hover:hover + .tooltip { display: block; }
 
+.interpTopRightDiv {
+    display: inline-block;
+    float: right;
+}
+
+.topRightIcons {
+  cursor: pointer;
+  width: 15px;
+}
+
+.topRightAnchors {
+  margin-right: 7px;
+}
 /*----------------------------------------------------------------------------*/
 /* Search and Advanced Search Popup Related                                 */
 /*----------------------------------------------------------------------------*/

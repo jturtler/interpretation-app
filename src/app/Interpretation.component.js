@@ -37,7 +37,8 @@ const Interpretation = React.createClass({
     },
 
 
-    _drawIntepretation(isRedraw) {
+    _drawIntepretation( isRedraw ) {
+
         delayOnceTimeAction.bind(1000, `resultInterpretation${this.props.data.id}`, () => {
             const divId = this.props.data.id;
 
@@ -386,8 +387,72 @@ const Interpretation = React.createClass({
     _deleteHandler() {
         actions.deleteInterpretation(this.props.data, this.props.data.id)
 			.subscribe(() => {
-    this.props.deleteInterpretationSuccess(this.props.data.id);
+            this.props.deleteInterpretationSuccess(this.props.data.id);
 		});
+    },
+
+    _starHandler( e ) {
+
+        // TODO: This TopRight Icons Area should become a separate component!!!
+
+        //console.log( 'star click test' );
+
+        // if not stared, star it..
+        //e.preventDefault();
+        //$( e.target ).
+        //event.target.getAttribute("data-sortorder");
+
+        const starImgTag = this._getTopRightIconImgByType( 'star' );
+
+        _switchMark( starImgTag, 'marked.png', 'unmarked.png' );
+    },
+
+    // -------------------------------------------
+    _getTopRightIconImgByType( typeStr ) {
+        const interpretationTagId = `interpretation_${this.props.data.id}`;
+        //console.log( 'interpretationTagId: ' + interpretationTagId );
+        const interpDivTag = $( '#' + interpretationTagId );
+
+        return interpDivTag.find( 'img.' + typeStr );
+    },
+    
+    _switchMark( imgTag, markImgSrcStr, unmarkImgSrcStr ) {
+
+        // Need to send the submit request POST...
+
+        if ( imgTag.hasClass( 'unmarked' ) )
+        {
+            // POST request
+
+            // set image and status, title here..
+
+            // TODO: Need to do universal marking <-- for other interpretataions as well
+            // By Object ID!!!
+
+            imgTag.removeClass( 'unmarked' );
+            imgTag.addClass( 'marked' );
+            imgTag.attr( 'src', 'images/' + markImgSrcStr );
+
+        }
+        else if ( imgTag.hasClass( 'marked' ) )
+        {
+            // REMOVE 
+
+            imgTag.removeClass( 'marked' );
+            imgTag.addClass( 'unmarked' );
+            imgTag.attr( 'src', 'images/' + unmarkImgSrcStr );
+        }        
+    },
+    // Util.findInArray()
+
+    // MarkIt();
+
+    // UnMarkIt();
+
+    // -------------------------------------------
+
+    _subscribeHandler() {
+
     },
 
     _showEditHandler() {
@@ -502,6 +567,20 @@ const Interpretation = React.createClass({
                                     <span className="smallFont"> |</span>
                                     <a onClick={this._openAccessInfoHandler} className="userLink leftSpace smallFont" id={accessLinkTagId}>Access</a>
                                 </label>
+                                <div className="interpTopRightDiv">
+                                    <a onClick={this._starHandler} className="topRightAnchors">
+                                        { otherUtils.findInArray( props.data.objData.favorites, props.currentUser.id ) >= 0 
+                                            ? <img src="images/marked.png" title="Starred" className="topRightIcons star marked" />
+                                            : <img src="images/unmarked.png" title="Not Starred" className="topRightIcons star unmarked" /> 
+                                        }
+                                    </a>
+                                    <a onClick={this._subscribeHandler} className="topRightAnchors">
+                                        { otherUtils.findInArray( props.data.objData.subscribers, props.currentUser.id ) >= 0 
+                                            ? <img src="images/start_yes.png" title="Subscribed" className="topRightIcons subscribe marked" />
+                                            : <img src="images/start_no.png" title="Not Subscribed" className="topRightIcons subscribe unmarked" /> 
+                                        }
+                                    </a>
+                                </div>
                             </div>
                             <div id={this.props.data.id} ><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>
                         </div>

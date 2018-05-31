@@ -99,6 +99,17 @@ export const otherUtils = {
         return foundData;
     },
 
+    findInArray( arr, valueStr ) {
+        let foundIndex = -1;
+
+        if ( arr !== undefined && valueStr !== undefined )
+        {
+            foundIndex = arr.indexOf( valueStr );
+        }
+
+        return foundIndex;
+    },
+
     sortByKey(array, key) {
         return array.sort((a, b) => {
             const x = a[key];
