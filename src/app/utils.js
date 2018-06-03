@@ -70,6 +70,25 @@ export const restUtil = {
     },
 };
 
+export const dhisUtils = {
+    getMatchingApiObjTypeName( dataType ) {
+        let dhisApiObjName = '';
+        if (dataType === 'REPORT_TABLE') {
+            dhisApiObjName = 'reportTables';
+        } else if (dataType === 'CHART') {
+            dhisApiObjName = 'charts';
+        } else if (dataType === 'MAP') {
+            dhisApiObjName = 'maps';
+        } else if (dataType === 'EVENT_REPORT') {
+            dhisApiObjName = 'eventReports';
+        } else if (dataType === 'EVENT_CHART') {
+            dhisApiObjName = 'eventCharts'; // Event chart
+        }
+
+        return dhisApiObjName;
+    },
+};
+
 export const otherUtils = {
     removeFromList(list, propertyName, value) {
         let index;
@@ -150,4 +169,25 @@ export const otherUtils = {
     convertToNumber(n) {
         return (n.startsWith('0')) ? eval(n[1]) : eval(n);
     },
+
+    getClassName_ByBeginName( tag, nameBeginsWith ) {
+        const classNameArr = tag.attr('class').split(' ');
+        let foundName = '';
+
+        for (let i = 0; i < classNameArr.length; i++) {
+            const className = classNameArr[i];
+            if (className.startsWith('srcObj_')) {
+                foundName = className;
+                break;
+            }
+        }
+
+        return foundName;
+    },
+
+    getSameSourceInterpIconTags( tag, nameBeginsWith ) {
+        const scrObjName = getClassName_ByBeginName( tag, nameBeginsWith );
+
+        return ( scrObjName !== '' ) ? $( 'img.' + scrObjName ) : tag;
+    }
 };

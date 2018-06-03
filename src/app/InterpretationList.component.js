@@ -22,6 +22,7 @@ const InterpretationList = React.createClass({
             items: [],
             searchTerm: undefined,
             currentUser: { name: this.props.d2.currentUser.displayName, id: this.props.d2.currentUser.id, superUser: this.isSuperUser() },
+            d2Api: this.props.d2.getApi(),
         };
     },
 
@@ -149,6 +150,13 @@ const InterpretationList = React.createClass({
                 if (searchTerm.moreTerms.favoritesName && searchTerm.moreTerms.type) searchTermUrl += `&filter=${this.getFavoriteSearchKeyName(searchTerm.moreTerms.type)}:ilike:${searchTerm.moreTerms.favoritesName}`;
 
                 if (searchTerm.moreTerms.commentText) searchTermUrl += `&filter=comments.text:ilike:${searchTerm.moreTerms.commentText}`;
+
+
+                // TODO:
+                //      For 'Star' (Favorite), we can check it by '/{charId}/favorites...  so, we can do favorites:in:$---, but that would be in char..
+                //      So, we need to do 'chart.favorites:in:-userId--' ?  How can we tell which type?
+                //      Look at this in API after being able to submit for favorites/subscribers..
+
             }
         }
 
@@ -179,7 +187,6 @@ const InterpretationList = React.createClass({
 
         return searchFavoriteKeyName;
     },
-
 
     searchLoading(loading) {
         if (loading) {
@@ -273,11 +280,8 @@ const InterpretationList = React.createClass({
         const searchQuery = `&filter=id:in:[${idList.toString()}]&order=created:desc`;
 
         actions.listInterpretation('', searchQuery).subscribe(result => {
-            const d2 = this.props.d2;
-            const d2Api = d2.Api.getApi();
-
             // NOTE: Changed the name of the method to long and descriptive.  Break up the method purpose if you can.
-            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, d2Api.baseUrl);
+            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, this.d2Api.baseUrl);
 
             this.addToDivList(dataList, false, 1);
 
@@ -295,19 +299,16 @@ const InterpretationList = React.createClass({
         const searchQuery = this.getSearchTerms(this.state.searchTerm);
 
         actions.listInterpretation('', searchQuery, page).subscribe(result => {
-            const d2 = this.props.d2;
-            const d2Api = d2.Api.getApi();
-
             if (page === 1) {
                 // Update the 'READ' timestamp
                 const queryUrl = 'me/dashboard/interpretations/read';
-                restUtil.requestPostHelper(d2Api, queryUrl, '', () => {
+                restUtil.requestPostHelper(this.d2Api, queryUrl, '', () => {
                     console.log('successfully updated read timestamp');
                 });
             }
 
             // NOTE: Changed the name of the method to long and descriptive.  Break up the method purpose if you can.
-            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, d2Api.baseUrl);
+            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, this.d2Api.baseUrl);
             const hasMore = (result.pager.page < result.pager.pageCount);
             const resultPage = result.pager.page;
 
@@ -347,9 +348,6 @@ const InterpretationList = React.createClass({
 
 
     performKeywordSearchRequest(keyword, doneFunc) {
-        const d2 = this.props.d2;
-        const d2Api = d2.Api.getApi();
-
         const searchIdListObject = {};
         const searchPerformList = [
             { type: 'chart', performed: false, query: `interpretations?paging=false&fields=id&filter=chart.name:ilike:${keyword}` },
@@ -364,7 +362,7 @@ const InterpretationList = React.createClass({
         ];
 
         for (const searchItem of searchPerformList) {
-            restUtil.requestGetHelper(d2Api, searchItem.query, (result) => {
+            restUtil.requestGetHelper(this.d2Api, searchItem.query, (result) => {
                 this.combineIdList(result, searchIdListObject);
 
                 searchItem.performed = true;
@@ -409,7 +407,7 @@ const InterpretationList = React.createClass({
         return (
 			<div key={divKey}>
 			{dataList.map(data =>
-                <Interpretation page={page} key={data.id} data={data} currentUser={this.state.currentUser} deleteInterpretationSuccess={this._deleteInterpretationSuccess} />
+                <Interpretation page={page} key={data.id} data={data} currentUser={this.state.currentUser} d2Api={this.d2Api} deleteInterpretationSuccess={this._deleteInterpretationSuccess} />
 			)}
 			</div>
         );

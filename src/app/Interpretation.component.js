@@ -5,7 +5,7 @@ import MessageOwner from './MessageOwner.component';
 import CommentArea from './CommentArea.component';
 import AccessInfo from './AccessInfo.component';
 import { getInstance as getD2 } from 'd2/lib/d2';
-import { delayOnceTimeAction, restUtil, otherUtils } from './utils';
+import { delayOnceTimeAction, restUtil, dhisUtils, otherUtils } from './utils';
 import { dataInfo } from './data';
 
 import actions from './actions/Interpretation.action';
@@ -16,6 +16,7 @@ const Interpretation = React.createClass({
     propTypes: {
         data: React.PropTypes.object,
         currentUser: React.PropTypes.object,
+        d2Api: React.PropTypes.object,
         deleteInterpretationSuccess: React.PropTypes.func,
     },
 
@@ -31,11 +32,9 @@ const Interpretation = React.createClass({
         };
     },
 
-
     componentDidMount() {
         this._drawIntepretation();
     },
-
 
     _drawIntepretation( isRedraw ) {
 
@@ -131,7 +130,7 @@ const Interpretation = React.createClass({
                 $(`#${relativePeriodMsgId}`).show();
             }
         });
-    },
+    },    
 
     _setEventChart() {
         const id = this.props.data.objId;
@@ -392,19 +391,13 @@ const Interpretation = React.createClass({
     },
 
     _starHandler( e ) {
-
-        // TODO: This TopRight Icons Area should become a separate component!!!
-
-        //console.log( 'star click test' );
-
-        // if not stared, star it..
-        //e.preventDefault();
-        //$( e.target ).
-        //event.target.getAttribute("data-sortorder");
-
         const starImgTag = this._getTopRightIconImgByType( 'star' );
+        _switchMark( starImgTag, 'favorite', 'marked.png', 'unmarked.png', 'Starred', 'Not Starred' );
+    },
 
-        _switchMark( starImgTag, 'marked.png', 'unmarked.png' );
+    _subscribeHandler() {
+        const starImgTag = this._getTopRightIconImgByType( 'subscribe' );
+        _switchMark( starImgTag, 'subscriber', 'start_yes.png', 'start_no.png', 'Subscribed', 'Not Subscribed' );
     },
 
     // -------------------------------------------
@@ -415,49 +408,32 @@ const Interpretation = React.createClass({
 
         return interpDivTag.find( 'img.' + typeStr );
     },
-    
-    _switchMark( imgTag, markImgSrcStr, unmarkImgSrcStr ) {
 
-        // Need to send the submit request POST...
+    _switchMark( imgTag, typeName, markImgSrcStr, unmarkImgSrcStr, markTitleStr, unmarkTitleStr ) {
+        const dataType = dhisUtils.getMatchingApiObjTypeName(this.props.data.type);
+        const queryUrl = dataType + '/' + this.props.data.objId + '/' + typeName;
 
+        // Do universal same sourceId icon change        
+        const imgTags_All = otherUtils.getSameSourceInterpIconTags( tag, nameBeginsWith );
+                
         if ( imgTag.hasClass( 'unmarked' ) )
         {
-            // POST request
-
-            restUtil.requestPostHelper(d2Api, '/api/charts/DkPKc1EUmC2/subscriber', '', () => {
-                // TODO: Need to do universal marking <-- for other interpretataions as well
-                // By Object ID!!!
-
-                imgTag.removeClass( 'unmarked' );
-                imgTag.addClass( 'marked' );
-                imgTag.attr( 'src', 'images/' + markImgSrcStr );
-
+            restUtil.requestPostHelper(this.props.d2Api, queryUrl, '', () => {
+                imgTags_All.removeClass( 'unmarked' );
+                imgTags_All.addClass( 'marked' );
+                imgTags_All.attr( 'src', 'images/' + markImgSrcStr );
+                imgTags_All.attr( 'title', markTitleStr );
             }, 'application/json' );
         }
         else if ( imgTag.hasClass( 'marked' ) )
         {
-            // REMOVE 
-            restUtil.requestHelper(d2Api, '/api/charts/DkPKc1EUmC2/subscriber', '', () => {
-                // TODO: Need to do universal marking 
-
-                imgTag.removeClass( 'marked' );
-                imgTag.addClass( 'unmarked' );
-                imgTag.attr( 'src', 'images/' + unmarkImgSrcStr );
-    
+            restUtil.requestHelper(this.props.d2Api, queryUrl, '', () => {
+                imgTags_All.removeClass( 'marked' );
+                imgTags_All.addClass( 'unmarked' );
+                imgTags_All.attr( 'src', 'images/' + unmarkImgSrcStr );
+                imgTags_All.attr( 'title', unmarkTitleStr );                
             }, 'DELETE', 'application/json' );
-
         }        
-    },
-    // Util.findInArray()
-
-    // MarkIt();
-
-    // UnMarkIt();
-
-    // -------------------------------------------
-
-    _subscribeHandler() {
-
     },
 
     _showEditHandler() {
@@ -575,14 +551,14 @@ const Interpretation = React.createClass({
                                 <div className="interpTopRightDiv">
                                     <a onClick={this._starHandler} className="topRightAnchors">
                                         { otherUtils.findInArray( props.data.objData.favorites, props.currentUser.id ) >= 0 
-                                            ? <img src="images/marked.png" title="Starred" className="topRightIcons star marked" />
-                                            : <img src="images/unmarked.png" title="Not Starred" className="topRightIcons star unmarked" /> 
+                                            ? <img src="images/marked.png" title="Starred" className={`topRightIcons star marked srcObj_${this.props.data.objId}`} />
+                                            : <img src="images/unmarked.png" title="Not Starred" className={`topRightIcons star unmarked srcObj_${this.props.data.objId}`} /> 
                                         }
                                     </a>
                                     <a onClick={this._subscribeHandler} className="topRightAnchors">
                                         { otherUtils.findInArray( props.data.objData.subscribers, props.currentUser.id ) >= 0 
-                                            ? <img src="images/start_yes.png" title="Subscribed" className="topRightIcons subscribe marked" />
-                                            : <img src="images/start_no.png" title="Not Subscribed" className="topRightIcons subscribe unmarked" /> 
+                                            ? <img src="images/start_yes.png" title="Subscribed" className={`topRightIcons subscribe marked srcObj_${this.props.data.objId}`} />
+                                            : <img src="images/start_no.png" title="Not Subscribed" className={`topRightIcons subscribe unmarked srcObj_${this.props.data.objId}`} /> 
                                         }
                                     </a>
                                 </div>
