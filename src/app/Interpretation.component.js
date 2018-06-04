@@ -391,13 +391,13 @@ const Interpretation = React.createClass({
     },
 
     _starHandler( e ) {
-        const starImgTag = this._getTopRightIconImgByType( 'star' );
-        _switchMark( starImgTag, 'favorite', 'marked.png', 'unmarked.png', 'Starred', 'Not Starred' );
+        //const starImgTag = this._getTopRightIconImgByType( 'star' );
+        this._switchMark( 'star', 'favorite', 'marked.png', 'unmarked.png', 'Starred', 'Not Starred' );
     },
 
     _subscribeHandler() {
-        const starImgTag = this._getTopRightIconImgByType( 'subscribe' );
-        _switchMark( starImgTag, 'subscriber', 'start_yes.png', 'start_no.png', 'Subscribed', 'Not Subscribed' );
+        //const starImgTag = this._getTopRightIconImgByType( 'subscribe' );
+        this._switchMark( 'subscribe', 'subscriber', 'start_yes.png', 'start_no.png', 'Subscribed', 'Not Subscribed' );
     },
 
     // -------------------------------------------
@@ -409,12 +409,13 @@ const Interpretation = React.createClass({
         return interpDivTag.find( 'img.' + typeStr );
     },
 
-    _switchMark( imgTag, typeName, markImgSrcStr, unmarkImgSrcStr, markTitleStr, unmarkTitleStr ) {
+    _switchMark( typeStr, typeName, markImgSrcStr, unmarkImgSrcStr, markTitleStr, unmarkTitleStr ) {
         const dataType = dhisUtils.getMatchingApiObjTypeName(this.props.data.type);
-        const queryUrl = dataType + '/' + this.props.data.objId + '/' + typeName;
+        const queryUrl = _dhisLoc + 'api/' + dataType + '/' + this.props.data.objId + '/' + typeName;
 
+        const imgTag = this._getTopRightIconImgByType( typeStr );
         // Do universal same sourceId icon change        
-        const imgTags_All = otherUtils.getSameSourceInterpIconTags( tag, nameBeginsWith );
+        const imgTags_All = otherUtils.getSameSourceInterpIconTags( imgTag, typeStr, 'srcObj_' );
                 
         if ( imgTag.hasClass( 'unmarked' ) )
         {
@@ -550,13 +551,13 @@ const Interpretation = React.createClass({
                                 </label>
                                 <div className="interpTopRightDiv">
                                     <a onClick={this._starHandler} className="topRightAnchors">
-                                        { otherUtils.findInArray( props.data.objData.favorites, props.currentUser.id ) >= 0 
+                                        { otherUtils.findInArray( this.props.data.objData.favorites, this.props.currentUser.id ) >= 0 
                                             ? <img src="images/marked.png" title="Starred" className={`topRightIcons star marked srcObj_${this.props.data.objId}`} />
                                             : <img src="images/unmarked.png" title="Not Starred" className={`topRightIcons star unmarked srcObj_${this.props.data.objId}`} /> 
                                         }
                                     </a>
                                     <a onClick={this._subscribeHandler} className="topRightAnchors">
-                                        { otherUtils.findInArray( props.data.objData.subscribers, props.currentUser.id ) >= 0 
+                                        { otherUtils.findInArray( this.props.data.objData.subscribers, this.props.currentUser.id ) >= 0 
                                             ? <img src="images/start_yes.png" title="Subscribed" className={`topRightIcons subscribe marked srcObj_${this.props.data.objId}`} />
                                             : <img src="images/start_no.png" title="Not Subscribed" className={`topRightIcons subscribe unmarked srcObj_${this.props.data.objId}`} /> 
                                         }

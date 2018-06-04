@@ -139,21 +139,23 @@ export default class AdvanceSearchForm extends Component {
     }
 
     _onCheckStar(event) {
-        this.setState((oldState) => {
-            return { star: !oldState.star };
+        this._tempClickFix( function() {
+            this.setState((oldState) => { return { star: !oldState.star }; });    
         });
     }
-
     _onCheckSubscribe(event) {
-        this.setState((oldState) => {
-            return { subscribe: !oldState.subscribe };
+        this._tempClickFix( function() {
+            this.setState((oldState) => { return { subscribe: !oldState.subscribe }; });    
+        });
+    }
+    _onCheckMention(event) {
+        this._tempClickFix( function() {
+            this.setState((oldState) => { return { mention: !oldState.mention }; });    
         });
     }
 
-    _onCheckMention(event) {
-        this.setState((oldState) => {
-            return { mention: !oldState.mention };
-        });
+    _tempClickFix( returnFunc ) {
+        setTimeout( returnFunc, 1 );
     }
 
     render() {
@@ -238,19 +240,19 @@ export default class AdvanceSearchForm extends Component {
                             </td>
                         </tr>
                         <tr>
-                            <td className="tdTitle"><span className="searchStyle">FollowUps</span></td>
+                            <td className="tdTitle"><span className="searchStyle">Follow-ups</span></td>
                             <td className="tdData">
                                 <table>
                                 <tbody>
                                 <tr>
                                     <td>
-                                        <Checkbox label="Star" value={this.state.star} onCheck={this._onCheckStar} />
+                                        <Checkbox label="Star" value={this.state.star} onCheck={this._onCheckStar} iconStyle={{left: "7"}} />
                                     </td>
                                     <td>
-                                        <Checkbox label="Subscribe" value={this.state.subscribe} onCheck={this._onCheckSubscribe} />
+                                        <Checkbox label="Subscribe" value={this.state.subscribe} onCheck={this._onCheckSubscribe} iconStyle={{left: "7"}} />
                                     </td>
                                     <td>
-                                        <Checkbox label="Mention" value={this.state.mention} onCheck={this._onCheckMention} />
+                                        <Checkbox label="Mention" value={this.state.mention} onCheck={this._onCheckMention} iconStyle={{left: "7"}} />
                                     </td>
                                 </tr>
                                 </tbody>

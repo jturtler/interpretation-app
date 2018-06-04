@@ -51,7 +51,7 @@ export const restUtil = {
     },
     requestPostHelper(d2Api, url, value, successFunc, returnContentType) {
         const returnContType = (returnContentType === undefined) ? 'text/plain' : returnContentType;
-        requestHelper(d2Api, url, value, successFunc, 'POST', returnContType);
+        restUtil.requestHelper(d2Api, url, value, successFunc, 'POST', returnContType);
         /*d2Api.post(url, value, { contentType: 'text/plain' })
             .then(successFunc)
             .catch(errorResponse => {
@@ -169,14 +169,14 @@ export const otherUtils = {
     convertToNumber(n) {
         return (n.startsWith('0')) ? eval(n[1]) : eval(n);
     },
-
+    // nameBeginsWith - 'srcObj_'
     getClassName_ByBeginName( tag, nameBeginsWith ) {
         const classNameArr = tag.attr('class').split(' ');
         let foundName = '';
 
         for (let i = 0; i < classNameArr.length; i++) {
             const className = classNameArr[i];
-            if (className.startsWith('srcObj_')) {
+            if (className.startsWith(nameBeginsWith)) {
                 foundName = className;
                 break;
             }
@@ -185,9 +185,9 @@ export const otherUtils = {
         return foundName;
     },
 
-    getSameSourceInterpIconTags( tag, nameBeginsWith ) {
-        const scrObjName = getClassName_ByBeginName( tag, nameBeginsWith );
+    getSameSourceInterpIconTags( tag, typeStr, nameBeginsWith ) {
+        const scrObjName = otherUtils.getClassName_ByBeginName( tag, nameBeginsWith );
 
-        return ( scrObjName !== '' ) ? $( 'img.' + scrObjName ) : tag;
+        return ( scrObjName !== '' ) ? $( 'img.' + scrObjName ).filter( '.' + typeStr ) : tag;
     }
 };

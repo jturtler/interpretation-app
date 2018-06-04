@@ -22,7 +22,7 @@ const InterpretationList = React.createClass({
             items: [],
             searchTerm: undefined,
             currentUser: { name: this.props.d2.currentUser.displayName, id: this.props.d2.currentUser.id, superUser: this.isSuperUser() },
-            d2Api: this.props.d2.getApi(),
+            d2Api: this.props.d2.Api.getApi(),
         };
     },
 
@@ -281,7 +281,7 @@ const InterpretationList = React.createClass({
 
         actions.listInterpretation('', searchQuery).subscribe(result => {
             // NOTE: Changed the name of the method to long and descriptive.  Break up the method purpose if you can.
-            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, this.d2Api.baseUrl);
+            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, this.state.d2Api.baseUrl);
 
             this.addToDivList(dataList, false, 1);
 
@@ -302,13 +302,13 @@ const InterpretationList = React.createClass({
             if (page === 1) {
                 // Update the 'READ' timestamp
                 const queryUrl = 'me/dashboard/interpretations/read';
-                restUtil.requestPostHelper(this.d2Api, queryUrl, '', () => {
+                restUtil.requestPostHelper(this.state.d2Api, queryUrl, '', () => {
                     console.log('successfully updated read timestamp');
                 });
             }
 
             // NOTE: Changed the name of the method to long and descriptive.  Break up the method purpose if you can.
-            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, this.d2Api.baseUrl);
+            const dataList = this.structureData_AndPutInGlobalList(result.interpretations, this.state.d2Api.baseUrl);
             const hasMore = (result.pager.page < result.pager.pageCount);
             const resultPage = result.pager.page;
 
@@ -362,7 +362,7 @@ const InterpretationList = React.createClass({
         ];
 
         for (const searchItem of searchPerformList) {
-            restUtil.requestGetHelper(this.d2Api, searchItem.query, (result) => {
+            restUtil.requestGetHelper(this.state.d2Api, searchItem.query, (result) => {
                 this.combineIdList(result, searchIdListObject);
 
                 searchItem.performed = true;
@@ -407,7 +407,7 @@ const InterpretationList = React.createClass({
         return (
 			<div key={divKey}>
 			{dataList.map(data =>
-                <Interpretation page={page} key={data.id} data={data} currentUser={this.state.currentUser} d2Api={this.d2Api} deleteInterpretationSuccess={this._deleteInterpretationSuccess} />
+                <Interpretation page={page} key={data.id} data={data} currentUser={this.state.currentUser} d2Api={this.state.d2Api} deleteInterpretationSuccess={this._deleteInterpretationSuccess} />
 			)}
 			</div>
         );
