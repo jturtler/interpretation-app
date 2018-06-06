@@ -550,18 +550,23 @@ const Interpretation = React.createClass({
                                     <a onClick={this._openAccessInfoHandler} className="userLink leftSpace smallFont" id={accessLinkTagId}>Access</a>
                                 </label>
                                 <div className="interpTopRightDiv">
-                                    <a onClick={this._starHandler} className="topRightAnchors">
-                                        { otherUtils.findInArray( this.props.data.objData.favorites, this.props.currentUser.id ) >= 0 
-                                            ? <img src="images/marked.png" title="Starred" className={`topRightIcons star marked srcObj_${this.props.data.objId}`} />
-                                            : <img src="images/unmarked.png" title="Not Starred" className={`topRightIcons star unmarked srcObj_${this.props.data.objId}`} /> 
-                                        }
-                                    </a>
-                                    <a onClick={this._subscribeHandler} className="topRightAnchors">
-                                        { otherUtils.findInArray( this.props.data.objData.subscribers, this.props.currentUser.id ) >= 0 
-                                            ? <img src="images/start_yes.png" title="Subscribed" className={`topRightIcons subscribe marked srcObj_${this.props.data.objId}`} />
-                                            : <img src="images/start_no.png" title="Not Subscribed" className={`topRightIcons subscribe unmarked srcObj_${this.props.data.objId}`} /> 
-                                        }
-                                    </a>
+                                    { this.props.data.objData !== undefined 
+                                    ?   <div>
+                                            <a onClick={this._starHandler} className="topRightAnchors">
+                                            { otherUtils.findInArray( this.props.data.objData.favorites, this.props.currentUser.id ) >= 0 
+                                                ? <img src="images/marked.png" title="Starred" className={`topRightIcons star marked srcObj_${this.props.data.objId}`} />
+                                                : <img src="images/unmarked.png" title="Not Starred" className={`topRightIcons star unmarked srcObj_${this.props.data.objId}`} /> 
+                                            }
+                                            </a>
+                                            <a onClick={this._subscribeHandler} className="topRightAnchors">
+                                                { otherUtils.findInArray( this.props.data.objData.subscribers, this.props.currentUser.id ) >= 0 
+                                                    ? <img src="images/start_yes.png" title="Subscribed" className={`topRightIcons subscribe marked srcObj_${this.props.data.objId}`} />
+                                                    : <img src="images/start_no.png" title="Not Subscribed" className={`topRightIcons subscribe unmarked srcObj_${this.props.data.objId}`} /> 
+                                                }
+                                            </a>
+                                        </div>
+                                    : <div></div>
+                                    }
                                 </div>
                             </div>
                             <div id={this.props.data.id} ><img className="loadingImg" src="images/ajax-loader-circle.gif" /></div>

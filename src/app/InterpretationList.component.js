@@ -150,7 +150,8 @@ const InterpretationList = React.createClass({
                 if (searchTerm.moreTerms.favoritesName && searchTerm.moreTerms.type) searchTermUrl += `&filter=${this.getFavoriteSearchKeyName(searchTerm.moreTerms.type)}:ilike:${searchTerm.moreTerms.favoritesName}`;
 
                 if (searchTerm.moreTerms.commentText) searchTermUrl += `&filter=comments.text:ilike:${searchTerm.moreTerms.commentText}`;
-
+                
+                if (searchTerm.moreTerms.mention) searchTermUrl += `&filter=comments.mentions.username:eq:${this.props.d2.currentUser.username}`;
 
                 // TODO:
                 //      For 'Star' (Favorite), we can check it by '/{charId}/favorites...  so, we can do favorites:in:$---, but that would be in char..
@@ -301,7 +302,7 @@ const InterpretationList = React.createClass({
         actions.listInterpretation('', searchQuery, page).subscribe(result => {
             if (page === 1) {
                 // Update the 'READ' timestamp
-                const queryUrl = 'me/dashboard/interpretations/read';
+                const queryUrl = _dhisLoc + 'api/' + 'me/dashboard/interpretations/read';
                 restUtil.requestPostHelper(this.state.d2Api, queryUrl, '', () => {
                     console.log('successfully updated read timestamp');
                 });

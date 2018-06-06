@@ -139,19 +139,19 @@ export default class AdvanceSearchForm extends Component {
     }
 
     _onCheckStar(event) {
-        this._tempClickFix( function() {
+        setTimeout(() => {
             this.setState((oldState) => { return { star: !oldState.star }; });    
-        });
+        }, 1 );
     }
     _onCheckSubscribe(event) {
-        this._tempClickFix( function() {
+        setTimeout(() => {
             this.setState((oldState) => { return { subscribe: !oldState.subscribe }; });    
-        });
+        }, 1 );
     }
     _onCheckMention(event) {
-        this._tempClickFix( function() {
-            this.setState((oldState) => { return { mention: !oldState.mention }; });    
-        });
+        setTimeout(() => {
+            this.setState((oldState) => { return { mention: !oldState.mention }; });
+        }, 1 );
     }
 
     _tempClickFix( returnFunc ) {
