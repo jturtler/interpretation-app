@@ -8,8 +8,14 @@ export default class AdvanceSearchForm extends Component {
     constructor(props) {
         super(props);
 
+        // TODO: Debugging
+        console.log( props.savedTerms );
+
         // const today = new Date().toISOString();
         this.state = (!props.savedTerms) ? this.getInitialData() : props.savedTerms;
+
+        // TODO: Debugging
+        console.log( this.state );
 
         this._clickCloseBtn = this._clickCloseBtn.bind(this);
         this._typeChanged = this._typeChanged.bind(this);
@@ -246,13 +252,13 @@ export default class AdvanceSearchForm extends Component {
                                 <tbody>
                                 <tr>
                                     <td>
-                                        <Checkbox label="Star" value={this.state.star} onCheck={this._onCheckStar} iconStyle={{left: "7"}} />
+                                        <Checkbox label="Star" value={this.state.star} checked={this.state.star} onCheck={this._onCheckStar} disabled iconStyle={{left: "7"}} />
                                     </td>
                                     <td>
-                                        <Checkbox label="Subscribe" value={this.state.subscribe} onCheck={this._onCheckSubscribe} iconStyle={{left: "7"}} />
+                                        <Checkbox label="Subscribe" value={this.state.subscribe} checked={this.state.subscribe} onCheck={this._onCheckSubscribe} disabled iconStyle={{left: "7"}} />
                                     </td>
                                     <td>
-                                        <Checkbox label="Mention" value={this.state.mention} onCheck={this._onCheckMention} iconStyle={{left: "7"}} />
+                                        <Checkbox label="Mention" value={this.state.mention} checked={this.state.mention} onCheck={this._onCheckMention} iconStyle={{left: "7"}} />
                                     </td>
                                 </tr>
                                 </tbody>
