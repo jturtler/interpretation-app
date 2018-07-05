@@ -100,6 +100,16 @@ const Interpretation = React.createClass({
     },
 
     _setEventReport() {
+        getD2().then(d2 => {
+            eventReportPlugin.url = restUtil.getUrlBase_Formatted(d2);
+            eventReportPlugin.load([{
+                id: this.props.data.objId,
+                el: this.props.data.id,
+            }]);
+        });
+    },
+
+    /*_setEventReport() {
         //const width = dataInfo.getInterpDivWidth(); //dataInfo.getleftAreaCalcWidth();
         const id = this.props.data.objId;
         const divId = this.props.data.id;
@@ -131,8 +141,18 @@ const Interpretation = React.createClass({
             }
         });
     },    
-
+ */
     _setEventChart() {
+        getD2().then(d2 => {
+            eventChartPlugin.url = restUtil.getUrlBase_Formatted(d2);
+            eventChartPlugin.load([{
+                id: this.props.data.objId,
+                el: this.props.data.id,
+            }]);
+        });
+    },
+
+    /*_setEventChart() {
         const id = this.props.data.objId;
         const divId = this.props.data.id;
         //const width = dataInfo.getInterpDivWidth(); //dataInfo.getleftAreaCalcWidth();
@@ -189,6 +209,9 @@ const Interpretation = React.createClass({
         });
     },
 
+*/
+
+
     detectRendered(divId, returnFunc) {
         const maxTimesRun = 15;
         const intervalTime = 500;
@@ -221,6 +244,19 @@ const Interpretation = React.createClass({
     ],
 
     _setMap(data) {
+        const me = this;
+        getD2().then(d2 => {			
+            const divId = this.props.data.id;
+            $(`#${divId}`).css('height', `${dataInfo.mapHeight}px`);
+            mapPlugin.url = restUtil.getUrlBase_Formatted( d2 );
+            mapPlugin.load({
+                id: data.id,
+                el: divId,
+            });
+        });
+    },
+
+   /* _setMap(data) {
         const me = this;
         getD2().then(d2 => {			
             const width = dataInfo.getInterpDivWidth();
@@ -268,6 +304,7 @@ const Interpretation = React.createClass({
 
         });
     },
+    */
 
     // Quaterly && 6-month period
     _converRelativePeriods(relativePeriodKey, createdDate) {
@@ -544,14 +581,14 @@ const Interpretation = React.createClass({
                                 <span>{this.props.data.name}</span>
                                 <label className="linkArea">
                                     <span className="smallFont">|</span>
-                                    <a href={sourceLink} className="userLink leftSpace smallFont" target="_blank">Explore</a>
+                                    <a href={sourceLink} className="userLink leftSpace smallFont" target="_blank">Explore_TRAN</a>
                                     
                                     <span className="smallFont"> |</span>
                                     <a onClick={this._openAccessInfoHandler} className="userLink leftSpace smallFont" id={accessLinkTagId}>Access</a>
                                 </label>
                                 <div className="interpTopRightDiv">
-                                    { this.props.data.objData !== undefined 
-                                    ?   <div>
+                                    { this.props.data.objData !== undefined
+                                    ?  <div>
                                             <a onClick={this._subscribeHandler} className="topRightAnchors">
                                                 { otherUtils.findInArray( this.props.data.objData.subscribers, this.props.currentUser.id ) >= 0 
                                                     ? <img src="images/start_yes.png" title="Subscribed" className={`topRightIcons subscribe marked srcObj_${this.props.data.objId}`} />
