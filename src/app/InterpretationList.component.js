@@ -75,6 +75,8 @@ const InterpretationList = React.createClass({
         const dataList = [];
         this.aggReportItems = [];
         this.curAggchartItems = [];
+        this.eventReportItems = [];
+        this.curEventChartItems = [];
 
         for (let i = 0; i < itemList.length; i++) {
             const interpretation = itemList[i];
@@ -267,6 +269,62 @@ const InterpretationList = React.createClass({
         });
     },
 
+    /*
+    // CHANGED - #1
+    loadEventReports() {
+        getD2().then(d2 => {
+            //const url = restUtil.getUrlBase_Formatted( d2 );
+            //const width = dataInfo.getInterpDivWidth();
+
+            const items = [];
+            for (let i = 0; i < this.eventReportItems.length; i++) {
+                const id = this.eventReportItems[i].objId;
+                const divId = this.eventReportItems[i].id;
+
+                const options = {};
+                options.url = '..';
+                options.el = divId;
+                options.id = id;
+                options.displayDensity = 'COMPACT';
+                options.fontSize = 'SMALL';
+                options.relativePeriodDate = this.eventReportItems[i].created;
+                items.push(options);
+            }
+
+            eventReportPlugin.url = restUtil.getUrlBase_Formatted( d2 );
+            eventReportPlugin.showTitles = false;
+            eventReportPlugin.load(items);
+        });
+    },
+
+    loadEventCharts(eventChartItems) {
+        getD2().then(d2 => {
+            //const url = restUtil.getUrlBase_Formatted( d2 );
+            //const width = dataInfo.getInterpDivWidth();
+
+            const chartItems = [];
+            for (let i = 0; i < eventChartItems.length; i++) {
+                const id = eventChartItems[i].objId;
+                const divId = eventChartItems[i].id;
+
+                const options = {};
+                options.uid = id;
+                options.el = divId;
+                options.id = id;
+                //options.width = width;
+                options.height = dataInfo.interpObjHeight;
+                options.preventMask = false;
+                options.relativePeriodDate = eventChartItems[i].created;
+                chartItems.push(options);
+            }
+
+            eventChartPlugin.url = restUtil.getUrlBase_Formatted( d2 );
+            eventChartPlugin.showTitles = false;
+            eventChartPlugin.preventMask = false;
+            eventChartPlugin.load(chartItems);
+        });
+    },
+*/
     addToDivList(dataList, hasMore, resultPage) {
         this.setState({
             items: this.state.items.concat([this.createDiv(dataList, resultPage)]), hasMore,
@@ -289,6 +347,9 @@ const InterpretationList = React.createClass({
             // QUESTION: Could we pass this as local list? Rather than using global list?
             this.loadCharts(this.curAggchartItems);
             this.loadAggregateReports();
+            // CHANGED - #2
+            //this.loadEventCharts(this.curEventChartItems);
+            //this.loadEventReports();
 
             if (afterFunc) afterFunc();
 
@@ -318,6 +379,9 @@ const InterpretationList = React.createClass({
             // QUESTION: Could we pass this as local list? Rather than using global list?
             this.loadCharts(this.curAggchartItems);
             this.loadAggregateReports();
+            // CHANGED - #3
+            //this.loadEventCharts(this.curEventChartItems);
+            //this.loadEventReports();
 
             if (afterFunc) afterFunc();
 
@@ -327,6 +391,8 @@ const InterpretationList = React.createClass({
 
     curAggchartItems: [],
     aggReportItems: [],
+    curEventChartItems: [],
+    eventReportItems: [],
 
     setTableCentering() {
         // TODO: If postback function after chart/table render is available, use that instead.

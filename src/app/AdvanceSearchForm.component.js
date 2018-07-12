@@ -8,14 +8,8 @@ export default class AdvanceSearchForm extends Component {
     constructor(props) {
         super(props);
 
-        // TODO: Debugging
-        console.log( props.savedTerms );
-
         // const today = new Date().toISOString();
         this.state = (!props.savedTerms) ? this.getInitialData() : props.savedTerms;
-
-        // TODO: Debugging
-        console.log( this.state );
 
         this._clickCloseBtn = this._clickCloseBtn.bind(this);
         this._typeChanged = this._typeChanged.bind(this);

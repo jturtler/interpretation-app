@@ -67,7 +67,7 @@ const Interpretation = React.createClass({
         });
     },
 
-    _hasRelativePeriods(relativePeriods) {
+    /* _hasRelativePeriods(relativePeriods) {
         if (this.props.data.type === 'MAP') {
             for (const key in relativePeriods) {
                 if (relativePeriods[key] && this.relativePeriodKeys.indexOf(key) < 0) {
@@ -89,7 +89,7 @@ const Interpretation = React.createClass({
         }
 
         return false;
-    },
+    }, */
 
     _setReportTable() {
         //const width = dataInfo.getInterpDivWidth();
@@ -105,112 +105,21 @@ const Interpretation = React.createClass({
             eventReportPlugin.load([{
                 id: this.props.data.objId,
                 el: this.props.data.id,
+                relativePeriodDate: this.props.data.created,
             }]);
         });
     },
 
-    /*_setEventReport() {
-        //const width = dataInfo.getInterpDivWidth(); //dataInfo.getleftAreaCalcWidth();
-        const id = this.props.data.objId;
-        const divId = this.props.data.id;
-
-
-        $(`#${divId}`).closest('.interpretationItem ').addClass('contentTable');
-        $(`#${divId}`).css('maxHeight', `${dataInfo.interpObjMaxHeight}px`);
-
-        // Report Table do not need to redraw when browser window side changes
-        getD2().then(d2 => {
-
-            const options = {};
-            options.el = divId;
-            options.id = id;
-            options.url = restUtil.getUrlBase_Formatted( d2 );
-            //options.width = width;
-            options.height = dataInfo.interpObjHeight;
-            options.displayDensity = 'compact';
-            options.fontSize = 'small';
-            options.relativePeriodDate = this.props.data.created;
-
-            DHIS.getEventReport(options);
-
-            const hasRelative = this._hasRelativePeriods(this.props.data.eventReport.relativePeriods);
-            if (hasRelative) {
-                const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
-                $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event report.');
-                $(`#${relativePeriodMsgId}`).show();
-            }
-        });
-    },    
- */
     _setEventChart() {
         getD2().then(d2 => {
             eventChartPlugin.url = restUtil.getUrlBase_Formatted(d2);
             eventChartPlugin.load([{
                 id: this.props.data.objId,
                 el: this.props.data.id,
+                relativePeriodDate: this.props.data.created,
             }]);
         });
     },
-
-    /*_setEventChart() {
-        const id = this.props.data.objId;
-        const divId = this.props.data.id;
-        //const width = dataInfo.getInterpDivWidth(); //dataInfo.getleftAreaCalcWidth();
-
-        getD2().then(d2 => {
-            const options = {};
-            options.uid = id;
-            options.el = divId;
-            options.id = id;
-            options.url = restUtil.getUrlBase_Formatted( d2 );
-            //options.width = width;
-            options.height = dataInfo.interpObjHeight;
-            options.relativePeriodDate = this.props.data.created;
-
-            options.domainAxisStyle = {
-                labelRotation: 45,
-                labelFont: '10px sans-serif',
-                labelColor: '#111',
-            };
-
-            options.rangeAxisStyle = {
-                labelFont: '9px sans-serif',
-            };
-
-            options.legendStyle = {
-                labelFont: 'normal 10px sans-serif',
-                labelColor: '#222',
-                labelMarkerSize: 10,
-                titleFont: 'bold 12px sans-serif',
-                titleColor: '#333',
-            };
-
-            options.seriesStyle = {
-                labelColor: '#333',
-                labelFont: '9px sans-serif',
-            };
-
-            DHIS.getEventChart(options);
-
-            this.detectRendered(divId, (rendered, panelTag) => {
-                if (rendered) {
-                    panelTag.css('width', '');
-                    // hide the loading progress images
-                    $(`#${divId}`).find('img.loadingImg').remove();
-                }
-            });
-
-            const hasRelative = this._hasRelativePeriods(this.props.data.eventChart.relativePeriods);
-            if (hasRelative) {
-                const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
-                $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the event chart.');
-                $(`#${relativePeriodMsgId}`).show();
-            }
-        });
-    },
-
-*/
-
 
     detectRendered(divId, returnFunc) {
         const maxTimesRun = 15;
@@ -252,59 +161,10 @@ const Interpretation = React.createClass({
             mapPlugin.load({
                 id: data.id,
                 el: divId,
+                relativePeriodDate: this.props.data.created,                
             });
         });
     },
-
-   /* _setMap(data) {
-        const me = this;
-        getD2().then(d2 => {			
-            const width = dataInfo.getInterpDivWidth();
-            const divId = this.props.data.id;
-            const createdDate = this.props.data.created;
-
-            $(`#${divId}`).css('height', `${dataInfo.mapHeight}px`);
-
-            const options = {};
-
-            options.el = divId;
-            options.url = restUtil.getUrlBase_Formatted( d2 );
-            options.width = width;
-            options.height = dataInfo.interpObjHeight;
-
-            options.mapViews = data.mapViews;
-
-            for (let i = 0; i < data.mapViews.length; i++) {
-                const mapView = data.mapViews[i];
-               // mapView.relativePeriodDate = createdDate.substring(0, 10);
-                if (otherUtils.findItemFromList(mapView.filters, 'dimension', 'pe') !== undefined) {
-                    let relativePeriods = [];
-                    for (let j = 0; j < mapView.filters.length; j++) {
-                        const items = mapView.filters[j].items;
-                        for (let k = 0; k < items.length; k++) {
-                            if (this.relativePeriodKeys.indexOf(items[k].id) >= 0) {
-                                relativePeriods = relativePeriods.concat(me._converRelativePeriods(items[k].id, createdDate));
-                            }
-                        }
-                        if (relativePeriods.length > 0) {
-                            options.mapViews[i].filters[j].items = relativePeriods;
-                        }
-                    }
-                }
-            }
-
-            DHIS.getMap(options);
-
-            const hasRelative = this._hasRelativePeriods(this.props.data.map.mapViews.relativePeriods);
-            if (hasRelative) {
-                const relativePeriodMsgId = `relativePeriodMsg_${this.props.data.id}`;
-                $(`#${relativePeriodMsgId}`).html('*** Relative periods is not supportted for the map.');
-                $(`#${relativePeriodMsgId}`).show();
-            }
-
-        });
-    },
-    */
 
     // Quaterly && 6-month period
     _converRelativePeriods(relativePeriodKey, createdDate) {
@@ -544,7 +404,6 @@ const Interpretation = React.createClass({
     },
 
     render() {
-        const accessLinkTagId = `accessLink_${this.props.data.id}`;
         const likeLinkTagId = `likeLink_${this.props.data.id}`;
         const interpretationTagId = `interpretation_${this.props.data.id}`;
         const peopleLikeTagId = `peopleLike_${this.props.data.id}`;
@@ -563,14 +422,6 @@ const Interpretation = React.createClass({
             />,
         ];
 
-        const accessInfoByDialogActions = [
-            <FlatButton type="button"
-                onClick={this._closeAccessInfoHandler}
-                label="Cancel"
-                primary
-            />,
-        ];
-
         return (
 			<div id={interpretationTagId} key={interpretationTagId} className="interpretations">
 				<div className="interpretationContainer" >
@@ -581,14 +432,11 @@ const Interpretation = React.createClass({
                                 <span>{this.props.data.name}</span>
                                 <label className="linkArea">
                                     <span className="smallFont">|</span>
-                                    <a href={sourceLink} className="userLink leftSpace smallFont" target="_blank">Explore_TRAN</a>
-                                    
-                                    <span className="smallFont"> |</span>
-                                    <a onClick={this._openAccessInfoHandler} className="userLink leftSpace smallFont" id={accessLinkTagId}>Access</a>
+                                    <a href={sourceLink} className="userLink leftSpace smallFont" target="_blank">Explore</a>
                                 </label>
                                 <div className="interpTopRightDiv">
-                                    { this.props.data.objData !== undefined
-                                    ?  <div>
+                                    { this.props.data.objData !== undefined 
+                                    ?   <div>
                                             <a onClick={this._subscribeHandler} className="topRightAnchors">
                                                 { otherUtils.findInArray( this.props.data.objData.subscribers, this.props.currentUser.id ) >= 0 
                                                     ? <img src="images/start_yes.png" title="Subscribed" className={`topRightIcons subscribe marked srcObj_${this.props.data.objId}`} />
@@ -644,17 +492,6 @@ const Interpretation = React.createClass({
                                     <p key={likedByUserName.id}>{likedByUserName.name}</p>
                                 )}
                             </div>
-                        </Dialog>
-
-                        <Dialog
-                            title="Access"
-                            actions={accessInfoByDialogActions}
-                            modal
-                            open={this.state.openAccessInfo}
-                            onRequestClose={this._closeAccessInfoHandler}
-                        >
-                            <AccessInfo data={this.props.data} />
-
                         </Dialog>
 
 
