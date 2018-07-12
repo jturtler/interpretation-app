@@ -33,6 +33,7 @@ const Interpretation = React.createClass({
     },
 
     componentDidMount() {
+       
         this._drawIntepretation();
     },
 
@@ -47,9 +48,10 @@ const Interpretation = React.createClass({
                 if (isRedraw) {
                     $(`#${divId}`).html('<img className="loadingImg" src="images/ajax-loader-circle.gif" />');
                 }
-                actions.getMap('', this.props.data.map.id).subscribe(result => {
-                    this._setMap(result);
-                });
+               // actions.getMap('', this.props.data.map.id).subscribe(result => {
+               //     this._setMap(result);
+               // });
+                this._setMap();
             } else if (this.props.data.type === 'EVENT_REPORT') {
                 if (!isRedraw) {
                     this._setEventReport();
@@ -152,14 +154,14 @@ const Interpretation = React.createClass({
         'LAST_5_YEARS',
     ],
 
-    _setMap(data) {
+    _setMap() {
         const me = this;
         getD2().then(d2 => {			
             const divId = this.props.data.id;
             $(`#${divId}`).css('height', `${dataInfo.mapHeight}px`);
             mapPlugin.url = restUtil.getUrlBase_Formatted( d2 );
             mapPlugin.load({
-                id: data.id,
+                id: this.props.data.objId,
                 el: divId,
                 relativePeriodDate: this.props.data.created,                
             });
